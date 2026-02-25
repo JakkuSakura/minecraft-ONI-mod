@@ -19,7 +19,7 @@ Rules:
 - `Vacuum` has no gas mass and no fluid mass.
 - `Void` is not just low pressure; it is an environment tag that actively removes incoming gas/fluid.
 
-## 2. Gas Species (v1)
+## 2. Gas Species (initial set)
 
 Required:
 
@@ -42,7 +42,7 @@ Gas behavior:
 - `Vacuum` cells do not diffuse out unless connected to gas.
 - `Void` cells drain gas each update by configured ratio.
 
-## 3. Fluid Species (v1)
+## 3. Fluid Species (initial set)
 
 Required:
 

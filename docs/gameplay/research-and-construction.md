@@ -1,4 +1,4 @@
-# Research and Construction v1
+# Research and Construction System
 
 This reworks building from instant crafting to a research + construction workflow.
 

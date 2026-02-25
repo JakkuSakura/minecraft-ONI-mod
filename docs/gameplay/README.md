@@ -10,16 +10,16 @@ This folder defines the first-pass gameplay design for bringing core *Oxygen Not
 
 ## Document Map
 
-- `docs/gameplay/worldgen-and-biomes.md`: constrained world layout and biome stack.
-- `docs/gameplay/matter-occupancy-air-fluid.md`: block occupancy state machine and matter simulation model.
+- `docs/gameplay/world-foundation.md`: constrained world layout and biome stack.
+- `docs/gameplay/matter-model.md`: block occupancy state machine and matter simulation model.
 - `docs/gameplay/mass-system.md`: mass units, conservation rules, and transfer semantics.
-- `docs/gameplay/heat-system.md`: thermal model, transfer rules, and machine overheat behavior.
-- `docs/gameplay/oxygen-system.md`: oxygen lifecycle from generation to breathing penalties.
-- `docs/gameplay/emotional-pressure-system.md`: stress, morale pressure, and behavior penalties.
-- `docs/gameplay/electricity-system.md`: ONI-style watt network with simplified IC2-like constraints.
+- `docs/gameplay/thermal-system.md`: thermal model, transfer rules, and machine overheat behavior.
+- `docs/gameplay/oxygen-and-breathing-system.md`: oxygen lifecycle from generation to breathing penalties.
+- `docs/gameplay/stress-system.md`: stress, morale pressure, and behavior penalties.
+- `docs/gameplay/power-grid-system.md`: ONI-style watt network with simplified IC2-like constraints.
 - `docs/gameplay/research-and-construction.md`: research tree, recipe book gating, and timed construction workflow.
-- `docs/gameplay/systems-spec.md`: systems contracts and formulas (v1).
-- `docs/gameplay/progression-and-content.md`: progression, buildings, and unlocks.
+- `docs/gameplay/simulation-kernel-spec.md`: simulation contracts and formulas.
+- `docs/gameplay/progression-framework.md`: progression, buildings, and unlocks.
 - `docs/gameplay/atmo-suits-and-checkpoints.md`: suit lifecycle, dock behavior, and hazard gating.
 - `docs/gameplay/room-system-and-bonuses.md`: room detection, categories, and buffs.
 - `docs/gameplay/sanitation-and-disease-loop.md`: toilets, polluted chains, and disease pressure.

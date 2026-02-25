@@ -1,4 +1,4 @@
-# Mass System v1
+# Mass System
 
 This system defines how all matter quantities are represented and conserved.
 

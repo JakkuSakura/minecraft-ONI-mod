@@ -1,10 +1,10 @@
-# Oxygen System v1
+# Oxygen and Breathing System
 
 This system defines oxygen generation, distribution, and player survival effects.
 
 ## 1. Oxygen Sources
 
-Primary v1 producers:
+Primary producers:
 
 - `AlgaeTerrarium`: low-rate passive oxygen.
 - `Electrolyzer`: high-rate oxygen + hydrogen from water.

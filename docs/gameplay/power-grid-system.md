@@ -1,4 +1,4 @@
-# Electricity System
+# Power Grid System
 
 This system is inspired by IC2 network constraints, but simplified and ONI-like in operation.
 

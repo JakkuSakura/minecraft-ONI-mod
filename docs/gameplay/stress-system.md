@@ -1,4 +1,4 @@
-# Emotional Pressure System v1
+# Stress System
 
 This system adds ONI-style stress pressure without duplicant AI.
 

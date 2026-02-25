@@ -1,14 +1,14 @@
-# Systems Spec v1
+# Simulation Kernel Specification
 
-This is the implementation-facing v1 contract. Values are initial targets and should be data-driven.
+This is the implementation-facing simulation contract. Values are initial targets and should be data-driven.
 
 Related detailed specs:
 
 - `docs/gameplay/mass-system.md`
-- `docs/gameplay/heat-system.md`
-- `docs/gameplay/oxygen-system.md`
-- `docs/gameplay/emotional-pressure-system.md`
-- `docs/gameplay/electricity-system.md`
+- `docs/gameplay/thermal-system.md`
+- `docs/gameplay/oxygen-and-breathing-system.md`
+- `docs/gameplay/stress-system.md`
+- `docs/gameplay/power-grid-system.md`
 - `docs/gameplay/research-and-construction.md`
 
 ## 0. World Constraints
@@ -38,7 +38,7 @@ Related detailed specs:
 - Simulate gases on a coarse grid (`4x4x4` blocks per cell by default).
 - Each cell stores:
   - `total_moles`
-  - gas composition map (required v1): `O2`, `CO2`, `H2`
+  - gas composition map (required core set): `O2`, `CO2`, `H2`
   - gas composition map (optional/next): `Cl2`, `Steam`, `NaturalGas`
   - `temperature_k`
   - `pressure_kpa`
@@ -98,7 +98,7 @@ Related detailed specs:
 
 - Fluids are finite-mass and do not use vanilla infinite-source duplication logic.
 
-### Species (required v1)
+### Species (required core set)
 
 - `Water`
 - `PollutedWater`

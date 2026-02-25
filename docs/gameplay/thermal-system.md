@@ -1,4 +1,4 @@
-# Heat System v1
+# Thermal System
 
 This system defines temperature, heat transfer, and thermal failure behavior.
 

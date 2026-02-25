@@ -6,7 +6,7 @@ Define who performs tasks in a Minecraft environment while keeping ONI-style pla
 
 ## Baseline Choice
 
-- v1 default: player performs errands directly.
+- Default: player performs errands directly.
 - Optional extension: helper drones for logistics/construction/research support.
 
 ## Errand Types
@@ -26,5 +26,5 @@ Define who performs tasks in a Minecraft environment while keeping ONI-style pla
 
 ## Design Constraint
 
-- Do not require full duplicant AI in v1.
+- Do not require full duplicant AI in the initial scope.
 - Keep the system deterministic and server-authoritative.

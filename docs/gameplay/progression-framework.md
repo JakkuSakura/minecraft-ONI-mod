@@ -1,4 +1,4 @@
-# Progression and Content Plan
+# Progression Framework
 
 ## Tier 0: Crash Survival (Day 1-2)
 

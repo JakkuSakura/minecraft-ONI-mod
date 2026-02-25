@@ -18,7 +18,7 @@ Create ONI-style hygiene pressure and polluted resource management.
 - `WaterSieve` (mid game)
 - `Deodorizer` (polluted gas cleanup)
 
-## Disease Model (v1-lite)
+## Disease Model (initial)
 
 - Track disease exposure as a scalar per player.
 - Exposure increases from:

@@ -1,8 +1,8 @@
-# Worldgen and Biome Layout
+# World Foundation and Biome Layout
 
 This is a hard requirement for the ONI-style experience.
 
-## World Topology (v1)
+## World Topology
 
 - World is horizontally constrained with bedrock side borders.
 - Top boundary is "space exposure" (vacuum-biased zone).
