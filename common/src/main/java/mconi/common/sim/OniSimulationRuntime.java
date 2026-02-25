@@ -9,6 +9,7 @@ public class OniSimulationRuntime
 {
 	private final OniSimulationConfig config = new OniSimulationConfig();
 	private final OniSimulationGrid grid = new OniSimulationGrid();
+	private final OniAtmosphereKernel atmosphereKernel = new OniAtmosphereKernel();
 	private final AtomicLong serverTicks = new AtomicLong(0L);
 	private final AtomicLong simulationTicks = new AtomicLong(0L);
 	private final AtomicLong lastSimulationTick = new AtomicLong(-1L);
@@ -77,6 +78,7 @@ public class OniSimulationRuntime
 
 	public void runOneSimulationStep(long serverTick)
 	{
+		atmosphereKernel.run(grid, config);
 		lastSimulationTick.set(serverTick);
 		simulationTicks.incrementAndGet();
 	}

@@ -55,4 +55,14 @@ public class OniCellState
 	{
 		this.pressureKpa = Math.max(0.0D, pressureKpa);
 	}
+
+	public double totalGasMassKg()
+	{
+		double total = 0.0D;
+		for (double mass : gasMassKg.values())
+		{
+			total += mass;
+		}
+		return total;
+	}
 }

@@ -3,6 +3,7 @@ package mconi.common.sim;
 import mconi.common.sim.model.OniCellCoordinate;
 import mconi.common.sim.model.OniCellState;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,6 +23,11 @@ public class OniSimulationGrid
 	public int activeCellCount()
 	{
 		return cells.size();
+	}
+
+	public Collection<OniCellState> cells()
+	{
+		return cells.values();
 	}
 
 	public void clear()

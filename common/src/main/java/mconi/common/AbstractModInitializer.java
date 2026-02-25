@@ -23,6 +23,7 @@ package mconi.common;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -30,6 +31,8 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import mconi.common.sim.OniServices;
 import mconi.common.sim.OniSimulationSnapshot;
 import mconi.common.sim.OniWorldFoundation;
+import mconi.common.sim.model.GasSpecies;
+import mconi.common.sim.model.OniCellState;
 import mconi.common.wrappers.Utils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.util.Mth;
@@ -214,7 +217,76 @@ public abstract class AbstractModInitializer
 											OniServices.simulationRuntime().config().setCellSize(size);
 											Utils.SendFeedback(context, "ONI Simulation cell size set to " + size + " blocks.", true);
 											return 1;
-										}))))
+										})))
+						.then(literal("touch_here")
+								.executes(context -> {
+									CommandSourceStack source = context.getSource();
+									int x = Mth.floor(source.getPosition().x);
+									int y = Mth.floor(source.getPosition().y);
+									int z = Mth.floor(source.getPosition().z);
+									OniServices.simulationRuntime().grid().getOrCreateCellAtBlock(
+											x,
+											y,
+											z,
+											OniServices.simulationRuntime().config().cellSize());
+									Utils.SendFeedback(context, "Created/loaded simulation cell at current position.", true);
+									return 1;
+								}))
+						.then(literal("inspect_here")
+								.executes(context -> {
+									CommandSourceStack source = context.getSource();
+									int x = Mth.floor(source.getPosition().x);
+									int y = Mth.floor(source.getPosition().y);
+									int z = Mth.floor(source.getPosition().z);
+									OniCellState cell = OniServices.simulationRuntime().grid().getOrCreateCellAtBlock(
+											x,
+											y,
+											z,
+											OniServices.simulationRuntime().config().cellSize());
+									Utils.SendFeedback(context,
+											"Cell: occupancy=" + cell.occupancyState()
+													+ " pressure=" + String.format("%.2f", cell.pressureKpa()) + "kPa"
+													+ " tempK=" + String.format("%.2f", cell.temperatureK())
+													+ " fluid=" + cell.fluidSpecies()
+													+ " fluidMassKg=" + String.format("%.3f", cell.fluidMassKg())
+													+ " O2kg=" + String.format("%.3f", cell.gasMassKg(GasSpecies.O2))
+													+ " CO2kg=" + String.format("%.3f", cell.gasMassKg(GasSpecies.CO2))
+													+ " H2kg=" + String.format("%.3f", cell.gasMassKg(GasSpecies.H2)),
+											true);
+									return 1;
+								}))
+						.then(literal("inject_gas")
+								.then(argument("species", StringArgumentType.word())
+										.then(argument("mass_kg", DoubleArgumentType.doubleArg(0.0D, 1000.0D))
+												.executes(context -> {
+													CommandSourceStack source = context.getSource();
+													int x = Mth.floor(source.getPosition().x);
+													int y = Mth.floor(source.getPosition().y);
+													int z = Mth.floor(source.getPosition().z);
+													String speciesInput = StringArgumentType.getString(context, "species");
+													double massKg = DoubleArgumentType.getDouble(context, "mass_kg");
+													GasSpecies species;
+													try
+													{
+														species = GasSpecies.valueOf(speciesInput.toUpperCase());
+													}
+													catch (IllegalArgumentException exception)
+													{
+														Utils.SendError(context, "Invalid gas species: " + speciesInput + ". Use O2/CO2/H2.", true);
+														return 0;
+													}
+													OniCellState cell = OniServices.simulationRuntime().grid().getOrCreateCellAtBlock(
+															x,
+															y,
+															z,
+															OniServices.simulationRuntime().config().cellSize());
+													double updatedMass = cell.gasMassKg(species) + massKg;
+													cell.setGasMassKg(species, updatedMass);
+													Utils.SendFeedback(context,
+															"Injected " + massKg + "kg of " + species + " into current cell.",
+															true);
+													return 1;
+												})))))
 				.then(literal("world")
 						.then(literal("here")
 								.executes(context -> {
