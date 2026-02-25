@@ -28,7 +28,7 @@ plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
 }
 
-sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = targetCompatibility = JavaVersion.toVersion(rootProject.java_version as Integer)
 
 architectury {
     platformSetupLoomIde()

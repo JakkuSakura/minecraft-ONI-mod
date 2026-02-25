@@ -23,11 +23,12 @@
  */
 
 plugins {
-    id "fabric-loom" version "1.6-SNAPSHOT"
+    id "fabric-loom" version "1.13.6"
 }
 
 loom {
     accessWidenerPath = project(":common").file("src/main/resources/${accessWidenerVersion}.${mod_id}.accesswidener")
+    enableModProvidedJavadoc = false
 
     mixin {
         useLegacyMixinAp = false
@@ -70,11 +71,16 @@ def addMod(path, enabled) {
 
 dependencies {
     minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
-    mappings loom.layered() {
-        // Mojmap mappings
-        officialMojangMappings()
-        // Parchment mappings (it adds parameter mappings & javadoc)
-        parchment("org.parchmentmc.data:parchment-${rootProject.parchment_version}@zip")
+    if (rootProject.hasProperty("yarn_mappings") && rootProject.yarn_mappings != "") {
+        // Fabric tooling expects intermediary-oriented mappings.
+        mappings "net.fabricmc:yarn:${rootProject.yarn_mappings}:v2"
+    } else {
+        mappings loom.layered() {
+            // Mojmap mappings
+            officialMojangMappings()
+            // Parchment mappings (it adds parameter mappings & javadoc)
+            parchment("org.parchmentmc.data:parchment-${rootProject.parchment_version}@zip")
+        }
     }
     // Fabric loader
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"

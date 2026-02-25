@@ -36,7 +36,7 @@ plugins {
     id "systems.manifold.manifold-gradle-plugin" version "0.0.2-alpha"
 
     // Architectury is used here only as a replacement for forge's own loom
-    id "dev.architectury.loom" version "1.6-SNAPSHOT" apply false
+    id "dev.architectury.loom" version "1.13.467" apply false
 
     // Modpublisher: publish to Github, Modrinth and Curseforge in one go
     id "com.hypherionmc.modutils.modpublisher" version "2.1.4"
