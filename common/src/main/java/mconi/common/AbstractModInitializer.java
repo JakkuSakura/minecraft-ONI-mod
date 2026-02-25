@@ -27,6 +27,8 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+import mconi.common.sim.OniServices;
+import mconi.common.sim.OniSimulationSnapshot;
 import mconi.common.wrappers.Utils;
 import net.minecraft.commands.CommandSourceStack;
 import org.apache.logging.log4j.LogManager;
@@ -121,6 +123,7 @@ public abstract class AbstractModInitializer
 	{
 		INSTANCE = this;
 		this.createInitialBindings();
+		OniServices.bootstrap();
 		//do common mod init here
 	}
 	
@@ -159,6 +162,50 @@ public abstract class AbstractModInitializer
 	}
 
 	public static void registerServerCommands(CommandDispatcher<CommandSourceStack> dispatcher, boolean allOrDedicated) {
+		LiteralArgumentBuilder<CommandSourceStack> oniCommand = literal("oni")
+				.then(literal("sim")
+						.then(literal("status")
+								.executes(context -> {
+									OniSimulationSnapshot snapshot = OniServices.simulationRuntime().snapshot();
+									Utils.SendFeedback(context,
+											"ONI Simulation: running=" + snapshot.running()
+													+ " serverTicks=" + snapshot.serverTicks()
+													+ " simTicks=" + snapshot.simulationTicks()
+													+ " lastSimTick=" + snapshot.lastSimulationTick()
+													+ " interval=" + snapshot.tickInterval()
+													+ " cellSize=" + snapshot.cellSize(),
+											true);
+									return 1;
+								}))
+						.then(literal("pause")
+								.executes(context -> {
+									OniServices.simulationRuntime().setRunning(false);
+									Utils.SendFeedback(context, "ONI Simulation paused.", true);
+									return 1;
+								}))
+						.then(literal("resume")
+								.executes(context -> {
+									OniServices.simulationRuntime().setRunning(true);
+									Utils.SendFeedback(context, "ONI Simulation resumed.", true);
+									return 1;
+								}))
+						.then(literal("step")
+								.executes(context -> {
+									OniServices.simulationRuntime().runOneSimulationStep(
+											OniServices.simulationRuntime().snapshot().serverTicks());
+									Utils.SendFeedback(context, "ONI Simulation executed one manual step.", true);
+									return 1;
+								}))
+						.then(literal("set_interval")
+								.then(argument("ticks", IntegerArgumentType.integer(1, 1200))
+										.executes(context -> {
+											int ticks = IntegerArgumentType.getInteger(context, "ticks");
+											OniServices.simulationRuntime().config().setTickInterval(ticks);
+											Utils.SendFeedback(context, "ONI Simulation interval set to " + ticks + " ticks.", true);
+											return 1;
+										}))));
+		dispatcher.register(oniCommand);
+
 		//Example Command
 		LiteralArgumentBuilder<CommandSourceStack> exampleCommand = literal("server_example_command")
 				.then(argument("example_string", StringArgumentType.word())
