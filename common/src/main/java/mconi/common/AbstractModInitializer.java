@@ -183,6 +183,14 @@ public abstract class AbstractModInitializer
 											true);
 									return 1;
 								}))
+						.then(literal("pipeline")
+								.executes(context -> {
+									Utils.SendFeedback(
+											context,
+											"ONI Simulation pipeline: " + String.join(" -> ", OniServices.simulationRuntime().pipelineOrder()),
+											true);
+									return 1;
+								}))
 						.then(literal("pause")
 								.executes(context -> {
 									OniServices.simulationRuntime().setRunning(false);

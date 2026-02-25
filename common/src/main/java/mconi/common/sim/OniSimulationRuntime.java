@@ -1,5 +1,13 @@
 package mconi.common.sim;
 
+import mconi.common.sim.subsystem.AtmosphereSubsystem;
+import mconi.common.sim.subsystem.NoopSubsystem;
+import mconi.common.sim.subsystem.SimulationContext;
+import mconi.common.sim.subsystem.SimulationSubsystem;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -9,7 +17,7 @@ public class OniSimulationRuntime
 {
 	private final OniSimulationConfig config = new OniSimulationConfig();
 	private final OniSimulationGrid grid = new OniSimulationGrid();
-	private final OniAtmosphereKernel atmosphereKernel = new OniAtmosphereKernel();
+	private final List<SimulationSubsystem> subsystems = new ArrayList<>();
 	private final AtomicLong serverTicks = new AtomicLong(0L);
 	private final AtomicLong simulationTicks = new AtomicLong(0L);
 	private final AtomicLong lastSimulationTick = new AtomicLong(-1L);
@@ -20,6 +28,12 @@ public class OniSimulationRuntime
 	{
 		this.started = false;
 		this.paused = false;
+		subsystems.clear();
+		subsystems.add(new AtmosphereSubsystem());
+		subsystems.add(new NoopSubsystem("thermal"));
+		subsystems.add(new NoopSubsystem("oxygen"));
+		subsystems.add(new NoopSubsystem("power"));
+		subsystems.add(new NoopSubsystem("stress"));
 	}
 
 	public OniSimulationConfig config()
@@ -78,9 +92,23 @@ public class OniSimulationRuntime
 
 	public void runOneSimulationStep(long serverTick)
 	{
-		atmosphereKernel.run(grid, config);
+		SimulationContext context = new SimulationContext(serverTick, config, grid);
+		for (SimulationSubsystem subsystem : subsystems)
+		{
+			subsystem.run(context);
+		}
 		lastSimulationTick.set(serverTick);
 		simulationTicks.incrementAndGet();
+	}
+
+	public List<String> pipelineOrder()
+	{
+		List<String> order = new ArrayList<>(subsystems.size());
+		for (SimulationSubsystem subsystem : subsystems)
+		{
+			order.add(subsystem.id());
+		}
+		return Collections.unmodifiableList(order);
 	}
 
 	public OniSimulationSnapshot snapshot()
