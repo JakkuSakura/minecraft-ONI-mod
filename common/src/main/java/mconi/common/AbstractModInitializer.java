@@ -179,7 +179,11 @@ public abstract class AbstractModInitializer
 													+ " lastSimTick=" + snapshot.lastSimulationTick()
 													+ " interval=" + snapshot.tickInterval()
 													+ " cellSize=" + snapshot.cellSize()
-													+ " activeCells=" + snapshot.activeCells(),
+													+ " activeCells=" + snapshot.activeCells()
+													+ " power=" + String.format("%.1f", snapshot.powerGenerationW()) + "/" + String.format("%.1f", snapshot.powerDemandW()) + "W"
+													+ " storedJ=" + String.format("%.1f", snapshot.storedEnergyJ())
+													+ " powerTripped=" + snapshot.powerTripped()
+													+ " stress=" + String.format("%.2f", snapshot.colonyStress()),
 											true);
 									return 1;
 								}))
@@ -255,6 +259,9 @@ public abstract class AbstractModInitializer
 											"Cell: occupancy=" + cell.occupancyState()
 													+ " pressure=" + String.format("%.2f", cell.pressureKpa()) + "kPa"
 													+ " tempK=" + String.format("%.2f", cell.temperatureK())
+													+ " o2Frac=" + String.format("%.4f", cell.o2Fraction())
+													+ " co2Frac=" + String.format("%.4f", cell.co2Fraction())
+													+ " breathBand=" + cell.breathingBand()
 													+ " fluid=" + cell.fluidSpecies()
 													+ " fluidMassKg=" + String.format("%.3f", cell.fluidMassKg())
 													+ " O2kg=" + String.format("%.3f", cell.gasMassKg(GasSpecies.O2))
@@ -294,7 +301,26 @@ public abstract class AbstractModInitializer
 															"Injected " + massKg + "kg of " + species + " into current cell.",
 															true);
 													return 1;
-												})))))
+												}))))
+						.then(literal("set_power")
+								.then(argument("generation_w", DoubleArgumentType.doubleArg(0.0D, 10000000.0D))
+										.then(argument("demand_w", DoubleArgumentType.doubleArg(0.0D, 10000000.0D))
+												.executes(context -> {
+													double generationW = DoubleArgumentType.getDouble(context, "generation_w");
+													double demandW = DoubleArgumentType.getDouble(context, "demand_w");
+													OniServices.simulationRuntime().powerState().setGenerationW(generationW);
+													OniServices.simulationRuntime().powerState().setDemandW(demandW);
+													Utils.SendFeedback(context, "Set power generation/demand to " + generationW + "W/" + demandW + "W.", true);
+													return 1;
+												}))))
+						.then(literal("set_stress")
+								.then(argument("score", DoubleArgumentType.doubleArg(0.0D, 100.0D))
+										.executes(context -> {
+											double score = DoubleArgumentType.getDouble(context, "score");
+											OniServices.simulationRuntime().stressState().setScore(score);
+											Utils.SendFeedback(context, "Set colony stress to " + score + ".", true);
+											return 1;
+										}))))
 				.then(literal("world")
 						.then(literal("here")
 								.executes(context -> {
