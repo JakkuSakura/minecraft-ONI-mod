@@ -1,5 +1,5 @@
 /*
- *    This file is part of the Universal Mod Template
+ *    This file is part of the minecraft-ONI-mod
  *    licensed under the GNU GPL v3 License.
  *    (some parts of this file are originally from the Distant Horizons mod by James Seibel)
  *
@@ -121,4 +121,4 @@ for (loader in ((String) gradle.builds_for).split(",")) {
     include(loaderName)
 }
 
-rootProject.name = "example_mod"
+rootProject.name = "mconi"

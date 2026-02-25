@@ -1,5 +1,5 @@
 /*
- *    This file is part of the Universal Mod Template
+ *    This file is part of the minecraft-ONI-mod
  *    licensed under the GNU GPL v3 License.
  *    (some parts of this file are originally from the Distant Horizons mod by James Seibel)
  *
@@ -60,13 +60,13 @@ loom {
 
         // Mixins are now defined in the `mods.toml`
 //        mixinConfigs = [
-//                "example_mod.mixins.json"
+//                "mconi.mixins.json"
 //        ]
     }
     mixin {
         // Mixins are now defined in the `mods.toml`
 //        mixinConfigs = [
-//                "example_mod.mixins.json"
+//                "mconi.mixins.json"
 //        ]
     }
 

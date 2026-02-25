@@ -17,37 +17,34 @@
  *
  *    You should have received a copy of the GNU General Public License
  *    along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * file changed by: Leander Knüttel
- * date: 01.06.2024
  */
 
-plugins {
-    id "org.spongepowered.gradle.vanilla" version "0.2.1-SNAPSHOT"
+package mconi.common;
+
+import net.minecraft.SharedConstants;
+import net.minecraft.client.Minecraft;
+
+/**
+ * has constants for MC versions
+ *
+ * @author James Seibel
+ * @author Leander Knüttel
+ * @version 17.05.2024
+ */
+public class VersionConstants
+{
+	public static final VersionConstants INSTANCE = new VersionConstants();
+
+	private VersionConstants()
+	{
+	}
+
+	public String getMinecraftVersion()
+	{
+		#if MC_VER < MC_1_19_2
+		return Minecraft.getInstance().getGame().getVersion().getId();
+		#else
+		return SharedConstants.getCurrentVersion().getId();
+		#endif
+	}
 }
-
-minecraft {
-    accessWideners(project(":common").file("src/main/resources/${accessWidenerVersion}.${rootProject.mod_id}.accesswidener"))
-    version(rootProject.minecraft_version)
-}
-
-dependencies {
-    // So mixins can be written in common
-    compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
-}
-
-
-publishing {
-    publications {
-        mavenCommon(MavenPublication) {
-            artifactId = rootProject.mod_id
-            from components.java
-        }
-    }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        // Add repositories to publish to here.
-    }
-}
-

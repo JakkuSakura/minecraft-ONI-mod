@@ -17,37 +17,40 @@
  *
  *    You should have received a copy of the GNU General Public License
  *    along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * file changed by: Leander Knüttel
- * date: 01.06.2024
  */
 
-plugins {
-    id "org.spongepowered.gradle.vanilla" version "0.2.1-SNAPSHOT"
+package mconi.common;
+
+import java.io.File;
+
+/**
+ * Checks if a mod is loaded
+ *
+ * @author coolGi
+ * @author Leander Knüttel
+ * @version 27.05.2024
+ */
+public abstract class ModChecker
+{
+	public static ModChecker INSTANCE;
+
+	public ModChecker() {
+		INSTANCE = this;
+	}
+
+	/**
+	 * Checks if a mod is loaded
+	 */
+	public abstract boolean isModLoaded(String modid);
+
+	public abstract File modLocation(String modid);
+
+	public boolean classExists(String className) {
+		try {
+			Class<?> ClassTest = Class.forName(className);
+			return true;
+		} catch (ClassNotFoundException ignored) {
+			return false;
+		}
+	}
 }
-
-minecraft {
-    accessWideners(project(":common").file("src/main/resources/${accessWidenerVersion}.${rootProject.mod_id}.accesswidener"))
-    version(rootProject.minecraft_version)
-}
-
-dependencies {
-    // So mixins can be written in common
-    compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
-}
-
-
-publishing {
-    publications {
-        mavenCommon(MavenPublication) {
-            artifactId = rootProject.mod_id
-            from components.java
-        }
-    }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        // Add repositories to publish to here.
-    }
-}
-

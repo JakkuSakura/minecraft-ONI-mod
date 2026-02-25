@@ -1,0 +1,14 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "mconi.mixins",
+    "mixins": [
+    ],
+    "client": [
+        "forge.client.SplashManagerMixin",
+        "common.client.TitleScreenMixin"
+    ],
+    "server": [
+    ],
+    "plugin": "mconi.mixins.forge.ForgeMixinPlugin"
+}

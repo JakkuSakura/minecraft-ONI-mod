@@ -17,37 +17,12 @@
  *
  *    You should have received a copy of the GNU General Public License
  *    along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * file changed by: Leander Knüttel
- * date: 01.06.2024
  */
 
-plugins {
-    id "org.spongepowered.gradle.vanilla" version "0.2.1-SNAPSHOT"
+package mconi.mixins.forge.mods.examplemixinintomod;
+
+public class ExampleMixin {
+    // This isn't a real mixin, but if a mixin into a mod were to be created it would be like this
+    // The folder that this mixin is in should be the mod id so that our mixin plugin applies it only when that mod is detected
+    // Other than that, everything else should be the same as a normal mixin
 }
-
-minecraft {
-    accessWideners(project(":common").file("src/main/resources/${accessWidenerVersion}.${rootProject.mod_id}.accesswidener"))
-    version(rootProject.minecraft_version)
-}
-
-dependencies {
-    // So mixins can be written in common
-    compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
-}
-
-
-publishing {
-    publications {
-        mavenCommon(MavenPublication) {
-            artifactId = rootProject.mod_id
-            from components.java
-        }
-    }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        // Add repositories to publish to here.
-    }
-}
-
