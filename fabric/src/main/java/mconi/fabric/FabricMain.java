@@ -56,6 +56,7 @@ public class FabricMain extends AbstractModInitializer implements ClientModIniti
 	@Override
 	protected void createInitialBindings() {
 		new FabricModChecker();
+		FabricItems.register();
 
 		//Fabric static Instances here
 	}

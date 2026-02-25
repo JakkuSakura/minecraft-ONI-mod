@@ -47,6 +47,7 @@ public class NeoforgeMain extends AbstractModInitializer
 	public NeoforgeMain(IEventBus eventBus)
 	{
 		loaderType = LoaderType.NeoForge;
+		NeoforgeItems.register(eventBus);
 		// Register the mod initializer (Actual event registration is done in the different proxies)
 		eventBus.addListener((FMLClientSetupEvent e) -> this.onInitializeClient());
 		eventBus.addListener((FMLDedicatedServerSetupEvent e) -> this.onInitializeServer());

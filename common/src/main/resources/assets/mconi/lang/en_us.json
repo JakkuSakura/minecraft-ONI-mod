@@ -1,3 +1,10 @@
 {
-
+  "item.mconi.atmosphere_glasses": "Atmosphere Glasses",
+  "item.mconi.fluid_glasses": "Fluid Glasses",
+  "item.mconi.thermal_glasses": "Thermal Glasses",
+  "item.mconi.oxygen_glasses": "Oxygen Glasses",
+  "item.mconi.power_glasses": "Power Glasses",
+  "item.mconi.stress_glasses": "Stress Glasses",
+  "item.mconi.research_glasses": "Research Glasses",
+  "item.mconi.construction_glasses": "Construction Glasses"
 }

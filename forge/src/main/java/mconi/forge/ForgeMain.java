@@ -64,6 +64,7 @@ public class ForgeMain extends AbstractModInitializer
 	public ForgeMain()
 	{
 		loaderType = LoaderType.Forge;
+		ForgeItems.register(FMLJavaModLoadingContext.get().getModEventBus());
 		// Register the mod initializer (Actual event registration is done in the different proxies)
 		FMLJavaModLoadingContext.get().getModEventBus().addListener((FMLClientSetupEvent e) -> this.onInitializeClient());
 		FMLJavaModLoadingContext.get().getModEventBus().addListener((FMLDedicatedServerSetupEvent e) -> this.onInitializeServer());
