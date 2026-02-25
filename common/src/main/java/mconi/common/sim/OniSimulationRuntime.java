@@ -11,11 +11,13 @@ public class OniSimulationRuntime
 	private final AtomicLong serverTicks = new AtomicLong(0L);
 	private final AtomicLong simulationTicks = new AtomicLong(0L);
 	private final AtomicLong lastSimulationTick = new AtomicLong(-1L);
-	private volatile boolean running;
+	private volatile boolean started;
+	private volatile boolean paused;
 
 	public void bootstrap()
 	{
-		this.running = false;
+		this.started = false;
+		this.paused = false;
 	}
 
 	public OniSimulationConfig config()
@@ -28,18 +30,25 @@ public class OniSimulationRuntime
 		serverTicks.set(0L);
 		simulationTicks.set(0L);
 		lastSimulationTick.set(-1L);
-		running = true;
+		started = true;
+		paused = false;
 	}
 
 	public void onServerStopped()
 	{
-		running = false;
+		started = false;
+		paused = false;
 	}
 
 	public void onServerTick()
 	{
+		if (!started)
+		{
+			onServerStarted();
+		}
+
 		long tick = serverTicks.incrementAndGet();
-		if (!running)
+		if (paused)
 		{
 			return;
 		}
@@ -52,7 +61,11 @@ public class OniSimulationRuntime
 
 	public void setRunning(boolean running)
 	{
-		this.running = running;
+		if (!started && running)
+		{
+			onServerStarted();
+		}
+		this.paused = !running;
 	}
 
 	public void runOneSimulationStep(long serverTick)
@@ -64,7 +77,7 @@ public class OniSimulationRuntime
 	public OniSimulationSnapshot snapshot()
 	{
 		return new OniSimulationSnapshot(
-				running,
+				started && !paused,
 				serverTicks.get(),
 				simulationTicks.get(),
 				lastSimulationTick.get(),

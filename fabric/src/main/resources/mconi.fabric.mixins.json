@@ -9,6 +9,7 @@
         "common.client.TitleScreenMixin"
     ],
     "server": [
+        "common.server.MinecraftServerSimulationMixin"
     ],
     "injectors": {
         "defaultRequire": 1

@@ -9,6 +9,7 @@
         "common.client.TitleScreenMixin"
     ],
     "server": [
+        "common.server.MinecraftServerSimulationMixin"
     ],
     "plugin": "mconi.mixins.forge.ForgeMixinPlugin"
 }
