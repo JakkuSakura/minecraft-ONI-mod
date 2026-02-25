@@ -40,6 +40,11 @@ public final class OniItems
 
 	public static Item createGlassesItem(SystemLens lens)
 	{
-		return new SystemGlassesItem(new Item.Properties().stacksTo(1), lens);
+		return createGlassesItem(lens, new Item.Properties().stacksTo(1));
+	}
+
+	public static Item createGlassesItem(SystemLens lens, Item.Properties properties)
+	{
+		return new SystemGlassesItem(properties, lens);
 	}
 }

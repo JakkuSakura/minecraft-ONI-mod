@@ -25,9 +25,6 @@
         ],
         "server": [
             "${group}.fabric.FabricMain"
-        ],
-        "modmenu": [
-            "${group}.fabric.wrappers.ModMenuIntegration"
         ]
     },
     
@@ -39,14 +36,6 @@
         "fabricloader": "*",
         "minecraft": $compatible_minecraft_versions,
         "java": ">=${java_version}"
-    },
-    
-    "custom": {
-        "modmenu": {
-            "links": {
-                "modmenu.discord": "${discord}"
-            }
-        }
     },
     
     "suggests": {

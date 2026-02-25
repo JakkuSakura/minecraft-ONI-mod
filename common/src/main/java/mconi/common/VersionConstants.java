@@ -44,7 +44,7 @@ public class VersionConstants
 		#if MC_VER < MC_1_19_2
 		return Minecraft.getInstance().getGame().getVersion().getId();
 		#else
-		return SharedConstants.getCurrentVersion().getId();
+		return SharedConstants.getCurrentVersion().id();
 		#endif
 	}
 }

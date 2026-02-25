@@ -71,22 +71,18 @@ def addMod(path, enabled) {
 
 dependencies {
     minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
-    if (rootProject.hasProperty("yarn_mappings") && rootProject.yarn_mappings != "") {
-        // Fabric tooling expects intermediary-oriented mappings.
-        mappings "net.fabricmc:yarn:${rootProject.yarn_mappings}:v2"
-    } else {
-        mappings loom.layered() {
-            // Mojmap mappings
-            officialMojangMappings()
-            // Parchment mappings (it adds parameter mappings & javadoc)
-            parchment("org.parchmentmc.data:parchment-${rootProject.parchment_version}@zip")
-        }
+    mappings loom.layered() {
+        // Mojmap mappings
+        officialMojangMappings()
+        // Parchment mappings (it adds parameter mappings & javadoc)
+        parchment("org.parchmentmc.data:parchment-${rootProject.parchment_version}@zip")
     }
     // Fabric loader
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.24"
 
     // Mod Menu
     if (rootProject.modmenu_version != "") {

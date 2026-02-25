@@ -22,6 +22,7 @@ package mconi.mixins.fabric.client;
 
 #if MC_VER > MC_1_19_4
 import net.minecraft.client.gui.components.SplashRenderer;
+import net.minecraft.network.chat.Component;
 #endif
 import net.minecraft.client.resources.SplashManager;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,7 +39,7 @@ public class SplashManagerMixin {
     @Inject(method = "getSplash", at = @At("HEAD"), cancellable = true)
     #if MC_VER > MC_1_19_4
     private void setSplash(CallbackInfoReturnable<SplashRenderer> cir) {
-        cir.setReturnValue(new SplashRenderer("§c§lExampleMod Fabric!"));
+        cir.setReturnValue(new SplashRenderer(Component.literal("§c§lExampleMod Fabric!")));
     }
     #else
     private void setSplash(CallbackInfoReturnable<String> cir) {

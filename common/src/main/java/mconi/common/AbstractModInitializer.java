@@ -432,8 +432,8 @@ public abstract class AbstractModInitializer
 									int x = Mth.floor(source.getPosition().x);
 									int y = Mth.floor(source.getPosition().y);
 									int z = Mth.floor(source.getPosition().z);
-									int minY = source.getLevel().getMinBuildHeight();
-									int maxY = source.getLevel().getMaxBuildHeight() - 1;
+									int minY = source.getLevel().getMinY();
+									int maxY = source.getLevel().getMaxY() - 1;
 									boolean inBounds = OniWorldFoundation.isWithinHorizontalBounds(
 											x,
 											z,
@@ -481,7 +481,7 @@ public abstract class AbstractModInitializer
 												Utils.SendFeedback(context, "[" + property.layer() + "] " + property.key() + "=" + property.value(), true);
 											}
 											return 1;
-										}))));
+											})))));
 		dispatcher.register(oniCommand);
 
 		//Example Command
