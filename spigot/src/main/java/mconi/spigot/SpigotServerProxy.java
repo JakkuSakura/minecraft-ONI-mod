@@ -21,6 +21,8 @@
 package mconi.spigot;
 
 import mconi.common.AbstractModInitializer;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginManager;
 
 /**
  * @author Leander Knüttel
@@ -29,6 +31,10 @@ import mconi.common.AbstractModInitializer;
 public class SpigotServerProxy implements AbstractModInitializer.IEventProxy {
     @Override
     public void registerEvents() {
-
+        PluginManager pluginManager = Bukkit.getPluginManager();
+        if (pluginManager.getPlugin("WorldEdit") != null) {
+            pluginManager.registerEvents(new SpigotWorldEditCompatListener(), SpigotPlugin.getInstance());
+            AbstractModInitializer.LOGGER.info("Registered WorldEdit compatibility listener for ONI simulation.");
+        }
     }
 }

@@ -29,10 +29,15 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import mconi.common.sim.OniServices;
+import mconi.common.sim.OniConstructionState;
 import mconi.common.sim.OniSimulationSnapshot;
+import mconi.common.sim.OniSystemInspector;
 import mconi.common.sim.OniWorldFoundation;
+import mconi.common.sim.model.FluidSpecies;
 import mconi.common.sim.model.GasSpecies;
+import mconi.common.sim.model.LayerProperty;
 import mconi.common.sim.model.OniCellState;
+import mconi.common.sim.model.SystemLens;
 import mconi.common.wrappers.Utils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.util.Mth;
@@ -183,7 +188,9 @@ public abstract class AbstractModInitializer
 													+ " power=" + String.format("%.1f", snapshot.powerGenerationW()) + "/" + String.format("%.1f", snapshot.powerDemandW()) + "W"
 													+ " storedJ=" + String.format("%.1f", snapshot.storedEnergyJ())
 													+ " powerTripped=" + snapshot.powerTripped()
-													+ " stress=" + String.format("%.2f", snapshot.colonyStress()),
+													+ " stress=" + String.format("%.2f", snapshot.colonyStress())
+													+ " researchUnlocked=" + snapshot.unlockedResearchCount()
+													+ " buildQueue=" + snapshot.activeConstructionCount(),
 											true);
 									return 1;
 								}))
@@ -302,6 +309,35 @@ public abstract class AbstractModInitializer
 															true);
 													return 1;
 												}))))
+						.then(literal("inject_fluid")
+								.then(argument("species", StringArgumentType.word())
+										.then(argument("mass_kg", DoubleArgumentType.doubleArg(0.0D, 10000.0D))
+												.executes(context -> {
+													CommandSourceStack source = context.getSource();
+													int x = Mth.floor(source.getPosition().x);
+													int y = Mth.floor(source.getPosition().y);
+													int z = Mth.floor(source.getPosition().z);
+													String speciesInput = StringArgumentType.getString(context, "species");
+													double massKg = DoubleArgumentType.getDouble(context, "mass_kg");
+													FluidSpecies species;
+													try
+													{
+														species = FluidSpecies.valueOf(speciesInput.toUpperCase());
+													}
+													catch (IllegalArgumentException exception)
+													{
+														Utils.SendError(context, "Invalid fluid species. Use WATER/POLLUTED_WATER/CRUDE_OIL/LAVA.", true);
+														return 0;
+													}
+													OniCellState cell = OniServices.simulationRuntime().grid().getOrCreateCellAtBlock(
+															x,
+															y,
+															z,
+															OniServices.simulationRuntime().config().cellSize());
+													cell.setFluidState(species, massKg);
+													Utils.SendFeedback(context, "Set fluid " + species + " mass to " + massKg + "kg in current cell.", true);
+													return 1;
+												}))))
 						.then(literal("set_power")
 								.then(argument("generation_w", DoubleArgumentType.doubleArg(0.0D, 10000000.0D))
 										.then(argument("demand_w", DoubleArgumentType.doubleArg(0.0D, 10000000.0D))
@@ -320,7 +356,75 @@ public abstract class AbstractModInitializer
 											OniServices.simulationRuntime().stressState().setScore(score);
 											Utils.SendFeedback(context, "Set colony stress to " + score + ".", true);
 											return 1;
-										}))))
+										})))
+						.then(literal("research")
+								.then(literal("status")
+										.executes(context -> {
+											Utils.SendFeedback(
+													context,
+													"Research unlocked nodes: " + OniServices.simulationRuntime().researchState().unlockedCount()
+															+ " " + OniServices.simulationRuntime().researchState().unlockedNodes(),
+													true);
+											return 1;
+										}))
+								.then(literal("unlock")
+										.then(argument("node", StringArgumentType.word())
+												.executes(context -> {
+													String node = StringArgumentType.getString(context, "node");
+													OniServices.simulationRuntime().researchState().unlock(node);
+													Utils.SendFeedback(context, "Unlocked research node: " + node, true);
+													return 1;
+												}))))
+						.then(literal("build")
+								.then(literal("status")
+										.executes(context -> {
+											Utils.SendFeedback(
+													context,
+													"Build queue size: " + OniServices.simulationRuntime().constructionState().activeCount(),
+													true);
+											for (OniConstructionState.BuildTask task : OniServices.simulationRuntime().constructionState().tasks())
+											{
+												Utils.SendFeedback(
+														context,
+														"- " + task.getBlueprintId()
+																+ " progress=" + String.format("%.2f", task.getProgressSeconds()) + "/" + task.getBuildTimeSeconds() + "s"
+																+ " materials=" + task.getDepositedMaterials() + "/" + task.getRequiredMaterialUnits()
+																+ " pausedReason=" + task.getPausedReason(),
+														true);
+											}
+											return 1;
+										}))
+								.then(literal("queue")
+										.then(argument("blueprint", StringArgumentType.word())
+												.then(argument("required_research", StringArgumentType.word())
+														.then(argument("materials", IntegerArgumentType.integer(1, 100000))
+																.then(argument("build_seconds", IntegerArgumentType.integer(1, 100000))
+																		.executes(context -> {
+																			String blueprint = StringArgumentType.getString(context, "blueprint");
+																			String requiredResearch = StringArgumentType.getString(context, "required_research");
+																			int materials = IntegerArgumentType.getInteger(context, "materials");
+																			int buildSeconds = IntegerArgumentType.getInteger(context, "build_seconds");
+																			OniServices.simulationRuntime().constructionState().queueTask(
+																					new OniConstructionState.BuildTask(blueprint, requiredResearch, materials, buildSeconds, 0, 0.0D, "Missing materials"));
+																			Utils.SendFeedback(context, "Queued build task for blueprint: " + blueprint, true);
+																			return 1;
+																		}))))))
+								.then(literal("deposit")
+										.then(argument("index", IntegerArgumentType.integer(0, 10000))
+												.then(argument("materials", IntegerArgumentType.integer(1, 100000))
+														.executes(context -> {
+															int index = IntegerArgumentType.getInteger(context, "index");
+															int materials = IntegerArgumentType.getInteger(context, "materials");
+															if (index >= OniServices.simulationRuntime().constructionState().tasks().size())
+															{
+																Utils.SendError(context, "Invalid task index.", true);
+																return 0;
+															}
+															OniConstructionState.BuildTask task = OniServices.simulationRuntime().constructionState().tasks().get(index);
+															task.setDepositedMaterials(task.getDepositedMaterials() + materials);
+															Utils.SendFeedback(context, "Deposited " + materials + " materials into task " + index + ".", true);
+															return 1;
+														})))))
 				.then(literal("world")
 						.then(literal("here")
 								.executes(context -> {
@@ -350,7 +454,34 @@ public abstract class AbstractModInitializer
 													+ " yRange=[" + minY + "," + maxY + "]",
 											true);
 									return 1;
-								})));
+								})))
+				.then(literal("glasses")
+						.then(literal("inspect")
+								.then(argument("system", StringArgumentType.word())
+										.executes(context -> {
+											String systemInput = StringArgumentType.getString(context, "system");
+											SystemLens systemLens = SystemLens.fromInput(systemInput);
+											if (systemLens == null)
+											{
+												Utils.SendError(context, "Unknown system lens. Use atmosphere/fluid/thermal/oxygen/power/stress/research/construction.", true);
+												return 0;
+											}
+											CommandSourceStack source = context.getSource();
+											int x = Mth.floor(source.getPosition().x);
+											int y = Mth.floor(source.getPosition().y);
+											int z = Mth.floor(source.getPosition().z);
+											OniCellState cell = OniServices.simulationRuntime().grid().getOrCreateCellAtBlock(
+													x,
+													y,
+													z,
+													OniServices.simulationRuntime().config().cellSize());
+											Utils.SendFeedback(context, "System glasses [" + systemLens.name() + "] at (" + x + "," + y + "," + z + "):", true);
+											for (LayerProperty property : OniSystemInspector.inspect(OniServices.simulationRuntime(), systemLens, cell))
+											{
+												Utils.SendFeedback(context, "[" + property.layer() + "] " + property.key() + "=" + property.value(), true);
+											}
+											return 1;
+										}))));
 		dispatcher.register(oniCommand);
 
 		//Example Command

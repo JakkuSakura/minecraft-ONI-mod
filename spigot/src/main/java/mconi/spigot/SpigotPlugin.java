@@ -29,8 +29,15 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @version 26.05.2024
  */
 public class SpigotPlugin extends JavaPlugin {
+    private static SpigotPlugin instance;
+
+    public static SpigotPlugin getInstance() {
+        return instance;
+    }
+
     @Override
     public void onEnable() {
+        instance = this;
         SpigotMain bukkitMain = new SpigotMain();
         bukkitMain.onInitializeServer();
         Bukkit.getLogger().info(ChatColor.GREEN + "Enabled " + "Oxygen Not Included");
@@ -38,6 +45,7 @@ public class SpigotPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        instance = null;
         //TODO
 
         Bukkit.getLogger().info(ChatColor.RED + "Disabled " + "Oxygen Not Included");

@@ -32,6 +32,7 @@ This folder defines the first-pass gameplay design for bringing core *Oxygen Not
 - `docs/gameplay/milestones-and-victory-track.md`: colony objectives and success states.
 - `docs/gameplay/errands-and-actor-model.md`: who performs work and how task execution scales.
 - `docs/gameplay/chunk-simulation-and-unload-rules.md`: chunk unload policy for persistent simulation.
+- `docs/gameplay/system-glasses-items.md`: right-click system lenses for layered diagnostics.
 
 ## Design Principles
 

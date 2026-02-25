@@ -1,8 +1,10 @@
 package mconi.common.sim
 
 import mconi.common.sim.subsystem.AtmosphereSubsystem
+import mconi.common.sim.subsystem.FluidSubsystem
 import mconi.common.sim.subsystem.OxygenSubsystem
 import mconi.common.sim.subsystem.PowerSubsystem
+import mconi.common.sim.subsystem.ResearchConstructionSubsystem
 import mconi.common.sim.subsystem.SimulationContext
 import mconi.common.sim.subsystem.SimulationSubsystem
 import mconi.common.sim.subsystem.StressSubsystem
@@ -18,6 +20,8 @@ class OniSimulationRuntime {
     private val subsystems: MutableList<SimulationSubsystem> = ArrayList()
     private val powerState = OniPowerState()
     private val stressState = OniStressState()
+    private val researchState = OniResearchState()
+    private val constructionState = OniConstructionState()
     private val serverTicks = AtomicLong(0L)
     private val simulationTicks = AtomicLong(0L)
     private val lastSimulationTick = AtomicLong(-1L)
@@ -29,10 +33,12 @@ class OniSimulationRuntime {
         paused = false
         subsystems.clear()
         subsystems.add(AtmosphereSubsystem())
+        subsystems.add(FluidSubsystem())
         subsystems.add(ThermalSubsystem())
         subsystems.add(OxygenSubsystem())
         subsystems.add(PowerSubsystem())
         subsystems.add(StressSubsystem())
+        subsystems.add(ResearchConstructionSubsystem())
     }
 
     fun config(): OniSimulationConfig = config
@@ -40,6 +46,8 @@ class OniSimulationRuntime {
     fun grid(): OniSimulationGrid = grid
     fun powerState(): OniPowerState = powerState
     fun stressState(): OniStressState = stressState
+    fun researchState(): OniResearchState = researchState
+    fun constructionState(): OniConstructionState = constructionState
 
     fun onServerStarted() {
         serverTicks.set(0L)
@@ -58,6 +66,8 @@ class OniSimulationRuntime {
         powerState.setStoredEnergyJ(0.0)
         powerState.setTripped(false)
         stressState.setScore(0.0)
+        researchState.clear()
+        constructionState.clear()
     }
 
     fun onServerTick() {
@@ -113,6 +123,8 @@ class OniSimulationRuntime {
             powerState.storedEnergyJ(),
             powerState.tripped(),
             stressState.score(),
+            researchState.unlockedCount(),
+            constructionState.activeCount(),
         )
     }
 }
