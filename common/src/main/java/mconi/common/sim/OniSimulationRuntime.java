@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class OniSimulationRuntime
 {
 	private final OniSimulationConfig config = new OniSimulationConfig();
+	private final OniSimulationGrid grid = new OniSimulationGrid();
 	private final AtomicLong serverTicks = new AtomicLong(0L);
 	private final AtomicLong simulationTicks = new AtomicLong(0L);
 	private final AtomicLong lastSimulationTick = new AtomicLong(-1L);
@@ -25,6 +26,11 @@ public class OniSimulationRuntime
 		return config;
 	}
 
+	public OniSimulationGrid grid()
+	{
+		return grid;
+	}
+
 	public void onServerStarted()
 	{
 		serverTicks.set(0L);
@@ -38,6 +44,7 @@ public class OniSimulationRuntime
 	{
 		started = false;
 		paused = false;
+		grid.clear();
 	}
 
 	public void onServerTick()
@@ -82,6 +89,7 @@ public class OniSimulationRuntime
 				simulationTicks.get(),
 				lastSimulationTick.get(),
 				config.tickInterval(),
-				config.cellSize());
+				config.cellSize(),
+				grid.activeCellCount());
 	}
 }

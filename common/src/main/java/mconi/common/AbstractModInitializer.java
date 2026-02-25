@@ -29,8 +29,10 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import mconi.common.sim.OniServices;
 import mconi.common.sim.OniSimulationSnapshot;
+import mconi.common.sim.OniWorldFoundation;
 import mconi.common.wrappers.Utils;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.util.Mth;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -173,7 +175,8 @@ public abstract class AbstractModInitializer
 													+ " simTicks=" + snapshot.simulationTicks()
 													+ " lastSimTick=" + snapshot.lastSimulationTick()
 													+ " interval=" + snapshot.tickInterval()
-													+ " cellSize=" + snapshot.cellSize(),
+													+ " cellSize=" + snapshot.cellSize()
+													+ " activeCells=" + snapshot.activeCells(),
 											true);
 									return 1;
 								}))
@@ -203,7 +206,45 @@ public abstract class AbstractModInitializer
 											OniServices.simulationRuntime().config().setTickInterval(ticks);
 											Utils.SendFeedback(context, "ONI Simulation interval set to " + ticks + " ticks.", true);
 											return 1;
-										}))));
+										})))
+						.then(literal("set_cell_size")
+								.then(argument("blocks", IntegerArgumentType.integer(1, 16))
+										.executes(context -> {
+											int size = IntegerArgumentType.getInteger(context, "blocks");
+											OniServices.simulationRuntime().config().setCellSize(size);
+											Utils.SendFeedback(context, "ONI Simulation cell size set to " + size + " blocks.", true);
+											return 1;
+										}))))
+				.then(literal("world")
+						.then(literal("here")
+								.executes(context -> {
+									CommandSourceStack source = context.getSource();
+									int x = Mth.floor(source.getPosition().x);
+									int y = Mth.floor(source.getPosition().y);
+									int z = Mth.floor(source.getPosition().z);
+									int minY = source.getLevel().getMinBuildHeight();
+									int maxY = source.getLevel().getMaxBuildHeight() - 1;
+									boolean inBounds = OniWorldFoundation.isWithinHorizontalBounds(
+											x,
+											z,
+											OniServices.simulationRuntime().config());
+									boolean inVoidBand = OniWorldFoundation.isVoidBand(
+											y,
+											maxY,
+											OniServices.simulationRuntime().config());
+									boolean inLavaBand = OniWorldFoundation.isLavaBand(
+											y,
+											minY,
+											OniServices.simulationRuntime().config());
+									Utils.SendFeedback(context,
+											"WorldFoundation: pos=(" + x + "," + y + "," + z + ")"
+													+ " inBounds=" + inBounds
+													+ " voidBand=" + inVoidBand
+													+ " lavaBand=" + inLavaBand
+													+ " yRange=[" + minY + "," + maxY + "]",
+											true);
+									return 1;
+								})));
 		dispatcher.register(oniCommand);
 
 		//Example Command

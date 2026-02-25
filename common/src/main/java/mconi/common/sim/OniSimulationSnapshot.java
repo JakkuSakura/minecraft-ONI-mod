@@ -8,6 +8,7 @@ public class OniSimulationSnapshot
 	private final long lastSimulationTick;
 	private final int tickInterval;
 	private final int cellSize;
+	private final int activeCells;
 
 	public OniSimulationSnapshot(
 			boolean running,
@@ -15,7 +16,8 @@ public class OniSimulationSnapshot
 			long simulationTicks,
 			long lastSimulationTick,
 			int tickInterval,
-			int cellSize)
+			int cellSize,
+			int activeCells)
 	{
 		this.running = running;
 		this.serverTicks = serverTicks;
@@ -23,6 +25,7 @@ public class OniSimulationSnapshot
 		this.lastSimulationTick = lastSimulationTick;
 		this.tickInterval = tickInterval;
 		this.cellSize = cellSize;
+		this.activeCells = activeCells;
 	}
 
 	public boolean running() { return running; }
@@ -31,4 +34,5 @@ public class OniSimulationSnapshot
 	public long lastSimulationTick() { return lastSimulationTick; }
 	public int tickInterval() { return tickInterval; }
 	public int cellSize() { return cellSize; }
+	public int activeCells() { return activeCells; }
 }
