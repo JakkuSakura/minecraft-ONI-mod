@@ -121,6 +121,7 @@ dependencies {
 
     // Neoforge
     neoForge "net.neoforged:neoforge:${rootProject.neoforge_version}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.24"
 
     //use addModJar() to include a library, some_api_version should be in version.property
     //addModJar(someApi.module("moduleName", rootProject.some_api_version))

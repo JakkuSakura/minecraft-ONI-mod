@@ -27,7 +27,7 @@ issueTrackerURL = "${issues}"
 [[mixins]]
     config = "${mod_id}.neoforge.mixins.json"
 
-[[dependencies.${mod_id}]]
+[[dependencies.mconi]]
     modId = "minecraft"
     mandatory = true  # Forge syntax
     type = "required" # Neoforge syntax
