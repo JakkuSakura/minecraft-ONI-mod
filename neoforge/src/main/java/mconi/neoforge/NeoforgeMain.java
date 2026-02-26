@@ -28,11 +28,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
-#if MC_VER > MC_1_20_4
 import net.neoforged.neoforge.client.gui.ModListScreen;
-#else
-import net.neoforged.neoforge.client.ConfigScreenHandler;
-#endif
 
 /**
  * main entry point on NeoForge
@@ -48,6 +44,7 @@ public class NeoforgeMain extends AbstractModInitializer
 	{
 		loaderType = LoaderType.NeoForge;
 		NeoforgeItems.register(eventBus);
+		NeoforgeWorldgen.register(eventBus);
 		// Register the mod initializer (Actual event registration is done in the different proxies)
 		eventBus.addListener((FMLClientSetupEvent e) -> this.onInitializeClient());
 		eventBus.addListener((FMLDedicatedServerSetupEvent e) -> this.onInitializeServer());

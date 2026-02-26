@@ -166,6 +166,7 @@ class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) 
         private const val LAVA_BAND_HEIGHT = 24
         private const val SPACE_BAND_HEIGHT = 32
 
+        @JvmField
         val CODEC: MapCodec<OniChunkGenerator> = RecordCodecBuilder.mapCodec { instance ->
             instance.group(
                 BiomeSource.CODEC.fieldOf("biome_source").forGetter(OniChunkGenerator::biomeSource)

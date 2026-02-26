@@ -20,10 +20,8 @@
 
 package mconi.mixins.neoforge.client;
 
-#if MC_VER > MC_1_19_4
 import net.minecraft.client.gui.components.SplashRenderer;
 import net.minecraft.network.chat.Component;
-#endif
 import net.minecraft.client.resources.SplashManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -37,13 +35,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(SplashManager.class)
 public class SplashManagerMixin {
     @Inject(method = "getSplash", at = @At("HEAD"), cancellable = true)
-    #if MC_VER > MC_1_19_4
     private void setSplash(CallbackInfoReturnable<SplashRenderer> cir) {
         cir.setReturnValue(new SplashRenderer(Component.literal("§c§lExampleMod NeoForge!")));
     }
-    #else
-    private void setSplash(CallbackInfoReturnable<String> cir) {
-    cir.setReturnValue("§c§lExampleMod NeoForge!");
-    }
-    #endif
 }

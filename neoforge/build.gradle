@@ -134,6 +134,12 @@ task deleteResources(type: Delete) {
     delete file("build/resources/main")
 }
 
+task copyResourcesToClasses(type: Copy) {
+    dependsOn(processResources)
+    from sourceSets.main.output.resourcesDir
+    into sourceSets.main.output.classesDirs.singleFile
+}
+
 tasks.register('copyAllResources') {
     dependsOn(copyCoreResources)
     dependsOn(copyCommonLoaderResources)
@@ -145,6 +151,7 @@ processResources {
 
 tasks.named('runClient') {
     dependsOn(tasks.named('copyAllResources'))
+    dependsOn(copyResourcesToClasses)
     finalizedBy(deleteResources)
 }
 

@@ -136,7 +136,10 @@ public abstract class AbstractModInitializer
 		INSTANCE = this;
 		this.createInitialBindings();
 		OniServices.bootstrap();
-		OniWorldgenBootstrap.register();
+		if (loaderType != LoaderType.NeoForge)
+		{
+			OniWorldgenBootstrap.register();
+		}
 		//do common mod init here
 	}
 	

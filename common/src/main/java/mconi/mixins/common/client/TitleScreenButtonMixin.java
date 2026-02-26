@@ -20,35 +20,26 @@
 
 package mconi.mixins.common.client;
 
-import java.util.Iterator;
-import java.util.List;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(TitleScreen.class)
 public abstract class TitleScreenButtonMixin extends Screen {
-    @Shadow @Final protected List<Renderable> renderables;
-
     protected TitleScreenButtonMixin(Component title) {
         super(title);
     }
 
     @Inject(method = "init", at = @At("TAIL"))
     private void removeCreateTestWorldButton(CallbackInfo ci) {
-        Iterator<Renderable> iterator = this.renderables.iterator();
-        while (iterator.hasNext()) {
-            Renderable renderable = iterator.next();
-            if (!(renderable instanceof AbstractWidget widget)) {
+        for (var child : this.children()) {
+            if (!(child instanceof AbstractWidget widget)) {
                 continue;
             }
 
@@ -58,7 +49,6 @@ public abstract class TitleScreenButtonMixin extends Screen {
 
             widget.visible = false;
             widget.active = false;
-            iterator.remove();
         }
     }
 
