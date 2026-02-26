@@ -20,6 +20,14 @@
   "block.mconi.algae": "藻類",
   "block.mconi.polluted_dirt": "汚染土",
   "block.mconi.printing_pod": "プリンティングポッド",
+  "item.mconi.regolith": "レゴリス",
+  "item.mconi.sedimentary_rock": "堆積岩",
+  "item.mconi.igneous_rock": "火成岩",
+  "item.mconi.granite": "花崗岩",
+  "item.mconi.abyssalite": "アビサライト",
+  "item.mconi.algae": "藻類",
+  "item.mconi.polluted_dirt": "汚染土",
+  "item.mconi.printing_pod": "プリンティングポッド",
   "itemGroup.mconi.oni": "Oxygen Not Included",
   "generator.mconi.oni": "ONIワールド"
 }

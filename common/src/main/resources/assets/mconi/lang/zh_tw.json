@@ -20,6 +20,14 @@
   "block.mconi.algae": "藻類",
   "block.mconi.polluted_dirt": "污染土",
   "block.mconi.printing_pod": "打印艙",
+  "item.mconi.regolith": "風化岩",
+  "item.mconi.sedimentary_rock": "沉積岩",
+  "item.mconi.igneous_rock": "火成岩",
+  "item.mconi.granite": "花崗岩",
+  "item.mconi.abyssalite": "深淵晶石",
+  "item.mconi.algae": "藻類",
+  "item.mconi.polluted_dirt": "污染土",
+  "item.mconi.printing_pod": "打印艙",
   "itemGroup.mconi.oni": "缺氧",
   "generator.mconi.oni": "缺氧世界"
 }
