@@ -26,6 +26,16 @@ Merged/
 # Folder created by the buildAll scripts
 buildAllJars/
 
+# Extracted Jade sources/assets from local inspection
+snownee/
+assets/jade/
+META-INF/
+com/terraformersmc/modmenu/api/
+high_contrast/
+icon.png
+jade.mixins.json
+pack.mcmeta
+
 # file from notepad++
 *.bak
 

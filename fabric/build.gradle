@@ -83,11 +83,14 @@ dependencies {
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.24"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:2.0.21"
 
     // Mod Menu
     if (rootProject.modmenu_version != "") {
         modImplementation("com.terraformersmc:modmenu:${rootProject.modmenu_version}")
+    }
+    if (rootProject.hasProperty("jade_fabric_version") && rootProject.jade_fabric_version != "") {
+        compileOnly("maven.modrinth:jade:${rootProject.jade_fabric_version}")
     }
 
     //use addModJar() to include a library

@@ -94,9 +94,7 @@ abstract class AbstractModInitializer {
         INSTANCE = this
         createInitialBindings()
         OniServices.bootstrap()
-        if (loaderType != LoaderType.NeoForge) {
-            OniWorldgenBootstrap.register()
-        }
+        OniWorldgenBootstrap.register()
     }
 
     private fun printModInfo() {

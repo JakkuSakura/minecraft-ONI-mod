@@ -33,3 +33,11 @@ issueTrackerURL = "${issues}"
     versionRange = "${compatible_forgemc_versions}" # Where we set what version of mc it is avalible for
     ordering = "NONE"
     side = "BOTH"
+
+[[dependencies.mconi]]
+    modId = "jade"
+    mandatory = false
+    type = "optional"
+    versionRange = "[0,)"
+    ordering = "NONE"
+    side = "BOTH"

@@ -21,5 +21,6 @@
   "block.mconi.polluted_dirt": "Polluted Dirt",
   "block.mconi.printing_pod": "Printing Pod",
   "itemGroup.mconi.oni": "Oxygen Not Included",
-  "generator.mconi.oni": "ONI World"
+  "generator.mconi.oni": "ONI World",
+  "config.jade.plugin_mconi.oni_systems": "ONI Systems"
 }

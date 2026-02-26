@@ -99,7 +99,7 @@ dependencies {
 
     // Forge
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.24"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:2.0.21"
 
     //use addModJar() to include a library, some_api_version should be in version.property
     //addModJar(someApi.module("moduleName", rootProject.some_api_version))

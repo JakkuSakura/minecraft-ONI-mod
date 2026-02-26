@@ -40,7 +40,7 @@ repositories {
 
 dependencies {
     compileOnly "org.spigotmc:spigot-api:${rootProject.spigot_api_version}"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.24"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:2.0.21"
     //implementation(project(":common"))
 }
 
