@@ -23,10 +23,14 @@ package mconi.neoforge;
 
 import com.mojang.brigadier.CommandDispatcher;
 import mconi.common.AbstractModInitializer;
+import mconi.neoforge.world.OniWorldEnforcer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.server.level.ServerLevel;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import org.apache.logging.log4j.Logger;
 
@@ -64,5 +68,19 @@ public class NeoforgeServerProxy implements AbstractModInitializer.IEventProxy
 				(CommandDispatcher<CommandSourceStack>) (CommandDispatcher<?>) event.getDispatcher(),
 				(event.getCommandSelection() == Commands.CommandSelection.ALL)
 						|| (event.getCommandSelection() == Commands.CommandSelection.DEDICATED));
+	}
+
+	@SubscribeEvent
+	public void onLevelLoad(LevelEvent.Load event) {
+		if (event.getLevel() instanceof ServerLevel serverLevel) {
+			OniWorldEnforcer.applyWorldBorder(serverLevel);
+		}
+	}
+
+	@SubscribeEvent
+	public void onChunkLoad(ChunkEvent.Load event) {
+		if (event.getLevel() instanceof ServerLevel serverLevel && event.getChunk() instanceof net.minecraft.world.level.chunk.LevelChunk chunk) {
+			OniWorldEnforcer.enforceChunk(serverLevel, chunk);
+		}
 	}
 }

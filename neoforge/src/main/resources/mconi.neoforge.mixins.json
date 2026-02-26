@@ -6,7 +6,8 @@
     ],
     "client": [
         "neoforge.client.SplashManagerMixin",
-        "common.client.TitleScreenMixin"
+        "common.client.TitleScreenMixin",
+        "common.client.TitleScreenButtonMixin"
     ],
     "server": [
         "common.server.MinecraftServerSimulationMixin"

@@ -36,6 +36,8 @@ dependencies {
     // So mixins can be written in common
     compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
     shadowMe "org.jetbrains.kotlin:kotlin-stdlib:1.9.24"
+    testImplementation "org.jetbrains.kotlin:kotlin-test:1.9.24"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
@@ -46,6 +48,10 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
 
 tasks.named("compileJava") {
     outputs.cacheIf { false }
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
 }
 
 

@@ -15,6 +15,14 @@ class OniSimulationGrid {
         return cells.computeIfAbsent(coordinate) { OniCellState() }
     }
 
+    fun getOrCreateCellAtCoordinate(coordinate: OniCellCoordinate): OniCellState {
+        return cells.computeIfAbsent(coordinate) { OniCellState() }
+    }
+
+    fun getCellAtCoordinate(coordinate: OniCellCoordinate): OniCellState? = cells[coordinate]
+
+    fun cellEntries(): Set<Map.Entry<OniCellCoordinate, OniCellState>> = cells.entries
+
     fun activeCellCount(): Int = cells.size
 
     fun cells(): Collection<OniCellState> = cells.values

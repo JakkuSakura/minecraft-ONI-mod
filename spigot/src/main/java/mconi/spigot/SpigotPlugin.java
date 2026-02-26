@@ -22,7 +22,10 @@ package mconi.spigot;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.java.JavaPlugin;
+import mconi.spigot.world.OniChunkGenerator;
 
 /**
  * @author Leander Knüttel
@@ -49,5 +52,13 @@ public class SpigotPlugin extends JavaPlugin {
         //TODO
 
         Bukkit.getLogger().info(ChatColor.RED + "Disabled " + "Oxygen Not Included");
+    }
+
+    @Override
+    public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
+        if (id == null || id.isEmpty() || "oni".equalsIgnoreCase(id)) {
+            return new OniChunkGenerator();
+        }
+        return null;
     }
 }

@@ -51,6 +51,7 @@ object OniSystemInspector {
         return listOf(
             LayerProperty("thermal", "temperature_k", "%.3f".format(cell.temperatureK())),
             LayerProperty("thermal", "zone", zone),
+            LayerProperty("thermal", "overheated", cell.overheated().toString()),
         )
     }
 

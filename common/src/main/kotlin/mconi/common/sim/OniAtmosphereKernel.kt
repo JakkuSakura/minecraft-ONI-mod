@@ -1,8 +1,11 @@
 package mconi.common.sim
 
 import mconi.common.sim.model.FluidSpecies
+import mconi.common.sim.model.GasSpecies
 import mconi.common.sim.model.OccupancyState
+import mconi.common.sim.model.OniCellCoordinate
 import mconi.common.sim.model.OniCellState
+import java.util.EnumMap
 
 /**
  * Initial atmosphere kernel pass: resolves occupancy and computes pressure from mass.
@@ -11,18 +14,31 @@ class OniAtmosphereKernel {
     fun run(grid: OniSimulationGrid, config: OniSimulationConfig) {
         val cellVolume = Math.pow(config.cellSize().toDouble(), 3.0)
         for (cell in grid.cells()) {
-            updateCell(cell, cellVolume)
+            updateCell(cell, config)
+        }
+        diffuseGases(grid, config)
+        for (cell in grid.cells()) {
+            updatePressure(cell, cellVolume)
         }
     }
 
-    private fun updateCell(cell: OniCellState, cellVolumeM3: Double) {
-        val totalGasMassKg = cell.totalGasMassKg()
-        val scaledDensity = totalGasMassKg / maxOf(0.0001, cellVolumeM3)
-        val pressureKpa = (scaledDensity / STANDARD_AIR_DENSITY_KG_PER_M3) *
-            (cell.temperatureK() / STANDARD_TEMPERATURE_K) *
-            STANDARD_PRESSURE_KPA
-        cell.setPressureKpa(pressureKpa)
+    private fun updateCell(cell: OniCellState, config: OniSimulationConfig) {
+        if (cell.occupancyState() == OccupancyState.SOLID) {
+            cell.setFluidState(FluidSpecies.NONE, 0.0)
+            for (species in GasSpecies.values()) {
+                cell.setGasMassKg(species, 0.0)
+            }
+            cell.setPressureKpa(0.0)
+            return
+        }
 
+        if (cell.occupancyState() == OccupancyState.VOID) {
+            drainVoid(cell, config)
+            cell.setPressureKpa(0.0)
+            return
+        }
+
+        val totalGasMassKg = cell.totalGasMassKg()
         if (cell.fluidSpecies() != FluidSpecies.NONE && cell.fluidMassKg() > 0.0) {
             cell.setOccupancyState(OccupancyState.FLUID)
             return
@@ -34,6 +50,99 @@ class OniAtmosphereKernel {
         }
 
         cell.setOccupancyState(OccupancyState.VACUUM)
+    }
+
+    private fun updatePressure(cell: OniCellState, cellVolumeM3: Double) {
+        if (cell.occupancyState() != OccupancyState.GAS) {
+            cell.setPressureKpa(0.0)
+            return
+        }
+        val totalGasMassKg = cell.totalGasMassKg()
+        val scaledDensity = totalGasMassKg / maxOf(0.0001, cellVolumeM3)
+        val pressureKpa = (scaledDensity / STANDARD_AIR_DENSITY_KG_PER_M3) *
+            (cell.temperatureK() / STANDARD_TEMPERATURE_K) *
+            STANDARD_PRESSURE_KPA
+        cell.setPressureKpa(pressureKpa)
+    }
+
+    private fun drainVoid(cell: OniCellState, config: OniSimulationConfig) {
+        val drainFraction = config.voidGasDrainFraction().coerceIn(0.0, 1.0)
+        for (species in GasSpecies.values()) {
+            val next = cell.gasMassKg(species) * (1.0 - drainFraction)
+            cell.setGasMassKg(species, next)
+        }
+        val nextFluid = cell.fluidMassKg() * (1.0 - config.voidFluidDrainFraction().coerceIn(0.0, 1.0))
+        if (nextFluid <= 0.0) {
+            cell.setFluidState(FluidSpecies.NONE, 0.0)
+        } else {
+            cell.setFluidState(cell.fluidSpecies(), nextFluid)
+        }
+    }
+
+    private fun diffuseGases(grid: OniSimulationGrid, config: OniSimulationConfig) {
+        val maxTransfer = config.gasTransferKgPerStep().coerceAtLeast(0.0)
+        if (maxTransfer <= 0.0) {
+            return
+        }
+
+        val deltas: MutableMap<OniCellCoordinate, EnumMap<GasSpecies, Double>> = HashMap()
+        for ((coordinate, cell) in grid.cellEntries()) {
+            if (cell.occupancyState() != OccupancyState.GAS) {
+                continue
+            }
+            for (neighbor in neighborsOf(coordinate)) {
+                val other = grid.getCellAtCoordinate(neighbor) ?: continue
+                if (other.occupancyState() != OccupancyState.GAS) {
+                    continue
+                }
+                if (coordinate.cellX() > neighbor.cellX() ||
+                    (coordinate.cellX() == neighbor.cellX() && coordinate.cellY() > neighbor.cellY()) ||
+                    (coordinate.cellX() == neighbor.cellX() && coordinate.cellY() == neighbor.cellY() && coordinate.cellZ() > neighbor.cellZ())
+                ) {
+                    continue
+                }
+                for (species in GasSpecies.values()) {
+                    val massA = cell.gasMassKg(species)
+                    val massB = other.gasMassKg(species)
+                    val diff = massA - massB
+                    if (kotlin.math.abs(diff) < 0.0001) {
+                        continue
+                    }
+                    val transfer = diff * 0.1
+                    val clamped = transfer.coerceIn(-maxTransfer, maxTransfer)
+                    addDelta(deltas, coordinate, species, -clamped)
+                    addDelta(deltas, neighbor, species, clamped)
+                }
+            }
+        }
+
+        for ((coordinate, speciesDelta) in deltas) {
+            val cell = grid.getOrCreateCellAtCoordinate(coordinate)
+            for ((species, delta) in speciesDelta) {
+                cell.setGasMassKg(species, cell.gasMassKg(species) + delta)
+            }
+        }
+    }
+
+    private fun neighborsOf(coordinate: OniCellCoordinate): List<OniCellCoordinate> {
+        return listOf(
+            OniCellCoordinate(coordinate.cellX() + 1, coordinate.cellY(), coordinate.cellZ()),
+            OniCellCoordinate(coordinate.cellX() - 1, coordinate.cellY(), coordinate.cellZ()),
+            OniCellCoordinate(coordinate.cellX(), coordinate.cellY() + 1, coordinate.cellZ()),
+            OniCellCoordinate(coordinate.cellX(), coordinate.cellY() - 1, coordinate.cellZ()),
+            OniCellCoordinate(coordinate.cellX(), coordinate.cellY(), coordinate.cellZ() + 1),
+            OniCellCoordinate(coordinate.cellX(), coordinate.cellY(), coordinate.cellZ() - 1),
+        )
+    }
+
+    private fun addDelta(
+        deltas: MutableMap<OniCellCoordinate, EnumMap<GasSpecies, Double>>,
+        coordinate: OniCellCoordinate,
+        species: GasSpecies,
+        delta: Double,
+    ) {
+        val map = deltas.computeIfAbsent(coordinate) { EnumMap(GasSpecies::class.java) }
+        map[species] = (map[species] ?: 0.0) + delta
     }
 
     companion object {

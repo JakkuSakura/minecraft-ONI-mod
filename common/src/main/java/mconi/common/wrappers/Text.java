@@ -22,26 +22,15 @@ package mconi.common.wrappers;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-#if MC_VER <= MC_1_18_2
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
-#endif
 
 /**
  * @author Leander Knüttel
  * @version 22.05.2024
  */
 public class Text {
-    #if MC_VER > MC_1_18_2
     public static MutableComponent literal(String string) {
         return Component.literal(string);
     }
 
     //TODO implement Style functions & Actions
-    #else
-    public static MutableComponent literal(String string) {
-        return new TextComponent(string);
-    }
-    //TODO implement Style functions & Actions (write to chat, if not supported in current version)
-    #endif
 }

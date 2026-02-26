@@ -17,6 +17,18 @@ class OniConstructionState {
         queue.add(task)
     }
 
+    fun queueBlueprint(id: String): BuildTask? {
+        val blueprint = OniBlueprintRegistry.get(id) ?: return null
+        val task = BuildTask(
+            blueprintId = blueprint.id,
+            requiredResearch = blueprint.requiredResearch,
+            requiredMaterialUnits = blueprint.requiredMaterialUnits,
+            buildTimeSeconds = blueprint.buildTimeSeconds,
+        )
+        queue.add(task)
+        return task
+    }
+
     fun tasks(): List<BuildTask> = queue.toList()
 
     fun activeCount(): Int = queue.size

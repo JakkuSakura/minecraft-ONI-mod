@@ -30,9 +30,11 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import mconi.common.sim.OniServices;
 import mconi.common.sim.OniConstructionState;
+import mconi.common.sim.OniBlueprintRegistry;
 import mconi.common.sim.OniSimulationSnapshot;
 import mconi.common.sim.OniSystemInspector;
 import mconi.common.sim.OniWorldFoundation;
+import mconi.common.world.OniWorldgenBootstrap;
 import mconi.common.sim.model.FluidSpecies;
 import mconi.common.sim.model.GasSpecies;
 import mconi.common.sim.model.LayerProperty;
@@ -134,6 +136,7 @@ public abstract class AbstractModInitializer
 		INSTANCE = this;
 		this.createInitialBindings();
 		OniServices.bootstrap();
+		OniWorldgenBootstrap.register();
 		//do common mod init here
 	}
 	
@@ -394,6 +397,24 @@ public abstract class AbstractModInitializer
 											}
 											return 1;
 										}))
+								.then(literal("blueprints")
+										.executes(context -> {
+											Utils.SendFeedback(context, "Blueprints: " + OniBlueprintRegistry.allIds(), true);
+											return 1;
+										}))
+								.then(literal("queue_blueprint")
+										.then(argument("blueprint", StringArgumentType.word())
+												.executes(context -> {
+													String blueprint = StringArgumentType.getString(context, "blueprint");
+													OniConstructionState.BuildTask task = OniServices.simulationRuntime().constructionState().queueBlueprint(blueprint);
+													if (task == null)
+													{
+														Utils.SendError(context, "Unknown blueprint: " + blueprint, true);
+														return 0;
+													}
+													Utils.SendFeedback(context, "Queued build task for blueprint: " + blueprint, true);
+													return 1;
+												})))
 								.then(literal("queue")
 										.then(argument("blueprint", StringArgumentType.word())
 												.then(argument("required_research", StringArgumentType.word())

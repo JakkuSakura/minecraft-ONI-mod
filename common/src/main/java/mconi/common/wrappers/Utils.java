@@ -51,12 +51,8 @@ public class Utils {
     }
 
     public static void SendFeedback(CommandContext<CommandSourceStack> context, Component text, boolean allowLogging){
-        #if MC_VER < MC_1_20_1
-		context.getSource().sendSuccess(text, allowLogging);
-		#else
         Supplier<Component> supplier = () -> text;
         context.getSource().sendSuccess(supplier, allowLogging);
-		#endif
     }
 
     public static void SendFeedback(CommandContext<CommandSourceStack> context, String text, boolean allowLogging){
@@ -64,12 +60,8 @@ public class Utils {
     }
 
     public static void SendError(CommandContext<CommandSourceStack> context, Component text, boolean allowLogging){
-        #if MC_VER < MC_1_20_1
-		context.getSource().sendSuccess(text.copy().withStyle(Style.EMPTY.withColor(ChatFormatting.RED)), allowLogging);
-		#else
         Supplier<Component> supplier = () -> text.copy().withStyle(Style.EMPTY.withColor(ChatFormatting.RED));
         context.getSource().sendSuccess(supplier, allowLogging);
-		#endif
     }
 
     public static void SendError(CommandContext<CommandSourceStack> context, String text, boolean allowLogging){

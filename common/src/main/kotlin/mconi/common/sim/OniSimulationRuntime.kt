@@ -32,8 +32,8 @@ class OniSimulationRuntime {
         started = false
         paused = false
         subsystems.clear()
-        subsystems.add(AtmosphereSubsystem())
         subsystems.add(FluidSubsystem())
+        subsystems.add(AtmosphereSubsystem())
         subsystems.add(ThermalSubsystem())
         subsystems.add(OxygenSubsystem())
         subsystems.add(PowerSubsystem())

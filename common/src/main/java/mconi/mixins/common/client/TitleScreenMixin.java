@@ -20,10 +20,7 @@
 
 package mconi.mixins.common.client;
 
-#if MC_VER > MC_1_19_2
 import net.minecraft.client.gui.components.LogoRenderer;
-#endif
-import net.minecraft.client.gui.screens.TitleScreen;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -36,7 +33,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * @author Leander Knüttel
  * @version 27.05.2024
  */
-#if MC_VER > MC_1_19_2
 @Mixin(LogoRenderer.class)
 public class TitleScreenMixin {
     @Mutable
@@ -47,15 +43,3 @@ public class TitleScreenMixin {
         this.showEasterEgg = true; // Minceraft!
     }
 }
-#else
-@Mixin(TitleScreen.class)
-public class TitleScreenMixin {
-    @Mutable
-    @Shadow @Final private boolean minceraftEasterEgg;
-
-    @Inject(method = "<init>(Z)V", at = @At("RETURN"))
-    private void setEasterEgg(CallbackInfo ci) {
-        this.minceraftEasterEgg = true; // Minceraft!
-    }
-}
-#endif

@@ -12,6 +12,7 @@ class OniCellState {
     private var o2Fraction: Double = 0.0
     private var co2Fraction: Double = 0.0
     private var breathingBand: BreathingBand = BreathingBand.CRITICAL
+    private var overheated: Boolean = false
 
     init {
         for (species in GasSpecies.values()) {
@@ -27,6 +28,7 @@ class OniCellState {
     fun o2Fraction(): Double = o2Fraction
     fun co2Fraction(): Double = co2Fraction
     fun breathingBand(): BreathingBand = breathingBand
+    fun overheated(): Boolean = overheated
 
     fun gasMassKg(species: GasSpecies): Double = gasMassKg[species] ?: 0.0
 
@@ -61,6 +63,10 @@ class OniCellState {
 
     fun setBreathingBand(breathingBand: BreathingBand) {
         this.breathingBand = breathingBand
+    }
+
+    fun setOverheated(overheated: Boolean) {
+        this.overheated = overheated
     }
 
     fun totalGasMassKg(): Double {

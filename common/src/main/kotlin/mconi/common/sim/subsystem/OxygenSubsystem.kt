@@ -3,6 +3,7 @@ package mconi.common.sim.subsystem
 import mconi.common.sim.model.BreathingBand
 import mconi.common.sim.model.GasSpecies
 import mconi.common.sim.model.OccupancyState
+import mconi.common.sim.model.PressureBand
 
 class OxygenSubsystem : SimulationSubsystem {
     override fun id(): String = "oxygen"
@@ -29,9 +30,12 @@ class OxygenSubsystem : SimulationSubsystem {
             cell.setO2Fraction(o2Fraction)
             cell.setCO2Fraction(co2Fraction)
 
+            val pressureBand = PressureBand.fromKpa(cell.pressureKpa())
             val band = when {
-                o2Fraction >= 0.18 && co2Fraction < 0.06 -> BreathingBand.HEALTHY
+                pressureBand == PressureBand.VACUUM -> BreathingBand.CRITICAL
+                o2Fraction >= 0.18 && co2Fraction < 0.06 && pressureBand == PressureBand.BREATHABLE -> BreathingBand.HEALTHY
                 o2Fraction >= 0.12 && co2Fraction < 0.12 -> BreathingBand.STRESSED
+                pressureBand == PressureBand.THIN -> BreathingBand.STRESSED
                 else -> BreathingBand.CRITICAL
             }
             cell.setBreathingBand(band)
