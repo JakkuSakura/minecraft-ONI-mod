@@ -563,6 +563,7 @@ allprojects { p ->
     }
 
     task copyCommonLoaderResources(type: Copy) {
+        outputs.upToDateWhen { false }
         from project(":common").file("src/main/resources/${accessWidenerVersion}.${rootProject.mod_id}.accesswidener")
         into(file(p.file("build/resources/main")))
         rename "${accessWidenerVersion}.${rootProject.mod_id}.accesswidener", "${rootProject.mod_id}.accesswidener"
@@ -577,6 +578,7 @@ allprojects { p ->
     }
 
     task copyCoreResources(type: Copy) {
+        outputs.upToDateWhen { false }
         from(project(":common").file("src/main/resources/assets")) {
             into "assets"
         }
