@@ -1,6 +1,5 @@
 package mconi.common.block
 
-import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
@@ -14,7 +13,10 @@ import mconi.common.content.OniItemTags
 import mconi.common.sim.OniConstructionMaterials
 import mconi.common.sim.OniServices
 
-class PrintingPodBlock(properties: BlockBehaviour.Properties) : Block(properties) {
+class PrintingPodBlock(
+    blockId: String,
+    properties: BlockBehaviour.Properties
+) : OniMassBlock(blockId, properties) {
     override fun useWithoutItem(
         state: BlockState,
         level: Level,

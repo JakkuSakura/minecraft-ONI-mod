@@ -14,28 +14,36 @@ object OniBlockFactory {
     fun createBlock(id: String, key: ResourceKey<Block>): Block {
         val base = BlockBehaviour.Properties.of().setId(key)
         return when (id) {
-            OniBlockIds.REGOLITH -> Block(
+            OniBlockIds.REGOLITH -> OniMassBlock(
+                id,
                 base.mapColor(MapColor.COLOR_BROWN).strength(0.6f).sound(SoundType.GRAVEL)
             )
-            OniBlockIds.SEDIMENTARY_ROCK -> Block(
+            OniBlockIds.SEDIMENTARY_ROCK -> OniMassBlock(
+                id,
                 base.mapColor(MapColor.COLOR_YELLOW).strength(1.2f, 3.0f).sound(SoundType.STONE)
             )
-            OniBlockIds.IGNEOUS_ROCK -> Block(
+            OniBlockIds.IGNEOUS_ROCK -> OniMassBlock(
+                id,
                 base.mapColor(MapColor.COLOR_GRAY).strength(1.5f, 4.0f).sound(SoundType.STONE)
             )
-            OniBlockIds.GRANITE -> Block(
+            OniBlockIds.GRANITE -> OniMassBlock(
+                id,
                 base.mapColor(MapColor.COLOR_ORANGE).strength(1.6f, 4.5f).sound(SoundType.STONE)
             )
-            OniBlockIds.ABYSSALITE -> Block(
+            OniBlockIds.ABYSSALITE -> OniMassBlock(
+                id,
                 base.mapColor(MapColor.COLOR_BLACK).strength(50.0f, 1200.0f).sound(SoundType.STONE)
             )
-            OniBlockIds.ALGAE -> Block(
+            OniBlockIds.ALGAE -> OniMassBlock(
+                id,
                 base.mapColor(MapColor.COLOR_GREEN).strength(0.4f).sound(SoundType.GRASS)
             )
-            OniBlockIds.POLLUTED_DIRT -> Block(
+            OniBlockIds.POLLUTED_DIRT -> OniMassBlock(
+                id,
                 base.mapColor(MapColor.COLOR_BROWN).strength(0.6f).sound(SoundType.GRAVEL)
             )
             OniBlockIds.PRINTING_POD -> PrintingPodBlock(
+                id,
                 base.mapColor(MapColor.COLOR_LIGHT_GRAY).strength(3.0f, 6.0f).sound(SoundType.METAL)
             )
             else -> throw IllegalArgumentException("Unknown block id: $id")

@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.storage.LevelData
+import net.minecraft.world.entity.Relative
 import org.apache.logging.log4j.Logger
 
 /**
@@ -42,6 +43,12 @@ class FabricServerProxy(private val isDedicated: Boolean) : AbstractModInitializ
                     true
                 )
                 player.setRespawnPosition(config, true)
+                val spawn = OniSpawnHelper.spawnPos()
+                player.teleportTo(
+                    spawn.x + 0.5,
+                    spawn.y.toDouble(),
+                    spawn.z + 0.5
+                )
             }
         }
 

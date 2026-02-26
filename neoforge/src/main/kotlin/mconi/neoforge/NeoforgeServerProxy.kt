@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.storage.LevelData
+import net.minecraft.world.entity.Relative
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.common.NeoForge
 import net.neoforged.neoforge.event.RegisterCommandsEvent
@@ -65,6 +66,18 @@ class NeoforgeServerProxy(private val isDedicated: Boolean) : AbstractModInitial
             true
         )
         player.setRespawnPosition(config, true)
+        val serverLevel = player.level() as? ServerLevel ?: return
+        val spawn = OniSpawnHelper.spawnPos()
+        player.teleportTo(
+            serverLevel,
+            spawn.x + 0.5,
+            spawn.y.toDouble(),
+            spawn.z + 0.5,
+            java.util.EnumSet.noneOf(Relative::class.java),
+            player.yRot,
+            player.xRot,
+            true
+        )
     }
 
     companion object {
