@@ -1,3 +1,6 @@
 {
-  "parent": "mconi:block/igneous_rock"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "mconi:item/igneous_rock"
+  }
 }

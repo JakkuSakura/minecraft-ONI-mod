@@ -229,6 +229,13 @@ subprojects { p ->
     if (isMinecraftSubProject){
         apply plugin: "com.hypherionmc.modutils.modpublisher"
     }
+
+    plugins.withId("org.jetbrains.kotlin.jvm") {
+        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+            destinationDirectory.set(file("$buildDir/classes/java/main"))
+        }
+        sourceSets.main.output.classesDirs.setFrom(files("$buildDir/classes/java/main"))
+    }
     
     // Apply forge's loom
     if (

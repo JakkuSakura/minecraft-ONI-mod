@@ -1,3 +1,6 @@
 {
-  "parent": "mconi:block/abyssalite"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "mconi:item/abyssalite"
+  }
 }

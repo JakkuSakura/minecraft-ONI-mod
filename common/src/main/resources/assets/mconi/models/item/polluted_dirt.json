@@ -1,3 +1,6 @@
 {
-  "parent": "mconi:block/polluted_dirt"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "mconi:item/polluted_dirt"
+  }
 }

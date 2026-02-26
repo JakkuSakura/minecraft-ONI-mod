@@ -1,3 +1,6 @@
 {
-  "parent": "mconi:block/printing_pod"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "mconi:item/printing_pod"
+  }
 }
