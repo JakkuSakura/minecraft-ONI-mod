@@ -13,6 +13,8 @@ import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.level.block.Blocks
+import mconi.common.block.OniBlockLookup
+import mconi.common.content.OniBlockIds
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluids
 import java.util.concurrent.atomic.AtomicLong
@@ -135,7 +137,8 @@ object OniWorldSampler {
         grid: OniSimulationGrid
     ) {
         val state: BlockState = level.getBlockState(BlockPos(x, y, z))
-        if (state.`is`(Blocks.MOSS_BLOCK) || state.`is`(Blocks.MOSS_CARPET) || state.`is`(Blocks.SEAGRASS)) {
+        val algaeBlock = OniBlockLookup.block(OniBlockIds.ALGAE)
+        if (state.`is`(Blocks.MOSS_BLOCK) || state.`is`(Blocks.MOSS_CARPET) || state.`is`(Blocks.SEAGRASS) || state.`is`(algaeBlock)) {
             injectGasAt(grid, x, y + 1, z, minY, maxY, config.baseO2MassKg(), 0.0)
         }
 

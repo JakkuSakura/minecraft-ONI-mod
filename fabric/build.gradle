@@ -24,6 +24,7 @@
 
 plugins {
     id "fabric-loom" version "1.13.6"
+    id "org.jetbrains.kotlin.jvm"
 }
 
 loom {
@@ -94,6 +95,12 @@ dependencies {
 
     //addMod can be used, to control it via the version.property
     //addMod("example.maven:some_mod:${rootProject.some_mod_version}", rootProject.enable_some_mod)
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "${rootProject.java_version}"
+    }
 }
 
 task deleteResources(type: Delete) {

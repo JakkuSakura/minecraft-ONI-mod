@@ -26,6 +26,7 @@ plugins {
     // Note: This is only needed for multi-loader projects
     // The main architectury loom version is set at the start of the root build.gradle
     id "architectury-plugin" version "3.4-SNAPSHOT"
+    id "org.jetbrains.kotlin.jvm"
 }
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_21
@@ -98,12 +99,19 @@ dependencies {
 
     // Forge
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.24"
 
     //use addModJar() to include a library, some_api_version should be in version.property
     //addModJar(someApi.module("moduleName", rootProject.some_api_version))
 
     //addMod can be used, to control it via the version.property
     //addMod("example.maven:some_mod:${rootProject.some_mod_version}", rootProject.enable_some_mod)
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "${rootProject.java_version}"
+    }
 }
 
 task deleteResources(type: Delete) {
@@ -287,4 +295,3 @@ publisher {
         //embedded 'fabric-api'
     }
 }
-

@@ -33,6 +33,10 @@ class OniConstructionState {
 
     fun activeCount(): Int = queue.size
 
+    fun nextTaskNeedingMaterials(): BuildTask? {
+        return queue.firstOrNull { it.depositedMaterials < it.requiredMaterialUnits }
+    }
+
     fun clearCompleted() {
         queue.removeIf { it.progressSeconds >= it.buildTimeSeconds.toDouble() }
     }

@@ -25,10 +25,13 @@
 plugins {
     id 'java-library'
     id("org.spongepowered.gradle.plugin") version "2.2.0"
+    id "org.jetbrains.kotlin.jvm"
 }
 
+import org.spongepowered.gradle.plugin.config.PluginLoaders
+
 sponge {
-    apiVersion("8.1.0")
+    apiVersion("14.0.0")
     loader {
         name(PluginLoaders.JAVA_PLAIN)
         version("1.0")
@@ -55,7 +58,14 @@ sponge {
 }
 
 dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.24"
     //implementation(project(":common"))
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "${rootProject.java_version}"
+    }
 }
 
 task deleteResources(type: Delete) {

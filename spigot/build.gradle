@@ -22,6 +22,10 @@
  * date: 09.06.2024
  */
 
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+}
+
 repositories {
     maven {
         name "Spigot"
@@ -36,7 +40,14 @@ repositories {
 
 dependencies {
     compileOnly "org.spigotmc:spigot-api:${rootProject.spigot_api_version}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.24"
     //implementation(project(":common"))
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "${rootProject.java_version}"
+    }
 }
 
 task deleteResources(type: Delete) {

@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "mconi:regolith",
+    "mconi:sedimentary_rock",
+    "mconi:igneous_rock",
+    "mconi:granite",
+    "mconi:abyssalite",
+    "mconi:algae",
+    "mconi:polluted_dirt",
+    "minecraft:stone",
+    "minecraft:cobblestone",
+    "minecraft:dirt",
+    "minecraft:gravel",
+    "minecraft:sand",
+    "minecraft:granite",
+    "minecraft:diorite",
+    "minecraft:andesite",
+    "minecraft:deepslate"
+  ]
+}

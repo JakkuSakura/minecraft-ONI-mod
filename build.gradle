@@ -382,6 +382,9 @@ subprojects { p ->
 
 
         // The left side is what gets replaced in the mod info and the right side is where to get it from in the gradle.properties
+        def neoforgeUpdateJSONURLSafe = project.hasProperty("neoforgeUpdateJSONURL") ? neoforgeUpdateJSONURL : ""
+        def forgeUpdateJSONURLSafe = project.hasProperty("forgeUpdateJSONURL") ? forgeUpdateJSONURL : ""
+
         def replaceProperties = [
                 mod_id                       : mod_id,
                 version                      : mod_version,
@@ -394,8 +397,8 @@ subprojects { p ->
                 issues                       : mod_issues,
                 discord                      : mod_discord,
                 mod_license                  : mod_license,
-                neoforgeUpdateJSONURL        : neoforgeUpdateJSONURL,
-                forgeUpdateJSONURL           : forgeUpdateJSONURL,
+                neoforgeUpdateJSONURL        : neoforgeUpdateJSONURLSafe,
+                forgeUpdateJSONURL           : forgeUpdateJSONURLSafe,
 
                 minecraft_version            : minecraft_version,
                 compatible_minecraft_versions: compatible_minecraft_versions,
@@ -564,8 +567,16 @@ allprojects { p ->
     }
 
     task copyCoreResources(type: Copy) {
-        from fileTree(project(":common").file("src/main/resources/assets"))
-        into p.file("build/resources/main/assets")
+        from(project(":common").file("src/main/resources/assets")) {
+            into "assets"
+        }
+        from(project(":common").file("src/main/resources/pack.mcmeta")) {
+            into "."
+        }
+        from(project(":common").file("src/main/resources/data")) {
+            into "data"
+        }
+        into p.file("build/resources/main")
     }
 
     tasks.withType(JavaCompile) {

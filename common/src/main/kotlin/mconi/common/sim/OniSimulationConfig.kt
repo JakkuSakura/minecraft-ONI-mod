@@ -7,12 +7,12 @@ package mconi.common.sim
 class OniSimulationConfig {
     private var tickInterval: Int = 10
     private var cellSize: Int = 4
-    private var worldMinX: Int = -1024
-    private var worldMaxX: Int = 1024
-    private var worldMinZ: Int = -1024
-    private var worldMaxZ: Int = 1024
-    private var voidBandHeight: Int = 32
-    private var lavaBandHeight: Int = 32
+    private var worldMinX: Int = -256
+    private var worldMaxX: Int = 256
+    private var worldMinZ: Int = -256
+    private var worldMaxZ: Int = 256
+    private var voidBandHeight: Int = 24
+    private var lavaBandHeight: Int = 24
     private var gasTransferKgPerStep: Double = 0.25
     private var fluidTransferKgPerStep: Double = 50.0
     private var voidGasDrainFraction: Double = 0.35

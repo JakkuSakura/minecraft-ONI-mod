@@ -26,6 +26,7 @@ plugins {
     // Note: This is only needed for multi-loader projects
     // The main architectury loom version is set at the start of the root build.gradle
     id "architectury-plugin" version "3.4-SNAPSHOT"
+    id "org.jetbrains.kotlin.jvm"
 }
 
 sourceCompatibility = targetCompatibility = JavaVersion.toVersion(rootProject.java_version as Integer)
@@ -130,6 +131,12 @@ dependencies {
     //addMod("example.maven:some_mod:${rootProject.some_mod_version}", rootProject.enable_some_mod)
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "${rootProject.java_version}"
+    }
+}
+
 task deleteResources(type: Delete) {
     delete file("build/resources/main")
 }
@@ -137,7 +144,7 @@ task deleteResources(type: Delete) {
 task copyResourcesToClasses(type: Copy) {
     dependsOn(processResources)
     from sourceSets.main.output.resourcesDir
-    into sourceSets.main.output.classesDirs.singleFile
+    into sourceSets.main.output.classesDirs.files.first()
 }
 
 tasks.register('copyAllResources') {

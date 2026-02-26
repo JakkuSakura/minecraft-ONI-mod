@@ -11,10 +11,10 @@ object OniBlueprintRegistry {
     private val blueprints: MutableMap<String, OniBlueprint> = LinkedHashMap()
 
     init {
-        register(OniBlueprint("oxygen_diffuser", "oxygen", 20, 30))
-        register(OniBlueprint("liquid_pump", "liquids", 40, 45))
-        register(OniBlueprint("power_generator", "power", 30, 40))
-        register(OniBlueprint("research_desk", "research", 25, 35))
+        register(OniBlueprint("oxygen_diffuser", "oxygen", 200, 30))
+        register(OniBlueprint("liquid_pump", "liquids", 400, 45))
+        register(OniBlueprint("power_generator", "power", 200, 40))
+        register(OniBlueprint("research_desk", "research", 400, 35))
     }
 
     @JvmStatic
