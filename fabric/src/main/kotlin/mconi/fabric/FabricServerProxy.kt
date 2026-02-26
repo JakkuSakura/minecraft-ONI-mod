@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.storage.LevelData
+import net.minecraft.world.level.storage.WritableLevelData
 import net.minecraft.world.entity.Relative
 import org.apache.logging.log4j.Logger
 
@@ -32,7 +33,10 @@ class FabricServerProxy(private val isDedicated: Boolean) : AbstractModInitializ
 
         ServerLifecycleEvents.SERVER_STARTED.register { server ->
             val level: ServerLevel = server.overworld()
-            level.setRespawnData(LevelData.RespawnData.of(Level.OVERWORLD, OniSpawnHelper.spawnPos(), 0.0f, 0.0f))
+            val respawn = LevelData.RespawnData.of(Level.OVERWORLD, OniSpawnHelper.spawnPos(), 0.0f, 0.0f)
+            level.setRespawnData(respawn)
+            val data = level.getLevelData() as? WritableLevelData
+            data?.setSpawn(respawn)
         }
 
         ServerPlayConnectionEvents.JOIN.register { handler, _, _ ->

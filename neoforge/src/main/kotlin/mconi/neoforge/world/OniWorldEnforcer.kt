@@ -4,6 +4,7 @@ import mconi.common.AbstractModInitializer
 import mconi.common.sim.OniServices
 import mconi.common.sim.OniSimulationConfig
 import mconi.common.sim.OniWorldFoundation
+import mconi.common.world.OniWorldLayout
 import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.level.ChunkPos
@@ -15,6 +16,8 @@ import net.minecraft.world.level.chunk.LevelChunk
 import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.level.border.WorldBorder
 import org.apache.logging.log4j.Logger
+import mconi.common.block.OniBlockLookup
+import mconi.common.content.OniBlockIds
 
 object OniWorldEnforcer {
     private val LOGGER: Logger = AbstractModInitializer.LOGGER
@@ -75,6 +78,8 @@ object OniWorldEnforcer {
             buildBedrockWallZ(level, maxZ, chunkMinX, chunkMaxX, minY, maxY)
         }
 
+        ensureSinglePrintingPod(level, chunk, minY, maxY)
+
         for (x in chunkMinX..chunkMaxX) {
             for (z in chunkMinZ..chunkMaxZ) {
                 if (!OniWorldFoundation.isWithinHorizontalBounds(x, z, config)) {
@@ -87,6 +92,35 @@ object OniWorldEnforcer {
                     }
                     if (OniWorldFoundation.isLavaBand(y, minY, config)) {
                         setIfReplaceable(level, x, y, z, Blocks.LAVA)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun ensureSinglePrintingPod(level: ServerLevel, chunk: LevelChunk, minY: Int, maxY: Int) {
+        val podPos = BlockPos(OniWorldLayout.POD_X, OniWorldLayout.POD_Y, OniWorldLayout.POD_Z)
+        val chunkPos = chunk.pos
+        val chunkMinX = chunkPos.minBlockX
+        val chunkMaxX = chunkPos.maxBlockX
+        val chunkMinZ = chunkPos.minBlockZ
+        val chunkMaxZ = chunkPos.maxBlockZ
+        val podState = OniBlockLookup.state(OniBlockIds.PRINTING_POD)
+        val fillerState = OniBlockLookup.state(OniBlockIds.IGNEOUS_ROCK)
+
+        if (podPos.x in chunkMinX..chunkMaxX && podPos.z in chunkMinZ..chunkMaxZ && podPos.y in minY..maxY) {
+            if (level.getBlockState(podPos).block != podState.block) {
+                level.setBlock(podPos, podState, 3)
+            }
+        }
+
+        for (x in chunkMinX..chunkMaxX) {
+            for (z in chunkMinZ..chunkMaxZ) {
+                for (y in minY..maxY) {
+                    val pos = BlockPos(x, y, z)
+                    val state = level.getBlockState(pos)
+                    if (state.block == podState.block && pos != podPos) {
+                        level.setBlock(pos, fillerState, 3)
                     }
                 }
             }

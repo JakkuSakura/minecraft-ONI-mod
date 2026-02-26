@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.storage.LevelData
+import net.minecraft.world.level.storage.WritableLevelData
 import net.minecraft.world.entity.Relative
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.common.NeoForge
@@ -44,7 +45,10 @@ class NeoforgeServerProxy(private val isDedicated: Boolean) : AbstractModInitial
         val serverLevel = event.level as? ServerLevel ?: return
         OniWorldEnforcer.applyWorldBorder(serverLevel)
         if (serverLevel.dimension() == Level.OVERWORLD) {
-            serverLevel.setRespawnData(LevelData.RespawnData.of(Level.OVERWORLD, OniSpawnHelper.spawnPos(), 0.0f, 0.0f))
+            val respawn = LevelData.RespawnData.of(Level.OVERWORLD, OniSpawnHelper.spawnPos(), 0.0f, 0.0f)
+            serverLevel.setRespawnData(respawn)
+            val data = serverLevel.getLevelData() as? WritableLevelData
+            data?.setSpawn(respawn)
         }
     }
 
