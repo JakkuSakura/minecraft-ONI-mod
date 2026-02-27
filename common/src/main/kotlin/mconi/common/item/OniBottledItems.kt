@@ -1,6 +1,6 @@
 package mconi.common.item
 
-import mconi.common.content.OniItemIds
+import mconi.common.element.OniElements
 
 data class BottledItemSpec(
     val id: String,
@@ -12,10 +12,10 @@ data class BottledItemSpec(
 object OniBottledItems {
     @JvmField
     val SPECS = listOf(
-        BottledItemSpec(OniItemIds.BOTTLED_OXYGEN, MatterPhase.GAS, 1.0, 295.0),
-        BottledItemSpec(OniItemIds.BOTTLED_CO2, MatterPhase.GAS, 1.0, 295.0),
-        BottledItemSpec(OniItemIds.BOTTLED_HYDROGEN, MatterPhase.GAS, 1.0, 295.0),
-        BottledItemSpec(OniItemIds.BOTTLED_WATER, MatterPhase.LIQUID, 1.0, 295.0),
-        BottledItemSpec(OniItemIds.BOTTLED_POLLUTED_WATER, MatterPhase.LIQUID, 1.0, 295.0)
-    )
+        BottledItemSpec(OniItemFactory.BOTTLED_OXYGEN, MatterPhase.GAS, 1.0, 295.0),
+        BottledItemSpec(OniItemFactory.BOTTLED_CO2, MatterPhase.GAS, 1.0, 295.0),
+        BottledItemSpec(OniItemFactory.BOTTLED_HYDROGEN, MatterPhase.GAS, 1.0, 295.0),
+    ) + OniElements.LIQUID_SPECS.map { spec ->
+        BottledItemSpec(spec.bottledItemId, MatterPhase.LIQUID, spec.defaultMassKg, spec.defaultTemperatureK)
+    }
 }

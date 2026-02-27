@@ -1,10 +1,15 @@
 package mconi.fabric
 
 import mconi.common.AbstractModInitializer
+import mconi.common.item.BlueprintBookItem
+import mconi.common.item.BlueprintItem
 import mconi.common.item.BottledMatterItem
+import mconi.common.item.ElementItem
 import mconi.common.item.OniBottledItems
 import mconi.common.item.OniCreativeTabs
 import mconi.common.item.OniItems
+import mconi.common.item.OniItemFactory
+import mconi.common.element.OniElements
 import mconi.common.sim.model.SystemLens
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
@@ -29,6 +34,7 @@ object FabricItems {
             val key = ResourceKey.create(Registries.ITEM, id)
             val item = OniItems.createGlassesItem(lens, Item.Properties().setId(key).stacksTo(1))
             Registry.register(BuiltInRegistries.ITEM, id, item)
+            OniItemFactory.registerItem(path) { item }
 
             if (lens == SystemLens.OXYGEN) {
                 Registry.register(
@@ -49,7 +55,42 @@ object FabricItems {
                 spec.temperatureK
             )
             Registry.register(BuiltInRegistries.ITEM, id, item)
+            OniItemFactory.registerItem(spec.id) { item }
         }
+
+        run {
+            val id = id(OniItemFactory.BLUEPRINT_BOOK)
+            val key = ResourceKey.create(Registries.ITEM, id)
+            val item = BlueprintBookItem(Item.Properties().setId(key).stacksTo(1))
+            Registry.register(BuiltInRegistries.ITEM, id, item)
+            OniItemFactory.registerItem(OniItemFactory.BLUEPRINT_BOOK) { item }
+        }
+
+        run {
+            val id = id(OniItemFactory.BLUEPRINT)
+            val key = ResourceKey.create(Registries.ITEM, id)
+            val item = BlueprintItem(Item.Properties().setId(key))
+            Registry.register(BuiltInRegistries.ITEM, id, item)
+            OniItemFactory.registerItem(OniItemFactory.BLUEPRINT) { item }
+        }
+
+        for (elementId in OniItemFactory.ELEMENTS) {
+            val id = id(elementId)
+            val key = ResourceKey.create(Registries.ITEM, id)
+            val item = ElementItem(Item.Properties().setId(key))
+            Registry.register(BuiltInRegistries.ITEM, id, item)
+            OniItemFactory.registerItem(elementId) { item }
+        }
+
+        run {
+            val id = id(OniItemFactory.POWER_STATION_TOOLS)
+            val key = ResourceKey.create(Registries.ITEM, id)
+            val item = Item(Item.Properties().setId(key).stacksTo(1))
+            Registry.register(BuiltInRegistries.ITEM, id, item)
+            OniItemFactory.registerItem(OniItemFactory.POWER_STATION_TOOLS) { item }
+        }
+
+        OniElements.refreshElementItems()
     }
 
     private fun id(path: String): Identifier {
