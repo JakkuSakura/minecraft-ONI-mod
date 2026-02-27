@@ -1,7 +1,7 @@
 package mconi.common.sim.subsystem
 
 import mconi.common.sim.OniSimulationRuntime
-import mconi.common.sim.model.FluidSpecies
+import mconi.common.element.OniElements
 import mconi.common.sim.model.OccupancyState
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -18,9 +18,9 @@ class FluidSubsystemTest {
         val top = grid.getOrCreateCellAtBlock(0, 4, 0, cellSize)
         val bottom = grid.getOrCreateCellAtBlock(0, 0, 0, cellSize)
         top.setOccupancyState(OccupancyState.FLUID)
-        top.setFluidState(FluidSpecies.WATER, 1000.0)
+        top.setFluidState(OniElements.LIQUID_WATER, 1000.0)
         bottom.setOccupancyState(OccupancyState.VACUUM)
-        bottom.setFluidState(FluidSpecies.NONE, 0.0)
+        bottom.setFluidState(OniElements.LIQUID_NONE, 0.0)
         val context = SimulationContext(0L, config, grid, runtime)
 
         FluidSubsystem().run(context)

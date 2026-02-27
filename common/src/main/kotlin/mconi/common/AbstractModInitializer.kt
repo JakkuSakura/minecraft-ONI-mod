@@ -28,14 +28,13 @@ import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
-import mconi.common.sim.OniBlueprintRegistry
+import mconi.common.item.OniBlueprintRegistry
 import mconi.common.sim.OniConstructionState
 import mconi.common.sim.OniServices
 import mconi.common.sim.OniSimulationSnapshot
 import mconi.common.sim.OniSystemInspector
 import mconi.common.sim.OniWorldFoundation
-import mconi.common.sim.model.FluidSpecies
-import mconi.common.sim.model.GasSpecies
+import mconi.common.element.OniElements
 import mconi.common.sim.model.LayerProperty
 import mconi.common.sim.model.OniCellState
 import mconi.common.sim.model.SystemLens
@@ -238,11 +237,11 @@ abstract class AbstractModInitializer {
                                     + " o2Frac=${String.format("%.4f", cell.o2Fraction())}"
                                     + " co2Frac=${String.format("%.4f", cell.co2Fraction())}"
                                     + " breathBand=${cell.breathingBand()}"
-                                    + " fluid=${cell.fluidSpecies()}"
+                                    + " fluid=${cell.fluidId()}"
                                     + " fluidMassKg=${String.format("%.3f", cell.fluidMassKg())}"
-                                    + " O2kg=${String.format("%.3f", cell.gasMassKg(GasSpecies.O2))}"
-                                    + " CO2kg=${String.format("%.3f", cell.gasMassKg(GasSpecies.CO2))}"
-                                    + " H2kg=${String.format("%.3f", cell.gasMassKg(GasSpecies.H2))}",
+                                    + " O2kg=${String.format("%.3f", cell.gasMassKg(OniElements.GAS_OXYGEN))}"
+                                    + " CO2kg=${String.format("%.3f", cell.gasMassKg(OniElements.GAS_CARBON_DIOXIDE))}"
+                                    + " H2kg=${String.format("%.3f", cell.gasMassKg(OniElements.GAS_HYDROGEN))}",
                                 true
                             )
                             1
@@ -257,9 +256,8 @@ abstract class AbstractModInitializer {
                                     val z = Mth.floor(source.position.z)
                                     val speciesInput = StringArgumentType.getString(context, "species")
                                     val massKg = DoubleArgumentType.getDouble(context, "mass_kg")
-                                    val species = try {
-                                        GasSpecies.valueOf(speciesInput.uppercase())
-                                    } catch (_: IllegalArgumentException) {
+                                    val species = OniElements.parseGas(speciesInput)
+                                    if (species == null) {
                                         Utils.SendError(context, "Invalid gas species: $speciesInput. Use O2/CO2/H2.", true)
                                         return@executes 0
                                     }
@@ -284,10 +282,9 @@ abstract class AbstractModInitializer {
                                     val z = Mth.floor(source.position.z)
                                     val speciesInput = StringArgumentType.getString(context, "species")
                                     val massKg = DoubleArgumentType.getDouble(context, "mass_kg")
-                                    val species = try {
-                                        FluidSpecies.valueOf(speciesInput.uppercase())
-                                    } catch (_: IllegalArgumentException) {
-                                        Utils.SendError(context, "Invalid fluid species. Use WATER/POLLUTED_WATER/CRUDE_OIL/LAVA.", true)
+                                    val liquidId = OniElements.parseLiquidId(speciesInput)
+                                    if (liquidId == null) {
+                                        Utils.SendError(context, "Invalid fluid id. Use water/polluted_water/crude_oil/lava.", true)
                                         return@executes 0
                                     }
                                     val cell: OniCellState = OniServices.simulationRuntime().grid().getOrCreateCellAtBlock(
@@ -296,8 +293,8 @@ abstract class AbstractModInitializer {
                                         z,
                                         OniServices.simulationRuntime().config().cellSize()
                                     )
-                                    cell.setFluidState(species, massKg)
-                                    Utils.SendFeedback(context, "Set fluid $species mass to $massKg kg in current cell.", true)
+                                    cell.setFluidState(liquidId, massKg)
+                                    Utils.SendFeedback(context, "Set fluid $liquidId mass to $massKg kg in current cell.", true)
                                     1
                                 })))
                     .then(literal("set_power")
@@ -315,8 +312,14 @@ abstract class AbstractModInitializer {
                         .then(argument("score", DoubleArgumentType.doubleArg(0.0, 100.0))
                             .executes { context ->
                                 val score = DoubleArgumentType.getDouble(context, "score")
-                                OniServices.simulationRuntime().stressState().setScore(score)
-                                Utils.SendFeedback(context, "Set colony stress to $score.", true)
+                                val player = context.source.player
+                                if (player != null) {
+                                    OniServices.simulationRuntime().stressState().setScore(player, score)
+                                    Utils.SendFeedback(context, "Set player stress to $score.", true)
+                                } else {
+                                    OniServices.simulationRuntime().stressState().setScore(score)
+                                    Utils.SendFeedback(context, "Set colony stress to $score.", true)
+                                }
                                 1
                             }))
                     .then(literal("research")
@@ -480,10 +483,12 @@ abstract class AbstractModInitializer {
                                     "System glasses [${systemLens.name}] at ($x,$y,$z):",
                                     true
                                 )
+                                val commandPlayer = context.source.entity as? net.minecraft.world.entity.player.Player
                                 for (property: LayerProperty in OniSystemInspector.inspect(
                                     OniServices.simulationRuntime(),
                                     systemLens,
-                                    cell
+                                    cell,
+                                    commandPlayer
                                 )) {
                                     Utils.SendFeedback(context, "[${property.layer()}] ${property.key()}=${property.value()}", true)
                                 }

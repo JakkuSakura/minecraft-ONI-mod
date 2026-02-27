@@ -1,9 +1,9 @@
 package mconi.common.sim.subsystem
 
 import mconi.common.sim.model.BreathingBand
-import mconi.common.sim.model.GasSpecies
 import mconi.common.sim.model.OccupancyState
 import mconi.common.sim.model.PressureBand
+import mconi.common.element.OniElements
 
 class OxygenSubsystem : SimulationSubsystem {
     override fun id(): String = "oxygen"
@@ -25,8 +25,8 @@ class OxygenSubsystem : SimulationSubsystem {
                 continue
             }
 
-            val o2Fraction = cell.gasMassKg(GasSpecies.O2) / total
-            val co2Fraction = cell.gasMassKg(GasSpecies.CO2) / total
+            val o2Fraction = cell.gasMassKg(OniElements.GAS_OXYGEN) / total
+            val co2Fraction = cell.gasMassKg(OniElements.GAS_CARBON_DIOXIDE) / total
             cell.setO2Fraction(o2Fraction)
             cell.setCO2Fraction(co2Fraction)
 

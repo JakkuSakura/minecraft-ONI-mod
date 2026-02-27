@@ -1,11 +1,10 @@
 package mconi.common.sim
 
-import mconi.common.sim.model.FluidSpecies
-import mconi.common.sim.model.GasSpecies
+import mconi.common.element.OniElements
 import mconi.common.sim.model.OccupancyState
 import mconi.common.sim.model.OniCellCoordinate
 import mconi.common.sim.model.OniCellState
-import java.util.EnumMap
+import java.util.LinkedHashMap
 
 /**
  * Initial atmosphere kernel pass: resolves occupancy and computes pressure from mass.
@@ -25,8 +24,8 @@ class OniAtmosphereKernel {
 
     private fun updateCell(cell: OniCellState, config: OniSimulationConfig) {
         if (cell.occupancyState() == OccupancyState.SOLID) {
-            cell.setFluidState(FluidSpecies.NONE, 0.0)
-            for (species in GasSpecies.values()) {
+            cell.setFluidState(OniElements.LIQUID_NONE, 0.0)
+            for (species in OniElements.GASES) {
                 cell.setGasMassKg(species, 0.0)
             }
             cell.setPressureKpa(0.0)
@@ -40,7 +39,7 @@ class OniAtmosphereKernel {
         }
 
         val totalGasMassKg = cell.totalGasMassKg()
-        if (cell.fluidSpecies() != FluidSpecies.NONE && cell.fluidMassKg() > 0.0) {
+        if (cell.fluidId() != OniElements.LIQUID_NONE && cell.fluidMassKg() > 0.0) {
             cell.setOccupancyState(OccupancyState.FLUID)
             return
         }
@@ -68,15 +67,15 @@ class OniAtmosphereKernel {
 
     private fun drainVoid(cell: OniCellState, config: OniSimulationConfig) {
         val drainFraction = config.voidGasDrainFraction().coerceIn(0.0, 1.0)
-        for (species in GasSpecies.values()) {
+        for (species in OniElements.GASES) {
             val next = cell.gasMassKg(species) * (1.0 - drainFraction)
             cell.setGasMassKg(species, next)
         }
         val nextFluid = cell.fluidMassKg() * (1.0 - config.voidFluidDrainFraction().coerceIn(0.0, 1.0))
         if (nextFluid <= 0.0) {
-            cell.setFluidState(FluidSpecies.NONE, 0.0)
+            cell.setFluidState(OniElements.LIQUID_NONE, 0.0)
         } else {
-            cell.setFluidState(cell.fluidSpecies(), nextFluid)
+            cell.setFluidState(cell.fluidId(), nextFluid)
         }
     }
 
@@ -86,7 +85,7 @@ class OniAtmosphereKernel {
             return
         }
 
-        val deltas: MutableMap<OniCellCoordinate, EnumMap<GasSpecies, Double>> = HashMap()
+        val deltas: MutableMap<OniCellCoordinate, MutableMap<OniElements.GasSpec, Double>> = HashMap()
         for ((coordinate, cell) in grid.cellEntries()) {
             if (cell.occupancyState() != OccupancyState.GAS) {
                 continue
@@ -102,7 +101,7 @@ class OniAtmosphereKernel {
                 ) {
                     continue
                 }
-                for (species in GasSpecies.values()) {
+                for (species in OniElements.GASES) {
                     val massA = cell.gasMassKg(species)
                     val massB = other.gasMassKg(species)
                     val diff = massA - massB
@@ -130,7 +129,7 @@ class OniAtmosphereKernel {
         if (maxTransfer <= 0.0) {
             return
         }
-        val deltas: MutableMap<OniCellCoordinate, EnumMap<GasSpecies, Double>> = HashMap()
+        val deltas: MutableMap<OniCellCoordinate, MutableMap<OniElements.GasSpec, Double>> = HashMap()
         for ((coordinate, cell) in grid.cellEntries()) {
             if (cell.occupancyState() != OccupancyState.GAS) {
                 continue
@@ -142,11 +141,11 @@ class OniAtmosphereKernel {
             val aboveCell = grid.getCellAtCoordinate(above)
 
             if (belowCell != null && belowCell.occupancyState() == OccupancyState.GAS) {
-                stratifyDown(GasSpecies.CO2, cell, belowCell, maxTransfer, coordinate, below, deltas)
-                stratifyDown(GasSpecies.O2, cell, belowCell, maxTransfer * 0.5, coordinate, below, deltas)
+                stratifyDown(OniElements.GAS_CARBON_DIOXIDE, cell, belowCell, maxTransfer, coordinate, below, deltas)
+                stratifyDown(OniElements.GAS_OXYGEN, cell, belowCell, maxTransfer * 0.5, coordinate, below, deltas)
             }
             if (aboveCell != null && aboveCell.occupancyState() == OccupancyState.GAS) {
-                stratifyUp(GasSpecies.H2, cell, aboveCell, maxTransfer, coordinate, above, deltas)
+                stratifyUp(OniElements.GAS_HYDROGEN, cell, aboveCell, maxTransfer, coordinate, above, deltas)
             }
         }
 
@@ -159,13 +158,13 @@ class OniAtmosphereKernel {
     }
 
     private fun stratifyDown(
-        species: GasSpecies,
+        species: OniElements.GasSpec,
         cell: OniCellState,
         belowCell: OniCellState,
         maxTransfer: Double,
         from: OniCellCoordinate,
         to: OniCellCoordinate,
-        deltas: MutableMap<OniCellCoordinate, EnumMap<GasSpecies, Double>>,
+        deltas: MutableMap<OniCellCoordinate, MutableMap<OniElements.GasSpec, Double>>,
     ) {
         val massA = cell.gasMassKg(species)
         val massB = belowCell.gasMassKg(species)
@@ -181,13 +180,13 @@ class OniAtmosphereKernel {
     }
 
     private fun stratifyUp(
-        species: GasSpecies,
+        species: OniElements.GasSpec,
         cell: OniCellState,
         aboveCell: OniCellState,
         maxTransfer: Double,
         from: OniCellCoordinate,
         to: OniCellCoordinate,
-        deltas: MutableMap<OniCellCoordinate, EnumMap<GasSpecies, Double>>,
+        deltas: MutableMap<OniCellCoordinate, MutableMap<OniElements.GasSpec, Double>>,
     ) {
         val massA = cell.gasMassKg(species)
         val massB = aboveCell.gasMassKg(species)
@@ -214,12 +213,12 @@ class OniAtmosphereKernel {
     }
 
     private fun addDelta(
-        deltas: MutableMap<OniCellCoordinate, EnumMap<GasSpecies, Double>>,
+        deltas: MutableMap<OniCellCoordinate, MutableMap<OniElements.GasSpec, Double>>,
         coordinate: OniCellCoordinate,
-        species: GasSpecies,
+        species: OniElements.GasSpec,
         delta: Double,
     ) {
-        val map = deltas.computeIfAbsent(coordinate) { EnumMap(GasSpecies::class.java) }
+        val map = deltas.computeIfAbsent(coordinate) { LinkedHashMap() }
         map[species] = (map[species] ?: 0.0) + delta
     }
 

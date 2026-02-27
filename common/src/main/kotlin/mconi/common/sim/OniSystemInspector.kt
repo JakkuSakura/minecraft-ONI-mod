@@ -1,21 +1,27 @@
 package mconi.common.sim
 
-import mconi.common.sim.model.GasSpecies
+import mconi.common.element.OniElements
 import mconi.common.sim.model.LayerProperty
 import mconi.common.sim.model.OniCellState
 import mconi.common.sim.model.PressureBand
 import mconi.common.sim.model.SystemLens
+import net.minecraft.world.entity.player.Player
 
 object OniSystemInspector {
     @JvmStatic
-    fun inspect(runtime: OniSimulationRuntime, systemLens: SystemLens, cell: OniCellState): List<LayerProperty> {
+    fun inspect(
+        runtime: OniSimulationRuntime,
+        systemLens: SystemLens,
+        cell: OniCellState,
+        player: Player?
+    ): List<LayerProperty> {
         return when (systemLens) {
             SystemLens.ATMOSPHERE -> atmosphereLayers(cell)
             SystemLens.FLUID -> fluidLayers(cell)
             SystemLens.THERMAL -> thermalLayers(cell)
             SystemLens.OXYGEN -> oxygenLayers(cell)
             SystemLens.POWER -> powerLayers(runtime)
-            SystemLens.STRESS -> stressLayers(runtime)
+            SystemLens.STRESS -> stressLayers(runtime, player)
             SystemLens.RESEARCH -> researchLayers(runtime)
             SystemLens.CONSTRUCTION -> constructionLayers(runtime)
         }
@@ -26,16 +32,16 @@ object OniSystemInspector {
             LayerProperty("matter", "occupancy", cell.occupancyState().name),
             LayerProperty("pressure", "kPa", "%.3f".format(cell.pressureKpa())),
             LayerProperty("pressure", "band", PressureBand.fromKpa(cell.pressureKpa()).name),
-            LayerProperty("gas", "O2_kg", "%.3f".format(cell.gasMassKg(GasSpecies.O2))),
-            LayerProperty("gas", "CO2_kg", "%.3f".format(cell.gasMassKg(GasSpecies.CO2))),
-            LayerProperty("gas", "H2_kg", "%.3f".format(cell.gasMassKg(GasSpecies.H2))),
+            LayerProperty("gas", "O2_kg", "%.3f".format(cell.gasMassKg(OniElements.GAS_OXYGEN))),
+            LayerProperty("gas", "CO2_kg", "%.3f".format(cell.gasMassKg(OniElements.GAS_CARBON_DIOXIDE))),
+            LayerProperty("gas", "H2_kg", "%.3f".format(cell.gasMassKg(OniElements.GAS_HYDROGEN))),
             LayerProperty("gas", "total_kg", "%.3f".format(cell.totalGasMassKg())),
         )
     }
 
     private fun fluidLayers(cell: OniCellState): List<LayerProperty> {
         return listOf(
-            LayerProperty("fluid", "species", cell.fluidSpecies().name),
+            LayerProperty("fluid", "id", cell.fluidId()),
             LayerProperty("fluid", "mass_kg", "%.3f".format(cell.fluidMassKg())),
             LayerProperty("fluid", "boiling_candidate", (cell.temperatureK() > 373.15).toString()),
         )
@@ -73,9 +79,14 @@ object OniSystemInspector {
         )
     }
 
-    private fun stressLayers(runtime: OniSimulationRuntime): List<LayerProperty> {
+    private fun stressLayers(runtime: OniSimulationRuntime, player: Player?): List<LayerProperty> {
+        val score = if (player != null) {
+            runtime.stressState().score(player)
+        } else {
+            runtime.stressState().score()
+        }
         return listOf(
-            LayerProperty("stress", "score", "%.2f".format(runtime.stressState().score())),
+            LayerProperty("stress", "score", "%.2f".format(score)),
         )
     }
 

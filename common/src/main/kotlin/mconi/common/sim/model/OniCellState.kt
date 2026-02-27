@@ -1,12 +1,12 @@
 package mconi.common.sim.model
 
-import java.util.EnumMap
-
+import mconi.common.element.OniElements
+// TODO: remove. read from world state instead of storing in cell state
 class OniCellState {
-    private val gasMassKg: EnumMap<GasSpecies, Double> = EnumMap(GasSpecies::class.java)
+    private val gasMassKg: MutableMap<OniElements.GasSpec, Double> = LinkedHashMap()
     private var occupancyState: OccupancyState = OccupancyState.VACUUM
-    private var fluidSpecies: FluidSpecies = FluidSpecies.NONE
-    private var fluidMassKg: Double = 0.0
+    private var liquidId: String = OniElements.LIQUID_NONE
+    private var liquidMassKg: Double = 0.0
     private var temperatureK: Double = 293.15
     private var pressureKpa: Double = 0.0
     private var o2Fraction: Double = 0.0
@@ -16,14 +16,14 @@ class OniCellState {
     private var worldBlockKey: String = ""
 
     init {
-        for (species in GasSpecies.values()) {
+        for (species in OniElements.GASES) {
             gasMassKg[species] = 0.0
         }
     }
 
     fun occupancyState(): OccupancyState = occupancyState
-    fun fluidSpecies(): FluidSpecies = fluidSpecies
-    fun fluidMassKg(): Double = fluidMassKg
+    fun liquidId(): String = liquidId
+    fun liquidMassKg(): Double = liquidMassKg
     fun temperatureK(): Double = temperatureK
     fun pressureKpa(): Double = pressureKpa
     fun o2Fraction(): Double = o2Fraction
@@ -32,18 +32,18 @@ class OniCellState {
     fun overheated(): Boolean = overheated
     fun worldBlockKey(): String = worldBlockKey
 
-    fun gasMassKg(species: GasSpecies): Double = gasMassKg[species] ?: 0.0
+    fun gasMassKg(species: OniElements.GasSpec): Double = gasMassKg[species] ?: 0.0
 
     fun setOccupancyState(occupancyState: OccupancyState) {
         this.occupancyState = occupancyState
     }
 
-    fun setFluidState(species: FluidSpecies, massKg: Double) {
-        this.fluidSpecies = species
-        this.fluidMassKg = maxOf(0.0, massKg)
+    fun setLiquidState(liquidId: String, massKg: Double) {
+        this.liquidId = liquidId
+        this.liquidMassKg = maxOf(0.0, massKg)
     }
 
-    fun setGasMassKg(species: GasSpecies, massKg: Double) {
+    fun setGasMassKg(species: OniElements.GasSpec, massKg: Double) {
         gasMassKg[species] = maxOf(0.0, massKg)
     }
 

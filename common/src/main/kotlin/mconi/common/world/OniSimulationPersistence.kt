@@ -1,7 +1,7 @@
 package mconi.common.world
 
+import mconi.common.element.OniElements
 import mconi.common.sim.OniServices
-import mconi.common.sim.model.GasSpecies
 import mconi.common.sim.model.OniCellCoordinate
 import mconi.common.sim.model.OniCellState
 import net.minecraft.server.level.ServerLevel
@@ -36,12 +36,18 @@ object OniSimulationPersistence {
             val coord = OniCellCoordinate(entry.x, entry.y, entry.z)
             val cell: OniCellState = grid.getOrCreateCellAtCoordinate(coord)
             cell.setOccupancyState(entry.occupancy)
-            cell.setFluidState(entry.fluid, entry.fluidMass)
+            val liquidId = OniElements.parseLiquidId(entry.fluidId) ?: entry.fluidId
+            val normalized = if (liquidId == OniElements.LIQUID_NONE || OniElements.isLiquid(liquidId)) {
+                liquidId
+            } else {
+                OniElements.LIQUID_NONE
+            }
+            cell.setFluidState(normalized, entry.fluidMass)
             cell.setTemperatureK(entry.temperatureK)
             cell.setPressureKpa(entry.pressureKpa)
-            cell.setGasMassKg(GasSpecies.O2, entry.o2Mass)
-            cell.setGasMassKg(GasSpecies.CO2, entry.co2Mass)
-            cell.setGasMassKg(GasSpecies.H2, entry.h2Mass)
+            cell.setGasMassKg(OniElements.GAS_OXYGEN, entry.o2Mass)
+            cell.setGasMassKg(OniElements.GAS_CARBON_DIOXIDE, entry.co2Mass)
+            cell.setGasMassKg(OniElements.GAS_HYDROGEN, entry.h2Mass)
             cell.setOverheated(entry.overheated)
         }
     }
@@ -56,13 +62,13 @@ object OniSimulationPersistence {
                     coord.cellY(),
                     coord.cellZ(),
                     cell.occupancyState(),
-                    cell.fluidSpecies(),
+                    cell.fluidId(),
                     cell.fluidMassKg(),
                     cell.temperatureK(),
                     cell.pressureKpa(),
-                    cell.gasMassKg(GasSpecies.O2),
-                    cell.gasMassKg(GasSpecies.CO2),
-                    cell.gasMassKg(GasSpecies.H2),
+                    cell.gasMassKg(OniElements.GAS_OXYGEN),
+                    cell.gasMassKg(OniElements.GAS_CARBON_DIOXIDE),
+                    cell.gasMassKg(OniElements.GAS_HYDROGEN),
                     cell.overheated()
                 )
             )

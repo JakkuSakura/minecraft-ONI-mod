@@ -4,9 +4,9 @@ import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpHandler
 import com.sun.net.httpserver.HttpServer
 import mconi.common.AbstractModInitializer
-import mconi.common.sim.OniBlueprintRegistry
+import mconi.common.element.OniElements
+import mconi.common.item.OniBlueprintRegistry
 import mconi.common.sim.OniServices
-import mconi.common.sim.model.GasSpecies
 import mconi.common.world.OniWorldSampler
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerLevel
@@ -201,11 +201,11 @@ object OniDebugHttpServer {
                 append(",\"occupancy\":\"").append(cell.occupancyState().name).append("\"")
                 append(",\"temperatureK\":").append(cell.temperatureK())
                 append(",\"pressureKpa\":").append(cell.pressureKpa())
-                append(",\"fluidSpecies\":\"").append(cell.fluidSpecies().name).append("\"")
+                append(",\"fluidId\":\"").append(cell.fluidId()).append("\"")
                 append(",\"fluidMassKg\":").append(cell.fluidMassKg())
-                append(",\"o2MassKg\":").append(cell.gasMassKg(GasSpecies.O2))
-                append(",\"co2MassKg\":").append(cell.gasMassKg(GasSpecies.CO2))
-                append(",\"h2MassKg\":").append(cell.gasMassKg(GasSpecies.H2))
+                append(",\"o2MassKg\":").append(cell.gasMassKg(OniElements.GAS_OXYGEN))
+                append(",\"co2MassKg\":").append(cell.gasMassKg(OniElements.GAS_CARBON_DIOXIDE))
+                append(",\"h2MassKg\":").append(cell.gasMassKg(OniElements.GAS_HYDROGEN))
                 append("}")
             }
             writeJson(exchange, 200, body)

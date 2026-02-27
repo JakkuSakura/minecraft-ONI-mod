@@ -1,11 +1,10 @@
 package mconi.common.world
 
 import mconi.common.block.OniBlockLookup
-import mconi.common.content.OniBlockIds
+import mconi.common.block.OniBlockFactory
 import mconi.common.sim.OniServices
 import mconi.common.sim.OniWorldFoundation
-import mconi.common.sim.model.FluidSpecies
-import mconi.common.sim.model.GasSpecies
+import mconi.common.element.OniElements
 import mconi.common.sim.model.OccupancyState
 import mconi.common.sim.model.OniCellCoordinate
 import net.minecraft.core.BlockPos
@@ -18,13 +17,13 @@ import java.util.concurrent.atomic.AtomicLong
 
 object OniWorldWriter {
     private val writeTick = AtomicLong(0L)
-    private val oxygenBlock = OniBlockLookup.block(OniBlockIds.OXYGEN_GAS)
-    private val co2Block = OniBlockLookup.block(OniBlockIds.CARBON_DIOXIDE_GAS)
-    private val hydrogenBlock = OniBlockLookup.block(OniBlockIds.HYDROGEN_GAS)
-    private val waterBlock = OniBlockLookup.block(OniBlockIds.WATER)
-    private val pollutedWaterBlock = OniBlockLookup.block(OniBlockIds.POLLUTED_WATER)
-    private val crudeOilBlock = OniBlockLookup.block(OniBlockIds.CRUDE_OIL)
-    private val lavaBlock = OniBlockLookup.block(OniBlockIds.LAVA)
+    private val oxygenBlock = OniBlockLookup.block(OniBlockFactory.OXYGEN_GAS)
+    private val co2Block = OniBlockLookup.block(OniBlockFactory.CARBON_DIOXIDE_GAS)
+    private val hydrogenBlock = OniBlockLookup.block(OniBlockFactory.HYDROGEN_GAS)
+    private val waterBlock = OniBlockLookup.block(OniBlockFactory.WATER)
+    private val pollutedWaterBlock = OniBlockLookup.block(OniBlockFactory.POLLUTED_WATER)
+    private val crudeOilBlock = OniBlockLookup.block(OniBlockFactory.CRUDE_OIL)
+    private val lavaBlock = OniBlockLookup.block(OniBlockFactory.LAVA)
 
     @JvmStatic
     fun applyAroundPlayers(server: MinecraftServer) {
@@ -87,7 +86,7 @@ object OniWorldWriter {
             return
         }
         if (OniWorldFoundation.isLavaBand(y, minY, config)) {
-            val target = OniBlockLookup.state(OniBlockIds.LAVA)
+            val target = OniBlockLookup.state(OniBlockFactory.LAVA)
             setIfReplaceable(level, x, y, z, target)
             cell?.setWorldBlockKey(BuiltInRegistries.BLOCK.getKey(target.block).toString())
             return
@@ -114,11 +113,11 @@ object OniWorldWriter {
 
         when (cell.occupancyState()) {
             OccupancyState.FLUID -> {
-                val target = when (cell.fluidSpecies()) {
-                    FluidSpecies.LAVA -> OniBlockLookup.state(OniBlockIds.LAVA)
-                    FluidSpecies.WATER -> OniBlockLookup.state(OniBlockIds.WATER)
-                    FluidSpecies.POLLUTED_WATER -> OniBlockLookup.state(OniBlockIds.POLLUTED_WATER)
-                    FluidSpecies.CRUDE_OIL -> OniBlockLookup.state(OniBlockIds.CRUDE_OIL)
+                val target = when (cell.fluidId()) {
+                    OniElements.LIQUID_LAVA -> OniBlockLookup.state(OniBlockFactory.LAVA)
+                    OniElements.LIQUID_WATER -> OniBlockLookup.state(OniBlockFactory.WATER)
+                    OniElements.LIQUID_POLLUTED_WATER -> OniBlockLookup.state(OniBlockFactory.POLLUTED_WATER)
+                    OniElements.LIQUID_CRUDE_OIL -> OniBlockLookup.state(OniBlockFactory.CRUDE_OIL)
                     else -> Blocks.AIR.defaultBlockState()
                 }
                 setIfReplaceable(level, x, y, z, target)
@@ -134,9 +133,10 @@ object OniWorldWriter {
                 }
                 val dominant = dominantGas(cell)
                 val gasState = when (dominant) {
-                    GasSpecies.O2 -> OniBlockLookup.state(OniBlockIds.OXYGEN_GAS)
-                    GasSpecies.CO2 -> OniBlockLookup.state(OniBlockIds.CARBON_DIOXIDE_GAS)
-                    GasSpecies.H2 -> OniBlockLookup.state(OniBlockIds.HYDROGEN_GAS)
+                    OniElements.GAS_OXYGEN -> OniBlockLookup.state(OniBlockFactory.OXYGEN_GAS)
+                    OniElements.GAS_CARBON_DIOXIDE -> OniBlockLookup.state(OniBlockFactory.CARBON_DIOXIDE_GAS)
+                    OniElements.GAS_HYDROGEN -> OniBlockLookup.state(OniBlockFactory.HYDROGEN_GAS)
+                    else -> Blocks.AIR.defaultBlockState()
                 }
                 setIfReplaceable(level, x, y, z, gasState)
                 cell.setWorldBlockKey(BuiltInRegistries.BLOCK.getKey(gasState.block).toString())
@@ -152,17 +152,17 @@ object OniWorldWriter {
         }
     }
 
-    private fun dominantGas(cell: mconi.common.sim.model.OniCellState): GasSpecies {
-        var best = GasSpecies.O2
-        var bestMass = cell.gasMassKg(GasSpecies.O2)
-        val co2 = cell.gasMassKg(GasSpecies.CO2)
+    private fun dominantGas(cell: mconi.common.sim.model.OniCellState): OniElements.GasSpec {
+        var best = OniElements.GAS_OXYGEN
+        var bestMass = cell.gasMassKg(OniElements.GAS_OXYGEN)
+        val co2 = cell.gasMassKg(OniElements.GAS_CARBON_DIOXIDE)
         if (co2 > bestMass) {
-            best = GasSpecies.CO2
+            best = OniElements.GAS_CARBON_DIOXIDE
             bestMass = co2
         }
-        val h2 = cell.gasMassKg(GasSpecies.H2)
+        val h2 = cell.gasMassKg(OniElements.GAS_HYDROGEN)
         if (h2 > bestMass) {
-            best = GasSpecies.H2
+            best = OniElements.GAS_HYDROGEN
         }
         return best
     }
