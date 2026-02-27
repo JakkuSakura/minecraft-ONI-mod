@@ -30,7 +30,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.abs
 import mconi.common.block.OniBlockLookup
-import mconi.common.content.OniBlockIds
+import mconi.common.block.OniBlockFactory
 
 class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) {
     override fun codec(): MapCodec<out ChunkGenerator> = CODEC
@@ -78,11 +78,11 @@ class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) 
     override fun spawnOriginalMobs(region: WorldGenRegion) {
     }
 
-    override fun getGenDepth(): Int = DEFAULT_HEIGHT
+    override fun getGenDepth(): Int = FALLBACK_HEIGHT
 
     override fun getSeaLevel(): Int = 63
 
-    override fun getMinY(): Int = DEFAULT_MIN_Y
+    override fun getMinY(): Int = FALLBACK_MIN_Y
 
     override fun fillFromNoise(
         blender: Blender,
@@ -110,15 +110,15 @@ class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) 
 
                 for (y in minY..maxY) {
                     val state = when {
-                        !inBounds -> Blocks.BEDROCK.defaultBlockState()
-                        onBorder -> Blocks.BEDROCK.defaultBlockState()
-                        y < activeMinY -> Blocks.BEDROCK.defaultBlockState()
-                        y == activeMinY -> Blocks.BEDROCK.defaultBlockState()
-                        y <= lavaTop -> OniBlockLookup.state(OniBlockIds.LAVA)
-                        y > activeMaxY -> Blocks.AIR.defaultBlockState()
-                        y >= spaceStart -> Blocks.AIR.defaultBlockState()
+                        !inBounds -> Blocks.BEDROCK.stateDefinition.any()
+                        onBorder -> Blocks.BEDROCK.stateDefinition.any()
+                        y < activeMinY -> Blocks.BEDROCK.stateDefinition.any()
+                        y == activeMinY -> Blocks.BEDROCK.stateDefinition.any()
+                        y <= lavaTop -> OniBlockLookup.state(OniBlockFactory.LAVA)
+                        y > activeMaxY -> Blocks.AIR.stateDefinition.any()
+                        y >= spaceStart -> Blocks.AIR.stateDefinition.any()
                         y <= surfaceY -> solidStateFor(worldX, y, worldZ, surfaceY, lavaTop)
-                        else -> Blocks.AIR.defaultBlockState()
+                        else -> Blocks.AIR.stateDefinition.any()
                     }
                     chunk.setBlockState(BlockPos(worldX, y, worldZ), state, 0)
                 }
@@ -156,15 +156,15 @@ class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) 
             z == OniWorldLayout.WORLD_MIN_Z || z == OniWorldLayout.WORLD_MAX_Z
         for (y in minY..maxY) {
             val state = when {
-                !inBounds -> Blocks.BEDROCK.defaultBlockState()
-                onBorder -> Blocks.BEDROCK.defaultBlockState()
-                y < activeMinY -> Blocks.BEDROCK.defaultBlockState()
-                y == activeMinY -> Blocks.BEDROCK.defaultBlockState()
-                        y <= lavaTop -> OniBlockLookup.state(OniBlockIds.LAVA)
-                y > activeMaxY -> Blocks.AIR.defaultBlockState()
-                y >= spaceStart -> Blocks.AIR.defaultBlockState()
+                !inBounds -> Blocks.BEDROCK.stateDefinition.any()
+                onBorder -> Blocks.BEDROCK.stateDefinition.any()
+                y < activeMinY -> Blocks.BEDROCK.stateDefinition.any()
+                y == activeMinY -> Blocks.BEDROCK.stateDefinition.any()
+                y <= lavaTop -> OniBlockLookup.state(OniBlockFactory.LAVA)
+                y > activeMaxY -> Blocks.AIR.stateDefinition.any()
+                y >= spaceStart -> Blocks.AIR.stateDefinition.any()
                 y <= surfaceY -> solidStateFor(x, y, z, surfaceY, lavaTop)
-                else -> Blocks.AIR.defaultBlockState()
+                else -> Blocks.AIR.stateDefinition.any()
             }
             states[y - minY] = state
         }
@@ -187,8 +187,8 @@ class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) 
     }
 
     companion object {
-        private const val DEFAULT_MIN_Y = -128
-        private const val DEFAULT_HEIGHT = 256
+        private const val FALLBACK_MIN_Y = -128
+        private const val FALLBACK_HEIGHT = 256
         private const val TOPSOIL_DEPTH = OniWorldLayout.TOPSOIL_DEPTH
         private const val SEDIMENTARY_DEPTH = OniWorldLayout.SEDIMENTARY_DEPTH
         private const val IGNEOUS_DEPTH = OniWorldLayout.IGNEOUS_DEPTH
@@ -211,14 +211,14 @@ class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) 
             carveStarterRoom(chunk, podX, podY, podZ)
             chunk.setBlockState(
                 BlockPos(podX, podY, podZ),
-                OniBlockLookup.state(OniBlockIds.PRINTING_POD),
+                OniBlockLookup.state(OniBlockFactory.PRINTING_POD),
                 0
             )
 
-            val algaeState = OniBlockLookup.state(OniBlockIds.ALGAE)
+            val algaeState = OniBlockLookup.state(OniBlockFactory.ALGAE)
             for (dx in -2..2) {
                 for (dz in -2..2) {
-                    chunk.setBlockState(BlockPos(podX + dx, podY - 1, podZ + dz), OniBlockLookup.state(OniBlockIds.SEDIMENTARY_ROCK), 0)
+                    chunk.setBlockState(BlockPos(podX + dx, podY - 1, podZ + dz), OniBlockLookup.state(OniBlockFactory.SEDIMENTARY_ROCK), 0)
                 }
             }
 
@@ -226,22 +226,29 @@ class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) 
             chunk.setBlockState(BlockPos(podX + 3, podY - 2, podZ + 2), algaeState, 0)
             chunk.setBlockState(BlockPos(podX + 4, podY - 2, podZ + 3), algaeState, 0)
 
+            // Starter lighting in the printing pod room.
+            val torchState = Blocks.TORCH.stateDefinition.any()
+            chunk.setBlockState(BlockPos(podX + 3, podY, podZ + 3), torchState, 0)
+            chunk.setBlockState(BlockPos(podX - 3, podY, podZ + 3), torchState, 0)
+            chunk.setBlockState(BlockPos(podX + 3, podY, podZ - 3), torchState, 0)
+            chunk.setBlockState(BlockPos(podX - 3, podY, podZ - 3), torchState, 0)
+
             // Starter water pocket.
             for (dx in 6..9) {
                 for (dz in -1..2) {
-                    chunk.setBlockState(BlockPos(podX + dx, podY - 3, podZ + dz), OniBlockLookup.state(OniBlockIds.WATER), 0)
+                    chunk.setBlockState(BlockPos(podX + dx, podY - 3, podZ + dz), OniBlockLookup.state(OniBlockFactory.WATER), 0)
                 }
             }
 
             // Early metal node. Using vanilla ore by design.
-            chunk.setBlockState(BlockPos(podX - 6, podY - 3, podZ), Blocks.IRON_ORE.defaultBlockState(), 0)
+            chunk.setBlockState(BlockPos(podX - 6, podY - 3, podZ), Blocks.IRON_ORE.stateDefinition.any(), 0)
         }
 
         private fun carveStarterRoom(chunk: ChunkAccess, centerX: Int, centerY: Int, centerZ: Int) {
             for (dx in -4..4) {
                 for (dz in -4..4) {
                     for (dy in -1..4) {
-                        chunk.setBlockState(BlockPos(centerX + dx, centerY + dy, centerZ + dz), Blocks.AIR.defaultBlockState(), 0)
+                        chunk.setBlockState(BlockPos(centerX + dx, centerY + dy, centerZ + dz), Blocks.AIR.stateDefinition.any(), 0)
                     }
                 }
             }
@@ -255,32 +262,32 @@ class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) 
                 min(abs(z - OniWorldLayout.WORLD_MIN_Z), abs(OniWorldLayout.WORLD_MAX_Z - z))
             )
             if (borderDistance <= 1) {
-                return OniBlockLookup.state(OniBlockIds.ABYSSALITE)
+                return OniBlockLookup.state(OniBlockFactory.ABYSSALITE)
             }
             if (depthFromSurface <= TOPSOIL_DEPTH) {
                 if ((hash and 0xFF) < 18) {
-                    return OniBlockLookup.state(OniBlockIds.ALGAE)
+                    return OniBlockLookup.state(OniBlockFactory.ALGAE)
                 }
-                return OniBlockLookup.state(OniBlockIds.REGOLITH)
+                return OniBlockLookup.state(OniBlockFactory.REGOLITH)
             }
             if (depthFromSurface <= SEDIMENTARY_DEPTH) {
                 if ((hash and 0xFF) < 16) {
-                    return OniBlockLookup.state(OniBlockIds.POLLUTED_DIRT)
+                    return OniBlockLookup.state(OniBlockFactory.POLLUTED_DIRT)
                 }
-                return OniBlockLookup.state(OniBlockIds.SEDIMENTARY_ROCK)
+                return OniBlockLookup.state(OniBlockFactory.SEDIMENTARY_ROCK)
             }
             val igneousStart = lavaTop + IGNEOUS_DEPTH
             if (y <= igneousStart) {
-                return OniBlockLookup.state(OniBlockIds.IGNEOUS_ROCK)
+                return OniBlockLookup.state(OniBlockFactory.IGNEOUS_ROCK)
             }
             val oreRoll = (hash ushr 8) and 0xFF
             return when {
                 // Reuse vanilla ores for now.
-                oreRoll < 6 -> Blocks.COAL_ORE.defaultBlockState()
-                oreRoll < 12 -> Blocks.COPPER_ORE.defaultBlockState()
-                oreRoll < 16 -> Blocks.IRON_ORE.defaultBlockState()
-                oreRoll < 18 -> OniBlockLookup.state(OniBlockIds.GRANITE)
-                else -> OniBlockLookup.state(OniBlockIds.IGNEOUS_ROCK)
+                oreRoll < 6 -> Blocks.COAL_ORE.stateDefinition.any()
+                oreRoll < 12 -> Blocks.COPPER_ORE.stateDefinition.any()
+                oreRoll < 16 -> Blocks.IRON_ORE.stateDefinition.any()
+                oreRoll < 18 -> OniBlockLookup.state(OniBlockFactory.GRANITE)
+                else -> OniBlockLookup.state(OniBlockFactory.IGNEOUS_ROCK)
             }
         }
 
