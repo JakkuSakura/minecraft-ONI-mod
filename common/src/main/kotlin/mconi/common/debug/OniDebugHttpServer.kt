@@ -3,7 +3,7 @@ package mconi.common.debug
 import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpHandler
 import com.sun.net.httpserver.HttpServer
-import mconi.common.AbstractModInitializer
+import mconi.common.AbstractModBootstrap
 import mconi.common.element.OniElements
 import mconi.common.item.OniBlueprintRegistry
 import mconi.common.sim.OniServices
@@ -53,9 +53,9 @@ object OniDebugHttpServer {
             httpServer.createContext("/world/sample", WorldSampleHandler())
             httpServer.start()
             server = httpServer
-            AbstractModInitializer.LOGGER.info("ONI debug HTTP server listening on {}:{}", bind, port)
+            AbstractModBootstrap.LOGGER.info("ONI debug HTTP server listening on {}:{}", bind, port)
         } catch (ex: Exception) {
-            AbstractModInitializer.LOGGER.warn("Failed to start ONI debug HTTP server: {}", ex.toString())
+            AbstractModBootstrap.LOGGER.warn("Failed to start ONI debug HTTP server: {}", ex.toString())
         }
     }
 
@@ -109,7 +109,7 @@ object OniDebugHttpServer {
                 writeJson(exchange, 405, "{\"error\":\"method_not_allowed\"}")
                 return
             }
-            val body = "{\"ok\":true,\"mod\":\"${AbstractModInitializer.MOD_ID}\",\"version\":\"${AbstractModInitializer.VERSION}\"}"
+            val body = "{\"ok\":true,\"mod\":\"${AbstractModBootstrap.MOD_ID}\",\"version\":\"${AbstractModBootstrap.VERSION}\"}"
             writeJson(exchange, 200, body)
         }
     }
@@ -201,8 +201,8 @@ object OniDebugHttpServer {
                 append(",\"occupancy\":\"").append(cell.occupancyState().name).append("\"")
                 append(",\"temperatureK\":").append(cell.temperatureK())
                 append(",\"pressureKpa\":").append(cell.pressureKpa())
-                append(",\"fluidId\":\"").append(cell.fluidId()).append("\"")
-                append(",\"fluidMassKg\":").append(cell.fluidMassKg())
+                append(",\"liquidId\":\"").append(cell.liquidId()).append("\"")
+                append(",\"liquidMassKg\":").append(cell.liquidMassKg())
                 append(",\"o2MassKg\":").append(cell.gasMassKg(OniElements.GAS_OXYGEN))
                 append(",\"co2MassKg\":").append(cell.gasMassKg(OniElements.GAS_CARBON_DIOXIDE))
                 append(",\"h2MassKg\":").append(cell.gasMassKg(OniElements.GAS_HYDROGEN))

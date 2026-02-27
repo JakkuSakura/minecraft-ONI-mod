@@ -8,7 +8,7 @@ On right-click, it shows layered properties for the selected system at the targe
 ## Item Family
 
 - `AtmosphereGlasses`
-- `FluidGlasses`
+- `LiquidGlasses`
 - `ThermalGlasses`
 - `OxygenGlasses`
 - `PowerGlasses`

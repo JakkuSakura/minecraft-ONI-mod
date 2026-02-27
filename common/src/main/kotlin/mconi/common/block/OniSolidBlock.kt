@@ -32,7 +32,7 @@ open class OniSolidBlock(
         for (element in elements) {
             val item = OniItemFactory.itemById(element.itemId) ?: continue
             var remaining = element.amount
-            val maxStack = item.defaultInstance.maxStackSize.coerceAtLeast(1)
+            val maxStack = ItemStack(item).maxStackSize.coerceAtLeast(1)
             while (remaining > 0) {
                 val count = minOf(remaining, maxStack)
                 drops.add(ItemStack(item, count))

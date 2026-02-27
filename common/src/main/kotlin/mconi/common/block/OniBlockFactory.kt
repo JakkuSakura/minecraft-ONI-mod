@@ -1,6 +1,6 @@
 package mconi.common.block
 
-import mconi.common.AbstractModInitializer
+import mconi.common.AbstractModBootstrap
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.Identifier
 import net.minecraft.resources.ResourceKey
@@ -62,12 +62,12 @@ object OniBlockFactory {
     )
 
     private fun blockKey(id: String): ResourceKey<Block> {
-        val identifier = Identifier.tryParse("${AbstractModInitializer.MOD_ID}:$id")
+        val identifier = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:$id")
             ?: throw IllegalArgumentException("Invalid block id: $id")
         return ResourceKey.create(Registries.BLOCK, identifier)
     }
 
-    private fun baseProps(id: String): BlockBehaviour.Properties {
+    private fun propsFor(id: String): BlockBehaviour.Properties {
         return BlockBehaviour.Properties.of().setId(blockKey(id))
     }
 
@@ -79,7 +79,7 @@ object OniBlockFactory {
             OniSolidBlock(
                 REGOLITH,
                 dropElementId = "mconi:element_regolith",
-                baseProps(REGOLITH).mapColor(MapColor.COLOR_BROWN).strength(0.6f).sound(SoundType.GRAVEL)
+                propsFor(REGOLITH).mapColor(MapColor.COLOR_BROWN).strength(0.6f).sound(SoundType.GRAVEL)
             )
         ),
         entry(
@@ -87,7 +87,7 @@ object OniBlockFactory {
             OniSolidBlock(
                 SEDIMENTARY_ROCK,
                 dropElementId = "mconi:element_sedimentary_rock",
-                baseProps(SEDIMENTARY_ROCK).mapColor(MapColor.COLOR_YELLOW).strength(1.2f, 3.0f).sound(SoundType.STONE)
+                propsFor(SEDIMENTARY_ROCK).mapColor(MapColor.COLOR_YELLOW).strength(1.2f, 3.0f).sound(SoundType.STONE)
             )
         ),
         entry(
@@ -95,7 +95,7 @@ object OniBlockFactory {
             OniSolidBlock(
                 IGNEOUS_ROCK,
                 dropElementId = "mconi:element_igneous_rock",
-                baseProps(IGNEOUS_ROCK).mapColor(MapColor.COLOR_GRAY).strength(1.5f, 4.0f).sound(SoundType.STONE)
+                propsFor(IGNEOUS_ROCK).mapColor(MapColor.COLOR_GRAY).strength(1.5f, 4.0f).sound(SoundType.STONE)
             )
         ),
         entry(
@@ -103,7 +103,7 @@ object OniBlockFactory {
             OniSolidBlock(
                 GRANITE,
                 dropElementId = "mconi:element_granite",
-                baseProps(GRANITE).mapColor(MapColor.COLOR_ORANGE).strength(1.6f, 4.5f).sound(SoundType.STONE)
+                propsFor(GRANITE).mapColor(MapColor.COLOR_ORANGE).strength(1.6f, 4.5f).sound(SoundType.STONE)
             )
         ),
         entry(
@@ -111,7 +111,7 @@ object OniBlockFactory {
             OniSolidBlock(
                 ABYSSALITE,
                 dropElementId = "mconi:element_abyssalite",
-                baseProps(ABYSSALITE).mapColor(MapColor.COLOR_BLACK).strength(50.0f, 1200.0f).sound(SoundType.STONE)
+                propsFor(ABYSSALITE).mapColor(MapColor.COLOR_BLACK).strength(50.0f, 1200.0f).sound(SoundType.STONE)
             )
         ),
         entry(
@@ -119,7 +119,7 @@ object OniBlockFactory {
             OniSolidBlock(
                 ALGAE,
                 dropElementId = "mconi:element_algae",
-                baseProps(ALGAE).mapColor(MapColor.COLOR_GREEN).strength(0.4f).sound(SoundType.GRASS)
+                propsFor(ALGAE).mapColor(MapColor.COLOR_GREEN).strength(0.4f).sound(SoundType.GRASS)
             )
         ),
         entry(
@@ -127,7 +127,7 @@ object OniBlockFactory {
             OniSolidBlock(
                 POLLUTED_DIRT,
                 dropElementId = "mconi:element_polluted_dirt",
-                baseProps(POLLUTED_DIRT).mapColor(MapColor.COLOR_BROWN).strength(0.6f).sound(SoundType.GRAVEL)
+                propsFor(POLLUTED_DIRT).mapColor(MapColor.COLOR_BROWN).strength(0.6f).sound(SoundType.GRAVEL)
             )
         ),
         entry(
@@ -135,216 +135,216 @@ object OniBlockFactory {
             PrintingPodBlock(
                 PRINTING_POD,
                 dropElementId = "mconi:element_refined_metal",
-                baseProps(PRINTING_POD).mapColor(MapColor.COLOR_LIGHT_GRAY).strength(3.0f, 6.0f).sound(SoundType.METAL)
+                propsFor(PRINTING_POD).mapColor(MapColor.COLOR_LIGHT_GRAY).strength(3.0f, 6.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             OXYGEN_DIFFUSER,
             OniSolidBlock(
                 OXYGEN_DIFFUSER,
-                properties = baseProps(OXYGEN_DIFFUSER).mapColor(MapColor.COLOR_LIGHT_BLUE).strength(2.0f, 5.0f).sound(SoundType.METAL)
+                properties = propsFor(OXYGEN_DIFFUSER).mapColor(MapColor.COLOR_LIGHT_BLUE).strength(2.0f, 5.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             ALGAE_DEOXIDIZER,
             OniSolidBlock(
                 ALGAE_DEOXIDIZER,
-                properties = baseProps(ALGAE_DEOXIDIZER).mapColor(MapColor.COLOR_GREEN).strength(2.0f, 5.0f).sound(SoundType.METAL)
+                properties = propsFor(ALGAE_DEOXIDIZER).mapColor(MapColor.COLOR_GREEN).strength(2.0f, 5.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             CO2_SCRUBBER,
             OniSolidBlock(
                 CO2_SCRUBBER,
-                properties = baseProps(CO2_SCRUBBER).mapColor(MapColor.COLOR_GRAY).strength(2.0f, 5.0f).sound(SoundType.METAL)
+                properties = propsFor(CO2_SCRUBBER).mapColor(MapColor.COLOR_GRAY).strength(2.0f, 5.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             LIQUID_PUMP,
             OniSolidBlock(
                 LIQUID_PUMP,
-                properties = baseProps(LIQUID_PUMP).mapColor(MapColor.COLOR_CYAN).strength(2.0f, 5.0f).sound(SoundType.METAL)
+                properties = propsFor(LIQUID_PUMP).mapColor(MapColor.COLOR_CYAN).strength(2.0f, 5.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             GAS_PUMP,
             OniSolidBlock(
                 GAS_PUMP,
-                properties = baseProps(GAS_PUMP).mapColor(MapColor.COLOR_LIGHT_GRAY).strength(2.0f, 5.0f).sound(SoundType.METAL)
+                properties = propsFor(GAS_PUMP).mapColor(MapColor.COLOR_LIGHT_GRAY).strength(2.0f, 5.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             MANUAL_GENERATOR,
             OniSolidBlock(
                 MANUAL_GENERATOR,
-                properties = baseProps(MANUAL_GENERATOR).mapColor(MapColor.COLOR_ORANGE).strength(2.0f, 5.0f).sound(SoundType.METAL)
+                properties = propsFor(MANUAL_GENERATOR).mapColor(MapColor.COLOR_ORANGE).strength(2.0f, 5.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             BATTERY,
             OniSolidBlock(
                 BATTERY,
-                properties = baseProps(BATTERY).mapColor(MapColor.COLOR_YELLOW).strength(2.0f, 5.0f).sound(SoundType.METAL)
+                properties = propsFor(BATTERY).mapColor(MapColor.COLOR_YELLOW).strength(2.0f, 5.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             POWER_WIRE,
             OniSolidBlock(
                 POWER_WIRE,
-                properties = baseProps(POWER_WIRE).mapColor(MapColor.COLOR_BROWN).noOcclusion().strength(0.6f).sound(SoundType.METAL)
+                properties = propsFor(POWER_WIRE).mapColor(MapColor.COLOR_BROWN).noOcclusion().strength(0.6f).sound(SoundType.METAL)
             )
         ),
         entry(
             WIRE,
             OniSolidBlock(
                 WIRE,
-                properties = baseProps(WIRE).mapColor(MapColor.COLOR_RED).noOcclusion().strength(0.4f).sound(SoundType.METAL)
+                properties = propsFor(WIRE).mapColor(MapColor.COLOR_RED).noOcclusion().strength(0.4f).sound(SoundType.METAL)
             )
         ),
         entry(
             WIRE_BRIDGE,
             OniSolidBlock(
                 WIRE_BRIDGE,
-                properties = baseProps(WIRE_BRIDGE).mapColor(MapColor.COLOR_RED).strength(0.6f).sound(SoundType.METAL)
+                properties = propsFor(WIRE_BRIDGE).mapColor(MapColor.COLOR_RED).strength(0.6f).sound(SoundType.METAL)
             )
         ),
         entry(
             CONDUCTIVE_WIRE,
             OniSolidBlock(
                 CONDUCTIVE_WIRE,
-                properties = baseProps(CONDUCTIVE_WIRE).mapColor(MapColor.COLOR_YELLOW).noOcclusion().strength(0.4f).sound(SoundType.METAL)
+                properties = propsFor(CONDUCTIVE_WIRE).mapColor(MapColor.COLOR_YELLOW).noOcclusion().strength(0.4f).sound(SoundType.METAL)
             )
         ),
         entry(
             CONDUCTIVE_WIRE_BRIDGE,
             OniSolidBlock(
                 CONDUCTIVE_WIRE_BRIDGE,
-                properties = baseProps(CONDUCTIVE_WIRE_BRIDGE).mapColor(MapColor.COLOR_YELLOW).strength(0.6f).sound(SoundType.METAL)
+                properties = propsFor(CONDUCTIVE_WIRE_BRIDGE).mapColor(MapColor.COLOR_YELLOW).strength(0.6f).sound(SoundType.METAL)
             )
         ),
         entry(
             HEAVI_WATT_WIRE,
             OniSolidBlock(
                 HEAVI_WATT_WIRE,
-                properties = baseProps(HEAVI_WATT_WIRE).mapColor(MapColor.COLOR_ORANGE).noOcclusion().strength(0.8f).sound(SoundType.METAL)
+                properties = propsFor(HEAVI_WATT_WIRE).mapColor(MapColor.COLOR_ORANGE).noOcclusion().strength(0.8f).sound(SoundType.METAL)
             )
         ),
         entry(
             HEAVI_WATT_JOINT_PLATE,
             OniSolidBlock(
                 HEAVI_WATT_JOINT_PLATE,
-                properties = baseProps(HEAVI_WATT_JOINT_PLATE).mapColor(MapColor.COLOR_ORANGE).strength(1.0f).sound(SoundType.METAL)
+                properties = propsFor(HEAVI_WATT_JOINT_PLATE).mapColor(MapColor.COLOR_ORANGE).strength(1.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             HEAVI_WATT_CONDUCTIVE_WIRE,
             OniSolidBlock(
                 HEAVI_WATT_CONDUCTIVE_WIRE,
-                properties = baseProps(HEAVI_WATT_CONDUCTIVE_WIRE).mapColor(MapColor.COLOR_YELLOW).noOcclusion().strength(0.8f).sound(SoundType.METAL)
+                properties = propsFor(HEAVI_WATT_CONDUCTIVE_WIRE).mapColor(MapColor.COLOR_YELLOW).noOcclusion().strength(0.8f).sound(SoundType.METAL)
             )
         ),
         entry(
             HEAVI_WATT_CONDUCTIVE_JOINT_PLATE,
             OniSolidBlock(
                 HEAVI_WATT_CONDUCTIVE_JOINT_PLATE,
-                properties = baseProps(HEAVI_WATT_CONDUCTIVE_JOINT_PLATE).mapColor(MapColor.COLOR_YELLOW).strength(1.0f).sound(SoundType.METAL)
+                properties = propsFor(HEAVI_WATT_CONDUCTIVE_JOINT_PLATE).mapColor(MapColor.COLOR_YELLOW).strength(1.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             POWER_TRANSFORMER,
             OniSolidBlock(
                 POWER_TRANSFORMER,
-                properties = baseProps(POWER_TRANSFORMER).mapColor(MapColor.COLOR_GRAY).strength(3.0f, 6.0f).sound(SoundType.METAL)
+                properties = propsFor(POWER_TRANSFORMER).mapColor(MapColor.COLOR_GRAY).strength(3.0f, 6.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             POWER_TRANSFORMER_SMALL,
             OniSolidBlock(
                 POWER_TRANSFORMER_SMALL,
-                properties = baseProps(POWER_TRANSFORMER_SMALL).mapColor(MapColor.COLOR_GRAY).strength(2.5f, 5.0f).sound(SoundType.METAL)
+                properties = propsFor(POWER_TRANSFORMER_SMALL).mapColor(MapColor.COLOR_GRAY).strength(2.5f, 5.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             SMART_BATTERY,
             OniSolidBlock(
                 SMART_BATTERY,
-                properties = baseProps(SMART_BATTERY).mapColor(MapColor.COLOR_YELLOW).strength(2.0f, 5.0f).sound(SoundType.METAL)
+                properties = propsFor(SMART_BATTERY).mapColor(MapColor.COLOR_YELLOW).strength(2.0f, 5.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             JUMBO_BATTERY,
             OniSolidBlock(
                 JUMBO_BATTERY,
-                properties = baseProps(JUMBO_BATTERY).mapColor(MapColor.COLOR_YELLOW).strength(2.5f, 5.5f).sound(SoundType.METAL)
+                properties = propsFor(JUMBO_BATTERY).mapColor(MapColor.COLOR_YELLOW).strength(2.5f, 5.5f).sound(SoundType.METAL)
             )
         ),
         entry(
             COAL_GENERATOR,
             OniSolidBlock(
                 COAL_GENERATOR,
-                properties = baseProps(COAL_GENERATOR).mapColor(MapColor.COLOR_BLACK).strength(4.0f, 8.0f).sound(SoundType.METAL)
+                properties = propsFor(COAL_GENERATOR).mapColor(MapColor.COLOR_BLACK).strength(4.0f, 8.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             HYDROGEN_GENERATOR,
             OniSolidBlock(
                 HYDROGEN_GENERATOR,
-                properties = baseProps(HYDROGEN_GENERATOR).mapColor(MapColor.COLOR_LIGHT_BLUE).strength(4.0f, 8.0f).sound(SoundType.METAL)
+                properties = propsFor(HYDROGEN_GENERATOR).mapColor(MapColor.COLOR_LIGHT_BLUE).strength(4.0f, 8.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             NATURAL_GAS_GENERATOR,
             OniSolidBlock(
                 NATURAL_GAS_GENERATOR,
-                properties = baseProps(NATURAL_GAS_GENERATOR).mapColor(MapColor.COLOR_GREEN).strength(4.0f, 8.0f).sound(SoundType.METAL)
+                properties = propsFor(NATURAL_GAS_GENERATOR).mapColor(MapColor.COLOR_GREEN).strength(4.0f, 8.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             PETROLEUM_GENERATOR,
             OniSolidBlock(
                 PETROLEUM_GENERATOR,
-                properties = baseProps(PETROLEUM_GENERATOR).mapColor(MapColor.COLOR_BROWN).strength(4.0f, 8.0f).sound(SoundType.METAL)
+                properties = propsFor(PETROLEUM_GENERATOR).mapColor(MapColor.COLOR_BROWN).strength(4.0f, 8.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             POWER_CONTROL_STATION,
             OniSolidBlock(
                 POWER_CONTROL_STATION,
-                properties = baseProps(POWER_CONTROL_STATION).mapColor(MapColor.COLOR_CYAN).strength(2.5f, 5.0f).sound(SoundType.METAL)
+                properties = propsFor(POWER_CONTROL_STATION).mapColor(MapColor.COLOR_CYAN).strength(2.5f, 5.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             POWER_SWITCH,
             OniSolidBlock(
                 POWER_SWITCH,
-                properties = baseProps(POWER_SWITCH).mapColor(MapColor.COLOR_RED).strength(1.5f, 3.0f).sound(SoundType.METAL)
+                properties = propsFor(POWER_SWITCH).mapColor(MapColor.COLOR_RED).strength(1.5f, 3.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             POWER_SHUTOFF,
             OniSolidBlock(
                 POWER_SHUTOFF,
-                properties = baseProps(POWER_SHUTOFF).mapColor(MapColor.COLOR_RED).strength(1.5f, 3.0f).sound(SoundType.METAL)
+                properties = propsFor(POWER_SHUTOFF).mapColor(MapColor.COLOR_RED).strength(1.5f, 3.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             POWER_GENERATOR,
             OniSolidBlock(
                 POWER_GENERATOR,
-                properties = baseProps(POWER_GENERATOR).mapColor(MapColor.COLOR_ORANGE).strength(2.0f, 5.0f).sound(SoundType.METAL)
+                properties = propsFor(POWER_GENERATOR).mapColor(MapColor.COLOR_ORANGE).strength(2.0f, 5.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             RESEARCH_DESK,
             OniSolidBlock(
                 RESEARCH_DESK,
-                properties = baseProps(RESEARCH_DESK).mapColor(MapColor.COLOR_LIGHT_GRAY).strength(2.0f, 5.0f).sound(SoundType.METAL)
+                properties = propsFor(RESEARCH_DESK).mapColor(MapColor.COLOR_LIGHT_GRAY).strength(2.0f, 5.0f).sound(SoundType.METAL)
             )
         ),
         entry(
             CONSTRUCTION_SITE,
             ConstructionSiteBlock(
-                baseProps(CONSTRUCTION_SITE).mapColor(MapColor.COLOR_LIGHT_GRAY).noOcclusion().strength(1.0f, 2.0f)
+                propsFor(CONSTRUCTION_SITE).mapColor(MapColor.COLOR_LIGHT_GRAY).noOcclusion().strength(1.0f, 2.0f)
                     .sound(SoundType.METAL)
             )
         ),
@@ -354,32 +354,32 @@ object OniBlockFactory {
         entry(
             WATER,
             OniLiquidBlock(
-                defaultMassKg = 1000,
-                properties = baseProps(WATER).mapColor(MapColor.WATER).noCollision().noOcclusion().strength(0.0f)
+                massKg = 1000,
+                properties = propsFor(WATER).mapColor(MapColor.WATER).noCollision().noOcclusion().strength(0.0f)
                     .sound(SoundType.WET_GRASS)
             )
         ),
         entry(
             POLLUTED_WATER,
             OniLiquidBlock(
-                defaultMassKg = 1000,
-                properties = baseProps(POLLUTED_WATER).mapColor(MapColor.COLOR_GREEN).noCollision().noOcclusion().strength(0.0f)
+                massKg = 1000,
+                properties = propsFor(POLLUTED_WATER).mapColor(MapColor.COLOR_GREEN).noCollision().noOcclusion().strength(0.0f)
                     .sound(SoundType.WET_GRASS)
             )
         ),
         entry(
             CRUDE_OIL,
             OniLiquidBlock(
-                defaultMassKg = 870,
-                properties = baseProps(CRUDE_OIL).mapColor(MapColor.COLOR_BROWN).noCollision().noOcclusion().strength(0.0f)
+                massKg = 870,
+                properties = propsFor(CRUDE_OIL).mapColor(MapColor.COLOR_BROWN).noCollision().noOcclusion().strength(0.0f)
                     .sound(SoundType.SLIME_BLOCK)
             )
         ),
         entry(
             LAVA,
             OniLiquidBlock(
-                defaultMassKg = 1840,
-                properties = baseProps(LAVA).mapColor(MapColor.COLOR_ORANGE).noCollision().noOcclusion().strength(0.0f)
+                massKg = 1840,
+                properties = propsFor(LAVA).mapColor(MapColor.COLOR_ORANGE).noCollision().noOcclusion().strength(0.0f)
                     .sound(SoundType.SLIME_BLOCK)
             )
         )
@@ -389,19 +389,19 @@ object OniBlockFactory {
         entry(
             OXYGEN_GAS,
             OniGasBlock(
-                baseProps(OXYGEN_GAS).noCollision().noOcclusion().strength(0.0f).sound(SoundType.WOOL)
+                propsFor(OXYGEN_GAS).noCollision().noOcclusion().strength(0.0f).sound(SoundType.WOOL)
             )
         ),
         entry(
             CARBON_DIOXIDE_GAS,
             OniGasBlock(
-                baseProps(CARBON_DIOXIDE_GAS).noCollision().noOcclusion().strength(0.0f).sound(SoundType.WOOL)
+                propsFor(CARBON_DIOXIDE_GAS).noCollision().noOcclusion().strength(0.0f).sound(SoundType.WOOL)
             )
         ),
         entry(
             HYDROGEN_GAS,
             OniGasBlock(
-                baseProps(HYDROGEN_GAS).noCollision().noOcclusion().strength(0.0f).sound(SoundType.WOOL)
+                propsFor(HYDROGEN_GAS).noCollision().noOcclusion().strength(0.0f).sound(SoundType.WOOL)
             )
         )
     )
@@ -426,7 +426,7 @@ object OniBlockFactory {
 
     fun idOf(block: Block): String? = IDS_BY_BLOCK[block]
 
-    private val BLOCK_DEFAULT_MASS_KG: Map<String, Int> = mapOf(
+    private val BLOCK_MASS_KG: Map<String, Int> = mapOf(
         REGOLITH to 1000,
         SEDIMENTARY_ROCK to 1840,
         IGNEOUS_ROCK to 1840,
@@ -436,15 +436,15 @@ object OniBlockFactory {
         POLLUTED_DIRT to 1000
     )
 
-    fun blockDefaultMassKg(id: String): Int {
-        return BLOCK_DEFAULT_MASS_KG[id] ?: 1
+    fun blockMassKg(id: String): Int {
+        return BLOCK_MASS_KG[id] ?: 1
     }
 
-    fun blockDigYieldKg(id: String): Int = blockDefaultMassKg(id).coerceAtLeast(1)
+    fun blockDigYieldKg(id: String): Int = blockMassKg(id).coerceAtLeast(1)
 
-    fun liquidDefaultMassKg(liquidId: String): Int {
+    fun liquidMassKg(liquidId: String): Int {
         val block = OniBlockLookup.block(liquidId)
-        return (block as? OniLiquidBlock)?.defaultMassKg ?: 0
+        return (block as? OniLiquidBlock)?.massKg ?: 0
     }
 
     fun createBlock(id: String): Block {

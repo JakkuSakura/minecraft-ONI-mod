@@ -24,7 +24,7 @@ class OniAtmosphereKernel {
 
     private fun updateCell(cell: OniCellState, config: OniSimulationConfig) {
         if (cell.occupancyState() == OccupancyState.SOLID) {
-            cell.setFluidState(OniElements.LIQUID_NONE, 0.0)
+            cell.setLiquidState(OniElements.LIQUID_NONE, 0.0)
             for (species in OniElements.GASES) {
                 cell.setGasMassKg(species, 0.0)
             }
@@ -39,8 +39,8 @@ class OniAtmosphereKernel {
         }
 
         val totalGasMassKg = cell.totalGasMassKg()
-        if (cell.fluidId() != OniElements.LIQUID_NONE && cell.fluidMassKg() > 0.0) {
-            cell.setOccupancyState(OccupancyState.FLUID)
+        if (cell.liquidId() != OniElements.LIQUID_NONE && cell.liquidMassKg() > 0.0) {
+            cell.setOccupancyState(OccupancyState.LIQUID)
             return
         }
 
@@ -71,11 +71,11 @@ class OniAtmosphereKernel {
             val next = cell.gasMassKg(species) * (1.0 - drainFraction)
             cell.setGasMassKg(species, next)
         }
-        val nextFluid = cell.fluidMassKg() * (1.0 - config.voidFluidDrainFraction().coerceIn(0.0, 1.0))
-        if (nextFluid <= 0.0) {
-            cell.setFluidState(OniElements.LIQUID_NONE, 0.0)
+        val nextLiquid = cell.liquidMassKg() * (1.0 - config.voidLiquidDrainFraction().coerceIn(0.0, 1.0))
+        if (nextLiquid <= 0.0) {
+            cell.setLiquidState(OniElements.LIQUID_NONE, 0.0)
         } else {
-            cell.setFluidState(cell.fluidId(), nextFluid)
+            cell.setLiquidState(cell.liquidId(), nextLiquid)
         }
     }
 

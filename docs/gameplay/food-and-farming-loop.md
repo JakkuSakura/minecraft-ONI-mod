@@ -9,7 +9,7 @@ Make food production depend on environmental engineering, not only crop placemen
 - Crop growth depends on:
   - temperature band
   - atmosphere composition
-  - irrigation fluid
+  - irrigation liquid
   - lighting policy
 
 ## Food Pipeline

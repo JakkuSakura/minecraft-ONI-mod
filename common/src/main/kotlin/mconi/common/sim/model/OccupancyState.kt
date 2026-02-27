@@ -3,7 +3,7 @@ package mconi.common.sim.model
 enum class OccupancyState {
     SOLID,
     GAS,
-    FLUID,
+    LIQUID,
     VACUUM,
     VOID,
 }

@@ -55,7 +55,7 @@ This system is inspired by IC2 network constraints, but simplified and ONI-like 
   - electrolyzers
   - research stations
   - advanced construction modules
-- Brownout should pause machines cleanly without deleting buffered mass/fluids.
+- Brownout should pause machines cleanly without deleting buffered mass/liquids.
 - Automation can disable non-critical loads when grid stress is high.
 
 ## 7. UX Requirements

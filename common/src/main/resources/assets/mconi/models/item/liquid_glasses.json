@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "mconi:item/fluid_glasses"
+    "layer0": "mconi:item/liquid_glasses"
   }
 }

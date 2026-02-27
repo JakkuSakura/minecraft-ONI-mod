@@ -17,8 +17,8 @@ This system defines temperature, heat transfer, and thermal failure behavior.
 
 - Gas <-> gas conduction between neighboring cells.
 - Gas <-> solid exchange at boundaries.
-- Fluid <-> gas exchange where adjacent.
-- Fluid <-> solid exchange for pipes/tanks/terrain contact.
+- Liquid <-> gas exchange where adjacent.
+- Liquid <-> solid exchange for pipes/tanks/terrain contact.
 - Machine heat injection into local cell.
 
 All channels are rate-limited per tick for stability.

@@ -2,7 +2,7 @@ package mconi.common.sim.model
 
 enum class SystemLens {
     ATMOSPHERE,
-    FLUID,
+    LIQUID,
     THERMAL,
     OXYGEN,
     POWER,
@@ -13,8 +13,12 @@ enum class SystemLens {
     companion object {
         @JvmStatic
         fun fromInput(input: String): SystemLens? {
+            val normalized = input.trim().uppercase()
+            if (normalized == "FLUID") {
+                return LIQUID
+            }
             return try {
-                valueOf(input.uppercase())
+                valueOf(normalized)
             } catch (_: IllegalArgumentException) {
                 null
             }

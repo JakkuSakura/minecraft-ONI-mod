@@ -14,13 +14,13 @@ class OniAtmosphereKernelTest {
         val cell = grid.getOrCreateCellAtBlock(0, 0, 0, config.cellSize())
         cell.setOccupancyState(OccupancyState.SOLID)
         cell.setGasMassKg(OniElements.GAS_OXYGEN, 5.0)
-        cell.setFluidState(OniElements.LIQUID_WATER, 100.0)
+        cell.setLiquidState(OniElements.LIQUID_WATER, 100.0)
 
         OniAtmosphereKernel().run(grid, config)
 
         assertEquals(OccupancyState.SOLID, cell.occupancyState())
         assertEquals(0.0, cell.totalGasMassKg(), 1e-6)
-        assertEquals(0.0, cell.fluidMassKg(), 1e-6)
+        assertEquals(0.0, cell.liquidMassKg(), 1e-6)
     }
 
     @Test

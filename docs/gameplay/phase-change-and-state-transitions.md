@@ -22,7 +22,7 @@ Turn temperature and pressure control into production mechanics.
 
 - Mass is conserved through phase conversions.
 - Heat system handles energy cost/release.
-- Atmosphere/fluid occupancy updates after conversion.
+- Atmosphere/liquid occupancy updates after conversion.
 
 ## Gameplay Uses
 

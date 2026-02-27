@@ -36,13 +36,13 @@ object OniSimulationPersistence {
             val coord = OniCellCoordinate(entry.x, entry.y, entry.z)
             val cell: OniCellState = grid.getOrCreateCellAtCoordinate(coord)
             cell.setOccupancyState(entry.occupancy)
-            val liquidId = OniElements.parseLiquidId(entry.fluidId) ?: entry.fluidId
+            val liquidId = OniElements.parseLiquidId(entry.liquidId) ?: entry.liquidId
             val normalized = if (liquidId == OniElements.LIQUID_NONE || OniElements.isLiquid(liquidId)) {
                 liquidId
             } else {
                 OniElements.LIQUID_NONE
             }
-            cell.setFluidState(normalized, entry.fluidMass)
+            cell.setLiquidState(normalized, entry.liquidMass)
             cell.setTemperatureK(entry.temperatureK)
             cell.setPressureKpa(entry.pressureKpa)
             cell.setGasMassKg(OniElements.GAS_OXYGEN, entry.o2Mass)
@@ -62,8 +62,8 @@ object OniSimulationPersistence {
                     coord.cellY(),
                     coord.cellZ(),
                     cell.occupancyState(),
-                    cell.fluidId(),
-                    cell.fluidMassKg(),
+                    cell.liquidId(),
+                    cell.liquidMassKg(),
                     cell.temperatureK(),
                     cell.pressureKpa(),
                     cell.gasMassKg(OniElements.GAS_OXYGEN),

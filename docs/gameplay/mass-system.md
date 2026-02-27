@@ -7,9 +7,9 @@ This system defines how all matter quantities are represented and conserved.
 - Canonical unit: `kg` (kilogram).
 - Gas cell stores per-species gas mass in kg:
   - `gas_mass_kg[species]`
-- Fluid cell stores:
-  - `fluid_mass_kg`
-  - `fluid_type`
+- Liquid cell stores:
+  - `liquid_mass_kg`
+  - `liquid_type`
 - `vacuum` means all masses are `0`.
 - `void` is a boundary sink where mass may be removed by rule.
 
@@ -17,7 +17,7 @@ This system defines how all matter quantities are represented and conserved.
 
 In closed regions (no `void`, no machine conversion), total mass is conserved:
 
-- `sum(gas_mass) + sum(fluid_mass) + contained_item_mass = constant`
+- `sum(gas_mass) + sum(liquid_mass) + contained_item_mass = constant`
 
 Mass can only change through:
 
@@ -43,9 +43,9 @@ Pressure is derived from gas mass and temperature.
   - `pressure_kpa = f(total_gas_mass_kg, temperature_k, cell_volume_m3)`
 - Keep formula and coefficients centralized in config for tuning.
 
-## 5. Fluid Mass and Fill Ratio
+## 5. Liquid Mass and Fill Ratio
 
-- `fill_ratio = fluid_mass_kg / fluid_capacity_kg`
+- `fill_ratio = liquid_mass_kg / liquid_capacity_kg`
 - Flow priority:
   1. down-gradient gravity flow
   2. lateral equalization toward lower fill ratio
@@ -55,8 +55,8 @@ Pressure is derived from gas mass and temperature.
 
 Each machine defines:
 
-- exact input mass rates by species/fluid
-- exact output mass rates by species/fluid
+- exact input mass rates by species/liquid
+- exact output mass rates by species/liquid
 - optional waste/byproduct channels
 
 Example (`Electrolyzer`):

@@ -23,11 +23,11 @@ Related detailed specs:
 - Every block position resolves to one runtime occupancy:
   - `solid`
   - `gas`
-  - `fluid`
+  - `liquid`
   - `vacuum`
   - `void` (space-exposed)
 - `solid` excludes other states.
-- `gas` and `fluid` are mutually exclusive at one position.
+- `gas` and `liquid` are mutually exclusive at one position.
 - `vacuum` means no matter and no automatic refill.
 - `void` is an active boundary sink, not just low pressure.
 
@@ -92,11 +92,11 @@ Related detailed specs:
 - Soft threshold at `>= 6%`, hard threshold at `>= 12%`.
 - Applies stacking fatigue and regen suppression before direct damage.
 
-## 4. Fluid System
+## 4. Liquid System
 
 ### Core Rule
 
-- Fluids are finite-mass and do not use vanilla infinite-source duplication logic.
+- Liquids are finite-mass and do not use vanilla infinite-source duplication logic.
 
 ### Species (required core set)
 
@@ -107,8 +107,8 @@ Related detailed specs:
 
 ### Per-Cell Liquid Data
 
-- `fluid_type`
-- `fluid_mass`
+- `liquid_type`
+- `liquid_mass`
 - `temperature_k`
 
 ### Flow Order
@@ -119,9 +119,9 @@ Related detailed specs:
 
 ### Occupancy Interactions
 
-- Fluid entering a `gas` cell displaces gas mass.
-- Fluid cannot enter `solid`.
-- Fluid exposed to `void` is removed at boundary sink rate.
+- Liquid entering a `gas` cell displaces gas mass.
+- Liquid cannot enter `solid`.
+- Liquid exposed to `void` is removed at boundary sink rate.
 
 ## 5. Thermal System
 

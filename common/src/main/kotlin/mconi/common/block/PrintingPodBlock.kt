@@ -9,14 +9,15 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
-import mconi.common.content.OniItemTags
+import mconi.common.element.OniElements
 import mconi.common.sim.OniConstructionMaterials
 import mconi.common.sim.OniServices
 
 class PrintingPodBlock(
     blockId: String,
+    dropElementId: String? = null,
     properties: BlockBehaviour.Properties
-) : OniMassBlock(blockId, properties) {
+) : OniSolidBlock(blockId, dropElementId, properties) {
     override fun useWithoutItem(
         state: BlockState,
         level: Level,
@@ -57,7 +58,7 @@ class PrintingPodBlock(
             return InteractionResult.CONSUME
         }
 
-        val deposited = OniConstructionMaterials.depositFromPlayer(player, OniItemTags.BUILD_MATERIALS, needed)
+        val deposited = OniConstructionMaterials.depositFromPlayer(player, OniElements.elementItems(), needed)
         if (deposited <= 0) {
             player.displayClientMessage(Component.literal("No build materials in inventory."), true)
             return InteractionResult.CONSUME

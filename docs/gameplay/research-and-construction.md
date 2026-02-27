@@ -10,6 +10,46 @@ This reworks building from instant crafting to a research + construction workflo
 4. Place construction ghost.
 5. Build completes over time with progress, not instantly.
 
+## 1.1 ONI-Style Construction Flow (In-Game)
+
+This mod uses an ONI-like construction flow driven by a Blueprint Book and construction sites.
+
+Player actions:
+
+1. Craft a `Blueprint Book` (4x Dirt).
+2. Open the book to select a blueprint and the construction materials for each slot.
+3. Right click in air to receive a `Blueprint` item for the selected building.
+4. Right click a target location to place a `Construction Site` directly (no intermediate item).
+5. Right click the site to deliver materials over time (per-second rate).
+6. When all materials are delivered, right click and hold to build over time.
+7. Construction can be interrupted and resumed at any time.
+8. Breaking a site refunds all delivered materials (full refund).
+
+Notes:
+
+- All blueprints are selectable for now (research may still pause completion).
+- Material requirements are based on Oxygen Not Included building materials.
+
+Current blueprint materials (ONI wiki reference values for the primary material, plus a secondary MC material to enforce multi-material recipes):
+
+| Blueprint | ONI building | Slot 1 (ONI material) | Amount (kg) | Slot 2 (MC structural material) | Amount |
+| --- | --- | --- | --- | --- | --- |
+| oxygen_diffuser | Oxygen Diffuser | Metal Ore | 200 | Raw Mineral | 50 |
+| algae_deoxidizer | Oxygen Diffuser (material values) | Metal Ore | 200 | Raw Mineral | 50 |
+| co2_scrubber | Carbon Skimmer | Metal Ore | 100 | Raw Mineral | 50 |
+| liquid_pump | Liquid Pump | Metal Ore | 400 | Refined Metal | 50 |
+| gas_pump | Gas Pump | Metal Ore | 50 | Refined Metal | 25 |
+| manual_generator | Manual Generator | Metal Ore | 200 | Raw Mineral | 100 |
+| battery | Battery | Metal Ore | 200 | Refined Metal | 50 |
+| power_wire | Wire | Metal Ore | 25 | Raw Mineral | 10 |
+| power_generator | Coal Generator | Metal Ore | 800 | Refined Metal | 200 |
+| research_desk | Research Station | Metal Ore | 400 | Raw Mineral | 100 |
+
+Notes:
+
+- Slot 1 follows ONI material costs.
+- Slot 2 is a mod-specific structural requirement to ensure multi-material recipes in Minecraft.
+
 ## 2. Research System
 
 ### Research Stations
@@ -28,7 +68,7 @@ This reworks building from instant crafting to a research + construction workflo
 - Directed acyclic graph with tier dependencies.
 - Example branches:
   - Atmosphere (oxygen, gas filtration)
-  - Liquids (pumps, purification, thermal fluids)
+  - Liquids (pumps, purification, thermal liquids)
   - Thermal (regulators, insulation, cooling)
   - Automation (sensors, valves, logic controllers)
 
@@ -55,6 +95,12 @@ Data contract per blueprint:
 - Player places `construction ghost` block/entity.
 - Ghost stores required materials and progress.
 - Materials can be deposited all-at-once or incrementally.
+
+For the ONI-style construction site:
+
+- Delivery and build progress advance per second, not per click.
+- Rate is multiplied by the builder's personal stress score.
+- If materials are incomplete, progress is paused with a reason shown.
 
 ### Build Progress
 

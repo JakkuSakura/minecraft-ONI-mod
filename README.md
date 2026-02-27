@@ -5,7 +5,7 @@ Bring ONI-style colony simulation into Minecraft. This repo focuses on a constra
 ## Highlights
 
 - Constrained ONI world with bedrock borders, space exposure up top, lava layer below.
-- Multi-layer simulation: atmosphere, fluids, thermal, stress, power, research, construction.
+- Multi-layer simulation: atmosphere, liquids, thermal, stress, power, research, construction.
 - Debug HTTP server for runtime inspection and test automation.
 - System glasses items for in-world visualization.
 - Multi-loader support (Fabric, NeoForge, Spigot).

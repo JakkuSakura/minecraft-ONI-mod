@@ -17,7 +17,7 @@ object OniSystemInspector {
     ): List<LayerProperty> {
         return when (systemLens) {
             SystemLens.ATMOSPHERE -> atmosphereLayers(cell)
-            SystemLens.FLUID -> fluidLayers(cell)
+            SystemLens.LIQUID -> liquidLayers(cell)
             SystemLens.THERMAL -> thermalLayers(cell)
             SystemLens.OXYGEN -> oxygenLayers(cell)
             SystemLens.POWER -> powerLayers(runtime)
@@ -39,11 +39,11 @@ object OniSystemInspector {
         )
     }
 
-    private fun fluidLayers(cell: OniCellState): List<LayerProperty> {
+    private fun liquidLayers(cell: OniCellState): List<LayerProperty> {
         return listOf(
-            LayerProperty("fluid", "id", cell.fluidId()),
-            LayerProperty("fluid", "mass_kg", "%.3f".format(cell.fluidMassKg())),
-            LayerProperty("fluid", "boiling_candidate", (cell.temperatureK() > 373.15).toString()),
+            LayerProperty("liquid", "id", cell.liquidId()),
+            LayerProperty("liquid", "mass_kg", "%.3f".format(cell.liquidMassKg())),
+            LayerProperty("liquid", "boiling_candidate", (cell.temperatureK() > 373.15).toString()),
         )
     }
 

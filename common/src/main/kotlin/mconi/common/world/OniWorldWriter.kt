@@ -80,7 +80,7 @@ object OniWorldWriter {
         }
         val cell = grid.getCellAtCoordinate(OniCellCoordinate.fromBlockPosition(x, y, z, config.cellSize()))
         if (OniWorldFoundation.isVoidBand(y, maxY, config)) {
-            val target = Blocks.AIR.defaultBlockState()
+            val target = Blocks.AIR.stateDefinition.any()
             setIfReplaceable(level, x, y, z, target)
             cell?.setWorldBlockKey(BuiltInRegistries.BLOCK.getKey(target.block).toString())
             return
@@ -112,13 +112,13 @@ object OniWorldWriter {
         }
 
         when (cell.occupancyState()) {
-            OccupancyState.FLUID -> {
-                val target = when (cell.fluidId()) {
+            OccupancyState.LIQUID -> {
+                val target = when (cell.liquidId()) {
                     OniElements.LIQUID_LAVA -> OniBlockLookup.state(OniBlockFactory.LAVA)
                     OniElements.LIQUID_WATER -> OniBlockLookup.state(OniBlockFactory.WATER)
                     OniElements.LIQUID_POLLUTED_WATER -> OniBlockLookup.state(OniBlockFactory.POLLUTED_WATER)
                     OniElements.LIQUID_CRUDE_OIL -> OniBlockLookup.state(OniBlockFactory.CRUDE_OIL)
-                    else -> Blocks.AIR.defaultBlockState()
+                    else -> Blocks.AIR.stateDefinition.any()
                 }
                 setIfReplaceable(level, x, y, z, target)
                 cell.setWorldBlockKey(BuiltInRegistries.BLOCK.getKey(target.block).toString())
@@ -126,7 +126,7 @@ object OniWorldWriter {
             OccupancyState.GAS -> {
                 val total = cell.totalGasMassKg()
                 if (total <= 0.001) {
-                    val target = Blocks.AIR.defaultBlockState()
+                    val target = Blocks.AIR.stateDefinition.any()
                     setIfReplaceable(level, x, y, z, target)
                     cell.setWorldBlockKey(BuiltInRegistries.BLOCK.getKey(target.block).toString())
                     return
@@ -136,14 +136,14 @@ object OniWorldWriter {
                     OniElements.GAS_OXYGEN -> OniBlockLookup.state(OniBlockFactory.OXYGEN_GAS)
                     OniElements.GAS_CARBON_DIOXIDE -> OniBlockLookup.state(OniBlockFactory.CARBON_DIOXIDE_GAS)
                     OniElements.GAS_HYDROGEN -> OniBlockLookup.state(OniBlockFactory.HYDROGEN_GAS)
-                    else -> Blocks.AIR.defaultBlockState()
+                    else -> Blocks.AIR.stateDefinition.any()
                 }
                 setIfReplaceable(level, x, y, z, gasState)
                 cell.setWorldBlockKey(BuiltInRegistries.BLOCK.getKey(gasState.block).toString())
             }
             OccupancyState.VACUUM,
             OccupancyState.VOID -> {
-                val target = Blocks.AIR.defaultBlockState()
+                val target = Blocks.AIR.stateDefinition.any()
                 setIfReplaceable(level, x, y, z, target)
                 cell.setWorldBlockKey(BuiltInRegistries.BLOCK.getKey(target.block).toString())
             }

@@ -1,8 +1,8 @@
 package mconi.common.world
 
-import mconi.common.AbstractModInitializer
+import mconi.common.AbstractModBootstrap
 import mconi.common.block.OniBlockLookup
-import mconi.common.content.OniBlockIds
+import mconi.common.block.OniBlockFactory
 import mconi.common.sim.OniServices
 import mconi.common.sim.OniSimulationConfig
 import mconi.common.sim.OniWorldFoundation
@@ -19,7 +19,7 @@ import net.minecraft.world.level.border.WorldBorder
 import org.apache.logging.log4j.Logger
 
 object OniWorldEnforcer {
-    private val LOGGER: Logger = AbstractModInitializer.LOGGER
+    private val LOGGER: Logger = AbstractModBootstrap.LOGGER
 
     fun applyWorldBorder(level: ServerLevel) {
         if (level.dimension() != Level.OVERWORLD) {
@@ -90,7 +90,7 @@ object OniWorldEnforcer {
                         continue
                     }
                     if (OniWorldFoundation.isLavaBand(y, minY, config)) {
-                        setIfReplaceable(level, x, y, z, OniBlockLookup.block(OniBlockIds.LAVA))
+                        setIfReplaceable(level, x, y, z, OniBlockLookup.block(OniBlockFactory.LAVA))
                     }
                 }
             }
@@ -104,8 +104,8 @@ object OniWorldEnforcer {
         val chunkMaxX = chunkPos.maxBlockX
         val chunkMinZ = chunkPos.minBlockZ
         val chunkMaxZ = chunkPos.maxBlockZ
-        val podState = OniBlockLookup.state(OniBlockIds.PRINTING_POD)
-        val fillerState = OniBlockLookup.state(OniBlockIds.IGNEOUS_ROCK)
+        val podState = OniBlockLookup.state(OniBlockFactory.PRINTING_POD)
+        val fillerState = OniBlockLookup.state(OniBlockFactory.IGNEOUS_ROCK)
 
         if (podPos.x in chunkMinX..chunkMaxX && podPos.z in chunkMinZ..chunkMaxZ && podPos.y in minY..maxY) {
             if (level.getBlockState(podPos).block != podState.block) {
@@ -129,7 +129,7 @@ object OniWorldEnforcer {
     private fun buildBedrockWall(level: ServerLevel, x: Int, minZ: Int, maxZ: Int, minY: Int, maxY: Int) {
         for (z in minZ..maxZ) {
             for (y in minY..maxY) {
-                level.setBlock(BlockPos(x, y, z), Blocks.BEDROCK.defaultBlockState(), 3)
+                level.setBlock(BlockPos(x, y, z), Blocks.BEDROCK.stateDefinition.any(), 3)
             }
         }
     }
@@ -137,7 +137,7 @@ object OniWorldEnforcer {
     private fun buildBedrockWallZ(level: ServerLevel, z: Int, minX: Int, maxX: Int, minY: Int, maxY: Int) {
         for (x in minX..maxX) {
             for (y in minY..maxY) {
-                level.setBlock(BlockPos(x, y, z), Blocks.BEDROCK.defaultBlockState(), 3)
+                level.setBlock(BlockPos(x, y, z), Blocks.BEDROCK.stateDefinition.any(), 3)
             }
         }
     }
@@ -145,20 +145,20 @@ object OniWorldEnforcer {
     private fun setIfNot(level: ServerLevel, x: Int, y: Int, z: Int, block: Block) {
         val pos = BlockPos(x, y, z)
         if (level.getBlockState(pos).block != block) {
-            level.setBlock(pos, block.defaultBlockState(), 2)
+            level.setBlock(pos, block.stateDefinition.any(), 2)
         }
     }
 
     private fun setIfReplaceable(level: ServerLevel, x: Int, y: Int, z: Int, block: Block) {
         val pos = BlockPos(x, y, z)
         val state: BlockState = level.getBlockState(pos)
-        val isFluid = state.fluidState.`is`(Fluids.WATER) || state.fluidState.`is`(Fluids.LAVA)
-        if (state.isAir || isFluid || state.`is`(OniBlockLookup.block(OniBlockIds.WATER)) ||
-            state.`is`(OniBlockLookup.block(OniBlockIds.POLLUTED_WATER)) ||
-            state.`is`(OniBlockLookup.block(OniBlockIds.CRUDE_OIL)) ||
-            state.`is`(OniBlockLookup.block(OniBlockIds.LAVA))
+        val isLiquid = state.fluidState.`is`(Fluids.WATER) || state.fluidState.`is`(Fluids.LAVA)
+        if (state.isAir || isLiquid || state.`is`(OniBlockLookup.block(OniBlockFactory.WATER)) ||
+            state.`is`(OniBlockLookup.block(OniBlockFactory.POLLUTED_WATER)) ||
+            state.`is`(OniBlockLookup.block(OniBlockFactory.CRUDE_OIL)) ||
+            state.`is`(OniBlockLookup.block(OniBlockFactory.LAVA))
         ) {
-            level.setBlock(pos, block.defaultBlockState(), 2)
+            level.setBlock(pos, block.stateDefinition.any(), 2)
         }
     }
 }
