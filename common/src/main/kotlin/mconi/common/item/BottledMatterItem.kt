@@ -5,26 +5,15 @@ import net.minecraft.world.item.Item
 import net.minecraft.core.component.DataComponents
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
-import net.minecraft.world.item.component.CustomData
 import net.minecraft.world.item.component.TooltipDisplay
 import net.minecraft.world.item.Item.TooltipContext
 
 class BottledMatterItem(
     properties: Properties,
     private val phase: MatterPhase,
-    private val defaultMassKg: Double,
-    private val defaultTempK: Double
+    private val massKg: Double,
+    private val temperatureK: Double
 ) : Item(properties.stacksTo(16)) {
-    override fun getDefaultInstance(): ItemStack {
-        val stack = super.getDefaultInstance()
-        CustomData.update(DataComponents.CUSTOM_DATA, stack) { tag ->
-            tag.putString(TAG_PHASE, phase.name)
-            tag.putDouble(TAG_MASS_KG, defaultMassKg)
-            tag.putDouble(TAG_TEMP_K, defaultTempK)
-        }
-        return stack
-    }
-
     override fun appendHoverText(
         stack: ItemStack,
         context: TooltipContext,
@@ -35,8 +24,8 @@ class BottledMatterItem(
         val data = stack.get(DataComponents.CUSTOM_DATA)
         val tag = data?.copyTag()
         val phaseName = tag?.getString(TAG_PHASE) ?: phase.name
-        val mass = tag?.getDouble(TAG_MASS_KG) ?: defaultMassKg
-        val temp = tag?.getDouble(TAG_TEMP_K) ?: defaultTempK
+        val mass = tag?.getDouble(TAG_MASS_KG) ?: massKg
+        val temp = tag?.getDouble(TAG_TEMP_K) ?: temperatureK
         tooltip.accept(Component.literal("Phase: $phaseName"))
         tooltip.accept(Component.literal(String.format("Mass: %.2f kg", mass)))
         tooltip.accept(Component.literal(String.format("Temp: %.1f K", temp)))

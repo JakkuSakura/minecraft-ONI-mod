@@ -1,6 +1,6 @@
 package mconi.common.item
 
-import mconi.common.AbstractModInitializer
+import mconi.common.AbstractModBootstrap
 import mconi.common.block.OniBlockFactory
 import mconi.common.item.OniItemFactory
 import mconi.common.sim.model.SystemLens
@@ -27,7 +27,7 @@ object OniCreativeTabs {
     )
 
     private fun tabId(): Identifier {
-        return Identifier.tryParse("${AbstractModInitializer.MOD_ID}:$TAB_PATH")
+        return Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:$TAB_PATH")
             ?: throw IllegalStateException("Invalid creative tab id: $TAB_PATH")
     }
 
@@ -39,23 +39,23 @@ object OniCreativeTabs {
     @JvmStatic
     fun createTab(iconSupplier: Supplier<ItemStack>): CreativeModeTab {
         return CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
-            .title(Component.translatable("itemGroup.${AbstractModInitializer.MOD_ID}.$TAB_PATH"))
+            .title(Component.translatable("itemGroup.${AbstractModBootstrap.MOD_ID}.$TAB_PATH"))
             .icon(iconSupplier)
             .displayItems { params, output ->
                 for (lens in SystemLens.values()) {
                     val path = OniItemFactory.pathForLens(lens) ?: continue
-                    val id = Identifier.tryParse("${AbstractModInitializer.MOD_ID}:$path") ?: continue
+                    val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:$path") ?: continue
                     val itemKey = ResourceKey.create(Registries.ITEM, id)
                     output.accept(ItemStack(params.holders().lookupOrThrow(Registries.ITEM).getOrThrow(itemKey)))
                 }
                 for (path in OniItemFactory.ALL) {
-                    val id = Identifier.tryParse("${AbstractModInitializer.MOD_ID}:$path") ?: continue
+                    val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:$path") ?: continue
                     val itemKey = ResourceKey.create(Registries.ITEM, id)
                     output.accept(ItemStack(params.holders().lookupOrThrow(Registries.ITEM).getOrThrow(itemKey)))
                 }
                 for (block in OniBlockFactory.SOLIDS) {
                     val path = OniBlockFactory.idOf(block) ?: continue
-                    val id = Identifier.tryParse("${AbstractModInitializer.MOD_ID}:$path") ?: continue
+                    val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:$path") ?: continue
                     val itemKey = ResourceKey.create(Registries.ITEM, id)
                     output.accept(ItemStack(params.holders().lookupOrThrow(Registries.ITEM).getOrThrow(itemKey)))
                 }

@@ -1,9 +1,9 @@
 package mconi.common.item
 
-import mconi.common.AbstractModInitializer
+import mconi.common.AbstractModBootstrap
 
 object OniElementCatalog {
-    private fun modId(id: String): String = "${AbstractModInitializer.MOD_ID}:$id"
+    private fun modId(id: String): String = "${AbstractModBootstrap.MOD_ID}:$id"
 
     val METAL_ORE: List<String> = listOf(
         modId(OniItemFactory.ELEMENT_METAL_ORE)

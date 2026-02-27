@@ -30,7 +30,7 @@ class SystemGlassesItem(
                 ),
                 false
             )
-            for (property in OniSystemInspector.inspect(OniServices.simulationRuntime(), systemLens, cell)) {
+            for (property in OniSystemInspector.inspect(OniServices.simulationRuntime(), systemLens, cell, player)) {
                 player.displayClientMessage(
                     Component.literal("[${property.layer()}] ${property.key()}=${property.value()}"),
                     false
