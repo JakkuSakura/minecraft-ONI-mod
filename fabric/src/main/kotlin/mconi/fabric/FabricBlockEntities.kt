@@ -1,6 +1,6 @@
 package mconi.fabric
 
-import mconi.common.AbstractModInitializer
+import mconi.common.AbstractModBootstrap
 import mconi.common.block.OniBlockLookup
 import mconi.common.block.entity.ConstructionSiteBlockEntity
 import mconi.common.block.entity.OniBlockEntityTypes
@@ -19,7 +19,7 @@ object FabricBlockEntities {
         }
         registered = true
 
-        val id = Identifier.tryParse("${AbstractModInitializer.MOD_ID}:${OniBlockFactory.CONSTRUCTION_SITE}")
+        val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:${OniBlockFactory.CONSTRUCTION_SITE}")
             ?: throw IllegalArgumentException("Invalid block entity id")
         val block = OniBlockLookup.block(OniBlockFactory.CONSTRUCTION_SITE)
         val type = FabricBlockEntityTypeBuilder.create(::ConstructionSiteBlockEntity, block).build()

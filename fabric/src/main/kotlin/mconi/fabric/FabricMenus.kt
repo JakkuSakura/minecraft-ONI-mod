@@ -1,6 +1,6 @@
 package mconi.fabric
 
-import mconi.common.AbstractModInitializer
+import mconi.common.AbstractModBootstrap
 import mconi.common.menu.BlueprintBookMenu
 import mconi.common.menu.OniMenuTypes
 import net.minecraft.core.Registry
@@ -18,7 +18,7 @@ object FabricMenus {
         }
         registered = true
 
-        val id = Identifier.tryParse("${AbstractModInitializer.MOD_ID}:blueprint_book")
+        val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:blueprint_book")
             ?: throw IllegalArgumentException("Invalid menu id")
         val type = MenuType({ containerId, inventory -> BlueprintBookMenu(containerId, inventory) }, FeatureFlagSet.of())
         Registry.register(BuiltInRegistries.MENU, id, type)

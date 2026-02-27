@@ -6,6 +6,7 @@
     ],
     "client": [
         "fabric.client.SplashManagerMixin",
+        "common.client.HudOverlayMixin",
         "common.client.TitleScreenMixin",
         "common.client.TitleScreenButtonMixin"
     ],

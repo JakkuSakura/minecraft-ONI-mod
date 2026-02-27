@@ -1,6 +1,6 @@
 package mconi.fabric
 
-import mconi.common.AbstractModInitializer
+import mconi.common.AbstractModBootstrap
 import mconi.common.block.OniBlockFactory
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
@@ -33,7 +33,7 @@ object FabricBlocks {
     }
 
     private fun id(path: String): Identifier {
-        return Identifier.tryParse("${AbstractModInitializer.MOD_ID}:$path")
+        return Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:$path")
             ?: throw IllegalArgumentException("Invalid block id path: $path")
     }
 }
