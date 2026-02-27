@@ -1,11 +1,11 @@
 package mconi.sponge
 
-import mconi.common.AbstractModInitializer
+import mconi.common.AbstractModBootstrap
 
 /**
  * Sponge server event proxy.
  */
-class SpongeServerProxy : AbstractModInitializer.IEventProxy {
+class SpongeServerProxy : AbstractModBootstrap.IEventProxy {
     override fun registerEvents() {
     }
 }

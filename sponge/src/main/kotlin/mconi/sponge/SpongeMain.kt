@@ -1,6 +1,6 @@
 package mconi.sponge
 
-import mconi.common.AbstractModInitializer
+import mconi.common.AbstractModBootstrap
 import mconi.common.LoaderType
 import org.spongepowered.api.Server
 import org.spongepowered.api.event.Listener
@@ -10,8 +10,8 @@ import org.spongepowered.plugin.builtin.jvm.Plugin
 /**
  * Sponge entrypoint.
  */
-@Plugin(AbstractModInitializer.MOD_ID)
-class SpongeMain : AbstractModInitializer() {
+@Plugin(AbstractModBootstrap.MOD_ID)
+class SpongeMain : AbstractModBootstrap() {
     init {
         loaderType = LoaderType.Sponge
         INSTANCE = this
@@ -19,15 +19,15 @@ class SpongeMain : AbstractModInitializer() {
 
     @Listener
     fun onServerStart(event: StartedEngineEvent<Server>) {
-        super.onInitializeServer()
+        super.onSetupServer()
     }
 
-    override fun createInitialBindings() {
+    override fun createBindings() {
     }
 
     override fun createServerProxy(isDedicated: Boolean): IEventProxy = SpongeServerProxy()
 
-    override fun initializeModCompat() {
+    override fun setupModCompat() {
     }
 
     override fun createClientProxy(): IEventProxy = NoopEventProxy
