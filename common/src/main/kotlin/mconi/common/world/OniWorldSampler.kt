@@ -8,7 +8,9 @@ import mconi.common.sim.model.FluidSpecies
 import mconi.common.sim.model.GasSpecies
 import mconi.common.sim.model.OccupancyState
 import mconi.common.sim.model.OniCellState
+import mconi.common.content.OniMaterialMass
 import net.minecraft.core.BlockPos
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
@@ -82,43 +84,112 @@ object OniWorldSampler {
         if (!OniWorldFoundation.isWithinHorizontalBounds(x, z, config)) {
             cell.setOccupancyState(OccupancyState.VOID)
             clearCellMass(cell)
+            cell.setWorldBlockKey(VOID_BLOCK_KEY)
             return
         }
 
         if (OniWorldFoundation.isVoidBand(y, maxY, config)) {
             cell.setOccupancyState(OccupancyState.VOID)
             clearCellMass(cell)
+            cell.setWorldBlockKey(VOID_BLOCK_KEY)
             return
         }
 
         val state = level.getBlockState(BlockPos(x, y, z))
+        val blockKey = BuiltInRegistries.BLOCK.getKey(state.block).toString()
+        val sameBlock = blockKey == cell.worldBlockKey()
         if (!state.fluidState.isEmpty) {
-            if (state.fluidState.`is`(Fluids.LAVA)) {
-                cell.setFluidState(FluidSpecies.LAVA, 4000.0)
-                cell.setTemperatureK(1300.0)
+            val species = if (state.fluidState.`is`(Fluids.LAVA)) {
+                FluidSpecies.LAVA
             } else {
-                cell.setFluidState(FluidSpecies.WATER, 4000.0)
-                cell.setTemperatureK(293.15)
+                FluidSpecies.WATER
             }
-            cell.setOccupancyState(OccupancyState.FLUID)
+            if (!sameBlock || cell.occupancyState() != OccupancyState.FLUID || cell.fluidSpecies() != species) {
+                clearCellMass(cell)
+                cell.setFluidState(species, OniMaterialMass.fluidDefaultMassKg(species).toDouble())
+                cell.setOccupancyState(OccupancyState.FLUID)
+                cell.setTemperatureK(if (species == FluidSpecies.LAVA) 1300.0 else 293.15)
+                cell.setWorldBlockKey(blockKey)
+            }
+            return
+        }
+
+        val waterBlock = OniBlockLookup.block(OniBlockIds.WATER)
+        val pollutedWaterBlock = OniBlockLookup.block(OniBlockIds.POLLUTED_WATER)
+        val crudeOilBlock = OniBlockLookup.block(OniBlockIds.CRUDE_OIL)
+        val lavaBlock = OniBlockLookup.block(OniBlockIds.LAVA)
+        if (state.`is`(waterBlock) || state.`is`(pollutedWaterBlock) || state.`is`(crudeOilBlock) || state.`is`(lavaBlock)) {
+            val species = when {
+                state.`is`(lavaBlock) -> FluidSpecies.LAVA
+                state.`is`(pollutedWaterBlock) -> FluidSpecies.POLLUTED_WATER
+                state.`is`(crudeOilBlock) -> FluidSpecies.CRUDE_OIL
+                else -> FluidSpecies.WATER
+            }
+            if (!sameBlock || cell.occupancyState() != OccupancyState.FLUID || cell.fluidSpecies() != species) {
+                cell.setFluidState(species, OniMaterialMass.fluidDefaultMassKg(species).toDouble())
+                cell.setTemperatureK(if (species == FluidSpecies.LAVA) 1300.0 else 293.15)
+                cell.setOccupancyState(OccupancyState.FLUID)
+                cell.setWorldBlockKey(blockKey)
+            }
+            return
+        }
+
+        val oxygenBlock = OniBlockLookup.block(OniBlockIds.OXYGEN_GAS)
+        val co2Block = OniBlockLookup.block(OniBlockIds.CARBON_DIOXIDE_GAS)
+        val hydrogenBlock = OniBlockLookup.block(OniBlockIds.HYDROGEN_GAS)
+        if (state.`is`(oxygenBlock)) {
+            if (!sameBlock || cell.occupancyState() != OccupancyState.GAS) {
+                clearCellMass(cell)
+                cell.setGasMassKg(GasSpecies.O2, config.baseO2MassKg())
+                cell.setOccupancyState(OccupancyState.GAS)
+                cell.setTemperatureK(293.15)
+                cell.setWorldBlockKey(blockKey)
+            }
+            return
+        }
+        if (state.`is`(co2Block)) {
+            if (!sameBlock || cell.occupancyState() != OccupancyState.GAS) {
+                clearCellMass(cell)
+                cell.setGasMassKg(GasSpecies.CO2, config.baseCO2MassKg())
+                cell.setOccupancyState(OccupancyState.GAS)
+                cell.setTemperatureK(293.15)
+                cell.setWorldBlockKey(blockKey)
+            }
+            return
+        }
+        if (state.`is`(hydrogenBlock)) {
+            if (!sameBlock || cell.occupancyState() != OccupancyState.GAS) {
+                clearCellMass(cell)
+                cell.setGasMassKg(GasSpecies.H2, config.baseH2MassKg())
+                cell.setOccupancyState(OccupancyState.GAS)
+                cell.setTemperatureK(293.15)
+                cell.setWorldBlockKey(blockKey)
+            }
             return
         }
 
         if (!state.isAir) {
-            cell.setOccupancyState(OccupancyState.SOLID)
-            clearCellMass(cell)
+            if (!sameBlock || cell.occupancyState() != OccupancyState.SOLID) {
+                cell.setOccupancyState(OccupancyState.SOLID)
+                clearCellMass(cell)
+                cell.setWorldBlockKey(blockKey)
+            }
             injectProducerEffects(level, x, y, z, minY, maxY, config, grid)
             return
         }
 
-        cell.setOccupancyState(OccupancyState.GAS)
-        cell.setGasMassKg(GasSpecies.O2, config.baseO2MassKg())
-        cell.setGasMassKg(GasSpecies.CO2, config.baseCO2MassKg())
-        cell.setGasMassKg(GasSpecies.H2, 0.0)
-        cell.setTemperatureK(293.15)
+        if (!sameBlock || cell.occupancyState() == OccupancyState.SOLID) {
+            cell.setOccupancyState(OccupancyState.GAS)
+            cell.setGasMassKg(GasSpecies.O2, config.baseO2MassKg())
+            cell.setGasMassKg(GasSpecies.CO2, config.baseCO2MassKg())
+            cell.setGasMassKg(GasSpecies.H2, 0.0)
+            cell.setTemperatureK(293.15)
+            cell.setWorldBlockKey(blockKey)
+        }
 
         if (OniWorldFoundation.isLavaBand(y, minY, config)) {
-            cell.setFluidState(FluidSpecies.LAVA, 4000.0)
+            val mass = OniMaterialMass.fluidDefaultMassKg(FluidSpecies.LAVA).toDouble()
+            cell.setFluidState(FluidSpecies.LAVA, mass)
             cell.setOccupancyState(OccupancyState.FLUID)
             cell.setTemperatureK(1300.0)
         }
@@ -172,4 +243,6 @@ object OniWorldSampler {
         cell.setGasMassKg(GasSpecies.CO2, 0.0)
         cell.setGasMassKg(GasSpecies.H2, 0.0)
     }
+
+    private const val VOID_BLOCK_KEY = "mconi:void"
 }

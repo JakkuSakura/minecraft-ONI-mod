@@ -1,7 +1,7 @@
 {
   "dimensions": {
     "minecraft:overworld": {
-      "type": "minecraft:overworld",
+      "type": "mconi:oni_overworld",
       "generator": {
         "type": "mconi:oni",
         "biome_source": {

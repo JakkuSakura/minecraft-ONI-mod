@@ -20,6 +20,13 @@
   "block.mconi.algae": "藻類",
   "block.mconi.polluted_dirt": "污染土",
   "block.mconi.printing_pod": "打印艙",
+  "block.mconi.oxygen_gas": "氧氣",
+  "block.mconi.carbon_dioxide_gas": "二氧化碳",
+  "block.mconi.hydrogen_gas": "氫氣",
+  "block.mconi.water": "水",
+  "block.mconi.polluted_water": "污染水",
+  "block.mconi.crude_oil": "原油",
+  "block.mconi.lava": "岩漿",
   "item.mconi.regolith": "風化岩",
   "item.mconi.sedimentary_rock": "沉積岩",
   "item.mconi.igneous_rock": "火成岩",
@@ -29,5 +36,6 @@
   "item.mconi.polluted_dirt": "污染土",
   "item.mconi.printing_pod": "打印艙",
   "itemGroup.mconi.oni": "缺氧",
-  "generator.mconi.oni": "缺氧世界"
+  "generator.mconi.oni": "缺氧世界",
+  "config.jade.plugin_mconi.oni_systems": "缺氧系統"
 }

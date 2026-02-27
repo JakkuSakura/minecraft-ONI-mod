@@ -20,6 +20,13 @@
   "block.mconi.algae": "조류",
   "block.mconi.polluted_dirt": "오염된 흙",
   "block.mconi.printing_pod": "프린팅 포드",
+  "block.mconi.oxygen_gas": "산소",
+  "block.mconi.carbon_dioxide_gas": "이산화탄소",
+  "block.mconi.hydrogen_gas": "수소",
+  "block.mconi.water": "물",
+  "block.mconi.polluted_water": "오염된 물",
+  "block.mconi.crude_oil": "원유",
+  "block.mconi.lava": "마그마",
   "item.mconi.regolith": "풍화암",
   "item.mconi.sedimentary_rock": "퇴적암",
   "item.mconi.igneous_rock": "화성암",
@@ -29,5 +36,6 @@
   "item.mconi.polluted_dirt": "오염된 흙",
   "item.mconi.printing_pod": "프린팅 포드",
   "itemGroup.mconi.oni": "산소 미포함",
-  "generator.mconi.oni": "산소 미포함 세계"
+  "generator.mconi.oni": "산소 미포함 세계",
+  "config.jade.plugin_mconi.oni_systems": "ONI 시스템"
 }

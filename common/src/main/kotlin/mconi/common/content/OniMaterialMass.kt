@@ -11,6 +11,11 @@ object OniMaterialMass {
     const val ABYSSALITE_DEFAULT_MASS_KG = 500 // elementId=Katairite
     const val ALGAE_DEFAULT_MASS_KG = 200
     const val POLLUTED_DIRT_DEFAULT_MASS_KG = 1000 // elementId=ToxicSand
+    // Values follow ONI element defaultMass from Module:Data/liquid (game data).
+    const val WATER_DEFAULT_MASS_KG = 1000
+    const val POLLUTED_WATER_DEFAULT_MASS_KG = 1000
+    const val CRUDE_OIL_DEFAULT_MASS_KG = 870
+    const val LAVA_DEFAULT_MASS_KG = 1840
 
     fun blockDefaultMassKg(id: String): Int {
         return when (id) {
@@ -27,5 +32,15 @@ object OniMaterialMass {
 
     fun blockDigYieldKg(id: String): Int {
         return blockDefaultMassKg(id).coerceAtLeast(1)
+    }
+
+    fun fluidDefaultMassKg(species: mconi.common.sim.model.FluidSpecies): Int {
+        return when (species) {
+            mconi.common.sim.model.FluidSpecies.WATER -> WATER_DEFAULT_MASS_KG
+            mconi.common.sim.model.FluidSpecies.POLLUTED_WATER -> POLLUTED_WATER_DEFAULT_MASS_KG
+            mconi.common.sim.model.FluidSpecies.CRUDE_OIL -> CRUDE_OIL_DEFAULT_MASS_KG
+            mconi.common.sim.model.FluidSpecies.LAVA -> LAVA_DEFAULT_MASS_KG
+            else -> 0
+        }
     }
 }

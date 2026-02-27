@@ -5,12 +5,12 @@ package mconi.common.sim
  * Values are currently in-memory and intentionally conservative.
  */
 class OniSimulationConfig {
-    private var tickInterval: Int = 10
-    private var cellSize: Int = 4
+    private var tickInterval: Int = 1
+    private var cellSize: Int = 1
     private var worldMinX: Int = -256
-    private var worldMaxX: Int = 256
+    private var worldMaxX: Int = 255
     private var worldMinZ: Int = -256
-    private var worldMaxZ: Int = 256
+    private var worldMaxZ: Int = 255
     private var voidBandHeight: Int = 24
     private var lavaBandHeight: Int = 24
     private var gasTransferKgPerStep: Double = 0.25
@@ -19,8 +19,9 @@ class OniSimulationConfig {
     private var voidFluidDrainFraction: Double = 0.35
     private var baseO2MassKg: Double = 1.0
     private var baseCO2MassKg: Double = 0.02
+    private var baseH2MassKg: Double = 0.02
     private var worldSampleRadiusBlocks: Int = 24
-    private var worldSampleIntervalTicks: Int = 40
+    private var worldSampleIntervalTicks: Int = 1
 
     fun tickInterval(): Int = tickInterval
     fun cellSize(): Int = cellSize
@@ -36,6 +37,7 @@ class OniSimulationConfig {
     fun voidFluidDrainFraction(): Double = voidFluidDrainFraction
     fun baseO2MassKg(): Double = baseO2MassKg
     fun baseCO2MassKg(): Double = baseCO2MassKg
+    fun baseH2MassKg(): Double = baseH2MassKg
     fun worldSampleRadiusBlocks(): Int = worldSampleRadiusBlocks
     fun worldSampleIntervalTicks(): Int = worldSampleIntervalTicks
 
@@ -77,6 +79,11 @@ class OniSimulationConfig {
     fun setBaseCO2MassKg(baseCO2MassKg: Double) {
         require(baseCO2MassKg >= 0.0) { "baseCO2MassKg must be >= 0" }
         this.baseCO2MassKg = baseCO2MassKg
+    }
+
+    fun setBaseH2MassKg(baseH2MassKg: Double) {
+        require(baseH2MassKg >= 0.0) { "baseH2MassKg must be >= 0" }
+        this.baseH2MassKg = baseH2MassKg
     }
 
     fun setWorldSampleRadiusBlocks(worldSampleRadiusBlocks: Int) {

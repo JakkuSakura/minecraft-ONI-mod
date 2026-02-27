@@ -1,10 +1,11 @@
-package mconi.neoforge.world
+package mconi.common.world
 
 import mconi.common.AbstractModInitializer
+import mconi.common.block.OniBlockLookup
+import mconi.common.content.OniBlockIds
 import mconi.common.sim.OniServices
 import mconi.common.sim.OniSimulationConfig
 import mconi.common.sim.OniWorldFoundation
-import mconi.common.world.OniWorldLayout
 import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.level.ChunkPos
@@ -16,8 +17,6 @@ import net.minecraft.world.level.chunk.LevelChunk
 import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.level.border.WorldBorder
 import org.apache.logging.log4j.Logger
-import mconi.common.block.OniBlockLookup
-import mconi.common.content.OniBlockIds
 
 object OniWorldEnforcer {
     private val LOGGER: Logger = AbstractModInitializer.LOGGER
@@ -91,7 +90,7 @@ object OniWorldEnforcer {
                         continue
                     }
                     if (OniWorldFoundation.isLavaBand(y, minY, config)) {
-                        setIfReplaceable(level, x, y, z, Blocks.LAVA)
+                        setIfReplaceable(level, x, y, z, OniBlockLookup.block(OniBlockIds.LAVA))
                     }
                 }
             }
@@ -153,7 +152,12 @@ object OniWorldEnforcer {
     private fun setIfReplaceable(level: ServerLevel, x: Int, y: Int, z: Int, block: Block) {
         val pos = BlockPos(x, y, z)
         val state: BlockState = level.getBlockState(pos)
-        if (state.isAir || state.fluidState.`is`(Fluids.WATER)) {
+        val isFluid = state.fluidState.`is`(Fluids.WATER) || state.fluidState.`is`(Fluids.LAVA)
+        if (state.isAir || isFluid || state.`is`(OniBlockLookup.block(OniBlockIds.WATER)) ||
+            state.`is`(OniBlockLookup.block(OniBlockIds.POLLUTED_WATER)) ||
+            state.`is`(OniBlockLookup.block(OniBlockIds.CRUDE_OIL)) ||
+            state.`is`(OniBlockLookup.block(OniBlockIds.LAVA))
+        ) {
             level.setBlock(pos, block.defaultBlockState(), 2)
         }
     }

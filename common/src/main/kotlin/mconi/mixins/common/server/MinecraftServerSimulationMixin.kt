@@ -6,6 +6,7 @@ import mconi.common.world.OniPlayerBreathing
 import mconi.common.world.OniPowerSampler
 import mconi.common.world.OniSimulationPersistence
 import mconi.common.world.OniWorldSampler
+import mconi.common.world.OniWorldWriter
 import net.minecraft.server.MinecraftServer
 import org.spongepowered.asm.mixin.Mixin
 import org.spongepowered.asm.mixin.injection.At
@@ -25,6 +26,7 @@ class MinecraftServerSimulationMixin {
         OniWorldSampler.sampleAroundPlayers(server)
         OniDebugHttpServer.ensureStarted(server)
         OniServices.simulationRuntime().onServerTick()
+        OniWorldWriter.applyAroundPlayers(server)
         OniPlayerBreathing.apply(server.overworld())
     }
 

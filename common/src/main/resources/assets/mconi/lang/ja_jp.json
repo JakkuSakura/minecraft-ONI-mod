@@ -20,6 +20,13 @@
   "block.mconi.algae": "藻類",
   "block.mconi.polluted_dirt": "汚染土",
   "block.mconi.printing_pod": "プリンティングポッド",
+  "block.mconi.oxygen_gas": "酸素",
+  "block.mconi.carbon_dioxide_gas": "二酸化炭素",
+  "block.mconi.hydrogen_gas": "水素",
+  "block.mconi.water": "水",
+  "block.mconi.polluted_water": "汚染水",
+  "block.mconi.crude_oil": "原油",
+  "block.mconi.lava": "マグマ",
   "item.mconi.regolith": "レゴリス",
   "item.mconi.sedimentary_rock": "堆積岩",
   "item.mconi.igneous_rock": "火成岩",
@@ -29,5 +36,6 @@
   "item.mconi.polluted_dirt": "汚染土",
   "item.mconi.printing_pod": "プリンティングポッド",
   "itemGroup.mconi.oni": "Oxygen Not Included",
-  "generator.mconi.oni": "ONIワールド"
+  "generator.mconi.oni": "ONIワールド",
+  "config.jade.plugin_mconi.oni_systems": "ONIシステム"
 }

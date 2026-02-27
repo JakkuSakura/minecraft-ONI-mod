@@ -17,6 +17,7 @@ class OniAtmosphereKernel {
             updateCell(cell, config)
         }
         diffuseGases(grid, config)
+        stratifyGases(grid, config)
         for (cell in grid.cells()) {
             updatePressure(cell, cellVolume)
         }
@@ -122,6 +123,83 @@ class OniAtmosphereKernel {
                 cell.setGasMassKg(species, cell.gasMassKg(species) + delta)
             }
         }
+    }
+
+    private fun stratifyGases(grid: OniSimulationGrid, config: OniSimulationConfig) {
+        val maxTransfer = config.gasTransferKgPerStep().coerceAtLeast(0.0)
+        if (maxTransfer <= 0.0) {
+            return
+        }
+        val deltas: MutableMap<OniCellCoordinate, EnumMap<GasSpecies, Double>> = HashMap()
+        for ((coordinate, cell) in grid.cellEntries()) {
+            if (cell.occupancyState() != OccupancyState.GAS) {
+                continue
+            }
+
+            val below = OniCellCoordinate(coordinate.cellX(), coordinate.cellY() - 1, coordinate.cellZ())
+            val above = OniCellCoordinate(coordinate.cellX(), coordinate.cellY() + 1, coordinate.cellZ())
+            val belowCell = grid.getCellAtCoordinate(below)
+            val aboveCell = grid.getCellAtCoordinate(above)
+
+            if (belowCell != null && belowCell.occupancyState() == OccupancyState.GAS) {
+                stratifyDown(GasSpecies.CO2, cell, belowCell, maxTransfer, coordinate, below, deltas)
+                stratifyDown(GasSpecies.O2, cell, belowCell, maxTransfer * 0.5, coordinate, below, deltas)
+            }
+            if (aboveCell != null && aboveCell.occupancyState() == OccupancyState.GAS) {
+                stratifyUp(GasSpecies.H2, cell, aboveCell, maxTransfer, coordinate, above, deltas)
+            }
+        }
+
+        for ((coordinate, speciesDelta) in deltas) {
+            val cell = grid.getOrCreateCellAtCoordinate(coordinate)
+            for ((species, delta) in speciesDelta) {
+                cell.setGasMassKg(species, cell.gasMassKg(species) + delta)
+            }
+        }
+    }
+
+    private fun stratifyDown(
+        species: GasSpecies,
+        cell: OniCellState,
+        belowCell: OniCellState,
+        maxTransfer: Double,
+        from: OniCellCoordinate,
+        to: OniCellCoordinate,
+        deltas: MutableMap<OniCellCoordinate, EnumMap<GasSpecies, Double>>,
+    ) {
+        val massA = cell.gasMassKg(species)
+        val massB = belowCell.gasMassKg(species)
+        if (massA <= massB) {
+            return
+        }
+        val transfer = ((massA - massB) * 0.15).coerceAtMost(maxTransfer)
+        if (transfer <= 0.0) {
+            return
+        }
+        addDelta(deltas, from, species, -transfer)
+        addDelta(deltas, to, species, transfer)
+    }
+
+    private fun stratifyUp(
+        species: GasSpecies,
+        cell: OniCellState,
+        aboveCell: OniCellState,
+        maxTransfer: Double,
+        from: OniCellCoordinate,
+        to: OniCellCoordinate,
+        deltas: MutableMap<OniCellCoordinate, EnumMap<GasSpecies, Double>>,
+    ) {
+        val massA = cell.gasMassKg(species)
+        val massB = aboveCell.gasMassKg(species)
+        if (massA <= massB) {
+            return
+        }
+        val transfer = ((massA - massB) * 0.2).coerceAtMost(maxTransfer)
+        if (transfer <= 0.0) {
+            return
+        }
+        addDelta(deltas, from, species, -transfer)
+        addDelta(deltas, to, species, transfer)
     }
 
     private fun neighborsOf(coordinate: OniCellCoordinate): List<OniCellCoordinate> {

@@ -114,7 +114,7 @@ class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) 
                         onBorder -> Blocks.BEDROCK.defaultBlockState()
                         y < activeMinY -> Blocks.BEDROCK.defaultBlockState()
                         y == activeMinY -> Blocks.BEDROCK.defaultBlockState()
-                        y <= lavaTop -> Blocks.LAVA.defaultBlockState()
+                        y <= lavaTop -> OniBlockLookup.state(OniBlockIds.LAVA)
                         y > activeMaxY -> Blocks.AIR.defaultBlockState()
                         y >= spaceStart -> Blocks.AIR.defaultBlockState()
                         y <= surfaceY -> solidStateFor(worldX, y, worldZ, surfaceY, lavaTop)
@@ -160,7 +160,7 @@ class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) 
                 onBorder -> Blocks.BEDROCK.defaultBlockState()
                 y < activeMinY -> Blocks.BEDROCK.defaultBlockState()
                 y == activeMinY -> Blocks.BEDROCK.defaultBlockState()
-                y <= lavaTop -> Blocks.LAVA.defaultBlockState()
+                        y <= lavaTop -> OniBlockLookup.state(OniBlockIds.LAVA)
                 y > activeMaxY -> Blocks.AIR.defaultBlockState()
                 y >= spaceStart -> Blocks.AIR.defaultBlockState()
                 y <= surfaceY -> solidStateFor(x, y, z, surfaceY, lavaTop)
@@ -187,8 +187,8 @@ class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) 
     }
 
     companion object {
-        private const val DEFAULT_MIN_Y = -64
-        private const val DEFAULT_HEIGHT = 384
+        private const val DEFAULT_MIN_Y = -128
+        private const val DEFAULT_HEIGHT = 256
         private const val TOPSOIL_DEPTH = OniWorldLayout.TOPSOIL_DEPTH
         private const val SEDIMENTARY_DEPTH = OniWorldLayout.SEDIMENTARY_DEPTH
         private const val IGNEOUS_DEPTH = OniWorldLayout.IGNEOUS_DEPTH
@@ -229,7 +229,7 @@ class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) 
             // Starter water pocket.
             for (dx in 6..9) {
                 for (dz in -1..2) {
-                    chunk.setBlockState(BlockPos(podX + dx, podY - 3, podZ + dz), Blocks.WATER.defaultBlockState(), 0)
+                    chunk.setBlockState(BlockPos(podX + dx, podY - 3, podZ + dz), OniBlockLookup.state(OniBlockIds.WATER), 0)
                 }
             }
 

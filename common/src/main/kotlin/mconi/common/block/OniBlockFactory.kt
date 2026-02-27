@@ -46,6 +46,27 @@ object OniBlockFactory {
                 id,
                 base.mapColor(MapColor.COLOR_LIGHT_GRAY).strength(3.0f, 6.0f).sound(SoundType.METAL)
             )
+            OniBlockIds.WATER -> OniFluidBlock(
+                base.mapColor(MapColor.WATER).noCollision().noOcclusion().strength(0.0f).sound(SoundType.WET_GRASS)
+            )
+            OniBlockIds.POLLUTED_WATER -> OniFluidBlock(
+                base.mapColor(MapColor.COLOR_GREEN).noCollision().noOcclusion().strength(0.0f).sound(SoundType.WET_GRASS)
+            )
+            OniBlockIds.CRUDE_OIL -> OniFluidBlock(
+                base.mapColor(MapColor.COLOR_BROWN).noCollision().noOcclusion().strength(0.0f).sound(SoundType.SLIME_BLOCK)
+            )
+            OniBlockIds.LAVA -> OniFluidBlock(
+                base.mapColor(MapColor.COLOR_ORANGE).noCollision().noOcclusion().strength(0.0f).sound(SoundType.SLIME_BLOCK)
+            )
+            OniBlockIds.OXYGEN_GAS -> OniGasBlock(
+                base.noCollision().noOcclusion().strength(0.0f).sound(SoundType.WOOL)
+            )
+            OniBlockIds.CARBON_DIOXIDE_GAS -> OniGasBlock(
+                base.noCollision().noOcclusion().strength(0.0f).sound(SoundType.WOOL)
+            )
+            OniBlockIds.HYDROGEN_GAS -> OniGasBlock(
+                base.noCollision().noOcclusion().strength(0.0f).sound(SoundType.WOOL)
+            )
             else -> throw IllegalArgumentException("Unknown block id: $id")
         }
     }

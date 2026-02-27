@@ -18,6 +18,7 @@ class FabricMain : AbstractModInitializer(), ClientModInitializer, DedicatedServ
         FabricModChecker()
         FabricBlocks.register()
         FabricItems.register()
+        FabricWorldgen.register()
         // Fabric static Instances here
     }
 

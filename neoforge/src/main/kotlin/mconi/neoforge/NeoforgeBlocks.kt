@@ -28,8 +28,10 @@ object NeoforgeBlocks {
             val blockKey = ResourceKey.create(Registries.BLOCK, id)
             val holder = BLOCKS.register(path, Supplier { OniBlockFactory.createBlock(path, blockKey) })
             BLOCK_HOLDERS[path] = holder
-            val itemKey = ResourceKey.create(Registries.ITEM, id)
-            ITEMS.register(path, Supplier { BlockItem(holder.get(), Item.Properties().setId(itemKey)) })
+            if (OniBlockIds.SOLIDS.contains(path)) {
+                val itemKey = ResourceKey.create(Registries.ITEM, id)
+                ITEMS.register(path, Supplier { BlockItem(holder.get(), Item.Properties().setId(itemKey)) })
+            }
         }
     }
 

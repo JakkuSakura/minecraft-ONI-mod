@@ -3,7 +3,7 @@ package mconi.neoforge
 import com.mojang.brigadier.CommandDispatcher
 import mconi.common.AbstractModInitializer
 import mconi.common.world.OniSpawnHelper
-import mconi.neoforge.world.OniWorldEnforcer
+import mconi.common.world.OniWorldEnforcer
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
 import net.minecraft.server.level.ServerLevel

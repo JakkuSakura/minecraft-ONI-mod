@@ -40,7 +40,6 @@ import mconi.common.sim.model.LayerProperty
 import mconi.common.sim.model.OniCellState
 import mconi.common.sim.model.SystemLens
 import mconi.common.wrappers.Utils
-import mconi.common.world.OniWorldgenBootstrap
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.util.Mth
 import org.apache.logging.log4j.LogManager
@@ -94,9 +93,6 @@ abstract class AbstractModInitializer {
         INSTANCE = this
         createInitialBindings()
         OniServices.bootstrap()
-        if (loaderType != LoaderType.NeoForge) {
-            OniWorldgenBootstrap.register()
-        }
     }
 
     private fun printModInfo() {

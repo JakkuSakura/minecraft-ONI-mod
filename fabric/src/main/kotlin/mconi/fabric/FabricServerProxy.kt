@@ -2,8 +2,10 @@ package mconi.fabric
 
 import com.mojang.brigadier.CommandDispatcher
 import mconi.common.AbstractModInitializer
+import mconi.common.world.OniWorldEnforcer
 import mconi.common.world.OniSpawnHelper
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
 import net.minecraft.commands.CommandSourceStack
@@ -33,11 +35,16 @@ class FabricServerProxy(private val isDedicated: Boolean) : AbstractModInitializ
 
         ServerLifecycleEvents.SERVER_STARTED.register { server ->
             val level: ServerLevel = server.overworld()
+            OniWorldEnforcer.applyWorldBorder(level)
             val respawn = LevelData.RespawnData.of(Level.OVERWORLD, OniSpawnHelper.spawnPos(), 0.0f, 0.0f)
             level.setRespawnData(respawn)
             val data = level.getLevelData() as? WritableLevelData
             data?.setSpawn(respawn)
         }
+
+        ServerChunkEvents.CHUNK_LOAD.register(ServerChunkEvents.Load { level, chunk ->
+            OniWorldEnforcer.enforceChunk(level, chunk)
+        })
 
         ServerPlayConnectionEvents.JOIN.register { handler, _, _ ->
             val player: ServerPlayer = handler.player

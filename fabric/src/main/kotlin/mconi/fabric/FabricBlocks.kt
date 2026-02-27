@@ -27,9 +27,11 @@ object FabricBlocks {
             val block: Block = OniBlockFactory.createBlock(path, key)
             Registry.register(BuiltInRegistries.BLOCK, id, block)
 
-            val itemKey = ResourceKey.create(Registries.ITEM, id)
-            val blockItem = BlockItem(block, Item.Properties().setId(itemKey))
-            Registry.register(BuiltInRegistries.ITEM, id, blockItem)
+            if (OniBlockIds.SOLIDS.contains(path)) {
+                val itemKey = ResourceKey.create(Registries.ITEM, id)
+                val blockItem = BlockItem(block, Item.Properties().setId(itemKey))
+                Registry.register(BuiltInRegistries.ITEM, id, blockItem)
+            }
         }
     }
 

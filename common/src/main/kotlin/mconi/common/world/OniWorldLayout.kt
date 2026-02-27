@@ -2,11 +2,11 @@ package mconi.common.world
 
 object OniWorldLayout {
     const val WORLD_MIN_X = -256
-    const val WORLD_MAX_X = 256
+    const val WORLD_MAX_X = 255
     const val WORLD_MIN_Z = -256
-    const val WORLD_MAX_Z = 256
+    const val WORLD_MAX_Z = 255
 
-    // Minecraft 1.21 minY is -64; we clamp to that at runtime.
+    // ONI preset uses a custom dimension type targeting -128..128.
     const val WORLD_TARGET_MIN_Y = -128
     const val WORLD_TARGET_MAX_Y = 128
 
