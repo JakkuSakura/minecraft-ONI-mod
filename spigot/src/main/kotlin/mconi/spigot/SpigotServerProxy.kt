@@ -1,13 +1,13 @@
 package mconi.spigot
 
-import mconi.common.AbstractModInitializer
+import mconi.common.AbstractModBootstrap
 import org.bukkit.Bukkit
 import org.bukkit.plugin.PluginManager
 
 /**
  * Spigot server event proxy.
  */
-class SpigotServerProxy : AbstractModInitializer.IEventProxy {
+class SpigotServerProxy : AbstractModBootstrap.IEventProxy {
     override fun registerEvents() {
         val pluginManager: PluginManager = Bukkit.getPluginManager()
         val plugin = SpigotPlugin.getInstance() ?: return

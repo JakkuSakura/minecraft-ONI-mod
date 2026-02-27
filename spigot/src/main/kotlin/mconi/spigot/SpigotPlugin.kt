@@ -13,7 +13,7 @@ class SpigotPlugin : JavaPlugin() {
     override fun onEnable() {
         instance = this
         val bukkitMain = SpigotMain()
-        bukkitMain.onInitializeServer()
+        bukkitMain.onSetupServer()
         Bukkit.getLogger().info(ChatColor.GREEN.toString() + "Enabled Oxygen Not Included")
     }
 
