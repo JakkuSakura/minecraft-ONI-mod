@@ -1,6 +1,6 @@
 package mconi.common.sim.subsystem
 
-import mconi.common.sim.model.FluidSpecies
+import mconi.common.element.OniElements
 import mconi.common.sim.model.OccupancyState
 import mconi.common.sim.model.OniCellCoordinate
 
@@ -19,12 +19,12 @@ class ThermalSubsystem : SimulationSubsystem {
                 next += (260.0 - temp) * 0.02
             }
 
-            if (cell.fluidSpecies() == FluidSpecies.LAVA && cell.fluidMassKg() > 0.0) {
+            if (cell.liquidId() == OniElements.LIQUID_LAVA && cell.liquidMassKg() > 0.0) {
                 next += 0.8
             }
 
             val conduction = when (occupancy) {
-                OccupancyState.FLUID -> 0.08
+                OccupancyState.LIQUID -> 0.08
                 OccupancyState.GAS -> 0.04
                 OccupancyState.SOLID -> 0.02
                 OccupancyState.VACUUM -> 0.01

@@ -1,16 +1,13 @@
 package mconi.common.compat.jade
 
-import mconi.common.AbstractModInitializer
-import mconi.common.sim.OniServices
-import mconi.common.sim.OniSystemInspector
-import mconi.common.sim.model.SystemLens
-import net.minecraft.core.BlockPos
+import mconi.common.AbstractModBootstrap
+import mconi.common.block.ConstructionSiteBlock
+import mconi.common.block.entity.ConstructionSiteBlockEntity
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
-import net.minecraft.world.level.block.Block
 import snownee.jade.api.BlockAccessor
 import snownee.jade.api.IBlockComponentProvider
 import snownee.jade.api.IWailaClientRegistration
@@ -24,40 +21,26 @@ import java.util.Optional
 @WailaPlugin
 class OniJadePlugin : IWailaPlugin {
     override fun register(registration: IWailaCommonRegistration) {
-        registration.registerBlockDataProvider(OniJadeDataProvider, Block::class.java)
+        registration.registerBlockDataProvider(OniJadeDataProvider, ConstructionSiteBlock::class.java)
     }
 
     override fun registerClient(registration: IWailaClientRegistration) {
-        registration.registerBlockComponent(OniJadeComponentProvider, Block::class.java)
+        registration.registerBlockComponent(OniJadeComponentProvider, ConstructionSiteBlock::class.java)
     }
 
     companion object {
         val UID: Identifier = requireNotNull(
-            Identifier.tryParse("${AbstractModInitializer.MOD_ID}:oni_systems")
+            Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:oni_systems")
         ) { "Invalid Jade UID" }
     }
 }
 
 object OniJadeDataProvider : StreamServerDataProvider<BlockAccessor, String> {
     override fun streamData(accessor: BlockAccessor): String? {
-        val runtime = OniServices.simulationRuntime()
-        val pos: BlockPos = accessor.position
-        val cell = runtime.grid().getOrCreateCellAtBlock(
-            pos.x,
-            pos.y,
-            pos.z,
-            runtime.config().cellSize()
-        )
-
         val lines = ArrayList<String>()
-        lines.add("ONI Systems @ ${pos.x},${pos.y},${pos.z}")
-        for (lens in SystemLens.values()) {
-            lines.add("Lens: ${lens.name}")
-            for (property in OniSystemInspector.inspect(runtime, lens, cell)) {
-                lines.add("[${property.layer()}] ${property.key()}=${property.value()}")
-            }
-        }
-
+        val constructionSite = accessor.blockEntity as? ConstructionSiteBlockEntity
+            ?: return null
+        constructionSite.appendJadeLines(lines)
         return lines.joinToString("\n")
     }
 
