@@ -62,7 +62,7 @@ class BlueprintBookMenu(
         val nextIndex = (currentIndex + direction).floorMod(blueprintIds.size)
         val nextId = blueprintIds[nextIndex]
         val blueprint = OniBlueprintRegistry.get(nextId) ?: return selection
-        return OniBlueprintSelectionNbt.defaultSelection(blueprint)
+        return OniBlueprintSelectionNbt.starterSelection(blueprint)
     }
 
     private fun shiftMaterial(
@@ -101,7 +101,7 @@ class BlueprintBookMenu(
         }
         val firstId = blueprintIds.firstOrNull() ?: return null
         val blueprint = OniBlueprintRegistry.get(firstId) ?: return null
-        val selection = OniBlueprintSelectionNbt.defaultSelection(blueprint)
+        val selection = OniBlueprintSelectionNbt.starterSelection(blueprint)
         OniBlueprintSelectionNbt.writeTo(stack, selection)
         return selection
     }

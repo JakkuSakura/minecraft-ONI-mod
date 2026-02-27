@@ -122,7 +122,7 @@ class BlueprintBookScreen(
         if (selection == null) {
             val firstId = OniBlueprintRegistry.allIds().firstOrNull() ?: return
             val blueprint = OniBlueprintRegistry.get(firstId) ?: return
-            selection = OniBlueprintSelectionNbt.defaultSelection(blueprint)
+            selection = OniBlueprintSelectionNbt.starterSelection(blueprint)
         }
     }
 
@@ -136,7 +136,7 @@ class BlueprintBookScreen(
         val nextIndex = (currentIndex + direction).floorMod(blueprintIds.size)
         val nextId = blueprintIds[nextIndex]
         val blueprint = OniBlueprintRegistry.get(nextId) ?: return
-        selection = OniBlueprintSelectionNbt.defaultSelection(blueprint)
+        selection = OniBlueprintSelectionNbt.starterSelection(blueprint)
         rebuildButtons()
     }
 

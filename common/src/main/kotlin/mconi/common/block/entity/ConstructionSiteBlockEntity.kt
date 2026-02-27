@@ -46,7 +46,7 @@ class ConstructionSiteBlockEntity(pos: BlockPos, state: BlockState) :
     private var lastInteractionTick: Long = 0L
     private var materialCarry: Double = 0.0
 
-    fun initialize(selection: OniBlueprintSelection, player: Player?) {
+    fun applySelection(selection: OniBlueprintSelection, player: Player?) {
         val blueprint = OniBlueprintRegistry.get(selection.blueprintId) ?: return
         blueprintId = blueprint.id
         buildTimeSeconds = blueprint.buildTimeSeconds

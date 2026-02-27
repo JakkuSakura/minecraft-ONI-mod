@@ -62,7 +62,7 @@ object OniBlueprintSelectionNbt {
         }
     }
 
-    fun defaultSelection(blueprint: OniBlueprint): OniBlueprintSelection {
+    fun starterSelection(blueprint: OniBlueprint): OniBlueprintSelection {
         val materials = blueprint.materialSlots.map { slot ->
             val itemId = slot.allowedItems.firstOrNull() ?: ""
             OniMaterialChoice(slot.slotId, itemId)

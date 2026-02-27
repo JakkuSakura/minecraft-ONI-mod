@@ -23,7 +23,7 @@ object OniConstructionSitePlacer {
             return false
         }
         val blockEntity = level.getBlockEntity(targetPos) as? ConstructionSiteBlockEntity ?: return false
-        blockEntity.initialize(selection, player)
+        blockEntity.applySelection(selection, player)
         return true
     }
 

@@ -59,7 +59,7 @@ class BlueprintBookItem(properties: Item.Properties) : Item(properties) {
                 val firstId = OniBlueprintRegistry.allIds().firstOrNull()
                 val blueprint = firstId?.let { OniBlueprintRegistry.get(it) }
                 if (blueprint != null) {
-                    OniBlueprintSelectionNbt.writeTo(existing, OniBlueprintSelectionNbt.defaultSelection(blueprint))
+                    OniBlueprintSelectionNbt.writeTo(existing, OniBlueprintSelectionNbt.starterSelection(blueprint))
                 }
             }
             return existing
@@ -70,7 +70,7 @@ class BlueprintBookItem(properties: Item.Properties) : Item(properties) {
         val firstId = OniBlueprintRegistry.allIds().firstOrNull()
         val blueprint = firstId?.let { OniBlueprintRegistry.get(it) }
         if (blueprint != null) {
-            OniBlueprintSelectionNbt.writeTo(stack, OniBlueprintSelectionNbt.defaultSelection(blueprint))
+            OniBlueprintSelectionNbt.writeTo(stack, OniBlueprintSelectionNbt.starterSelection(blueprint))
         }
         player.inventory.add(stack)
         return stack

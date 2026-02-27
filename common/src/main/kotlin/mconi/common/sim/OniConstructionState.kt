@@ -1,5 +1,7 @@
 package mconi.common.sim
 
+import mconi.common.item.OniBlueprintRegistry
+
 class OniConstructionState {
     data class BuildTask(
         val blueprintId: String,
@@ -19,10 +21,11 @@ class OniConstructionState {
 
     fun queueBlueprint(id: String): BuildTask? {
         val blueprint = OniBlueprintRegistry.get(id) ?: return null
+        val requiredUnits = blueprint.materialSlots.sumOf { it.amount }
         val task = BuildTask(
             blueprintId = blueprint.id,
             requiredResearch = blueprint.requiredResearch,
-            requiredMaterialUnits = blueprint.requiredMaterialUnits,
+            requiredMaterialUnits = requiredUnits,
             buildTimeSeconds = blueprint.buildTimeSeconds,
         )
         queue.add(task)
