@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "mconi:sedimentary_rock",
+          "name": "mconi:element_sedimentary_rock",
           "functions": [
             {
               "function": "minecraft:set_count",

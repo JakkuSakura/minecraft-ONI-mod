@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "mconi:polluted_dirt",
+          "name": "mconi:element_polluted_dirt",
           "functions": [
             {
               "function": "minecraft:set_count",

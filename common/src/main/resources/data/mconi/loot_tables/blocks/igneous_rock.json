@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "mconi:igneous_rock",
+          "name": "mconi:element_igneous_rock",
           "functions": [
             {
               "function": "minecraft:set_count",

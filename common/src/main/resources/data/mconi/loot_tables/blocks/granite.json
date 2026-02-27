@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "mconi:granite",
+          "name": "mconi:element_granite",
           "functions": [
             {
               "function": "minecraft:set_count",

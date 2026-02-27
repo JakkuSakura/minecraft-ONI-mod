@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "mconi:regolith",
+          "name": "mconi:element_regolith",
           "functions": [
             {
               "function": "minecraft:set_count",

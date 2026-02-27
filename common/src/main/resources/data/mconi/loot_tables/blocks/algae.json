@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "mconi:algae",
+          "name": "mconi:element_algae",
           "functions": [
             {
               "function": "minecraft:set_count",
