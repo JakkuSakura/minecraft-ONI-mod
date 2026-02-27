@@ -1,6 +1,6 @@
 package mconi.neoforge
 
-import mconi.common.AbstractModInitializer
+import mconi.common.AbstractModBootstrap
 import mconi.common.block.entity.ConstructionSiteBlockEntity
 import mconi.common.block.entity.OniBlockEntityTypes
 import mconi.common.block.OniBlockFactory
@@ -12,7 +12,7 @@ import java.util.function.Supplier
 
 object NeoforgeBlockEntities {
     private val BLOCK_ENTITIES: DeferredRegister<BlockEntityType<*>> =
-        DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, AbstractModInitializer.MOD_ID)
+        DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, AbstractModBootstrap.MOD_ID)
 
     private val CONSTRUCTION_SITE = BLOCK_ENTITIES.register(OniBlockFactory.CONSTRUCTION_SITE, Supplier {
         val block = NeoforgeBlocks.blockHolder(OniBlockFactory.CONSTRUCTION_SITE).get()

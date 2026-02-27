@@ -1,7 +1,7 @@
 package mconi.neoforge
 
 import com.mojang.brigadier.CommandDispatcher
-import mconi.common.AbstractModInitializer
+import mconi.common.AbstractModBootstrap
 import net.minecraft.commands.CommandSourceStack
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent
@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger
 /**
  * This handles all events sent to the client
  */
-class NeoforgeClientProxy : AbstractModInitializer.IEventProxy {
+class NeoforgeClientProxy : AbstractModBootstrap.IEventProxy {
     override fun registerEvents() {
         LOGGER.info("Registering NeoForge Client Events")
         NeoForge.EVENT_BUS.register(this)
@@ -21,10 +21,12 @@ class NeoforgeClientProxy : AbstractModInitializer.IEventProxy {
     @SubscribeEvent
     fun registerClientCommands(event: RegisterClientCommandsEvent) {
         @Suppress("UNCHECKED_CAST")
-        AbstractModInitializer.registerClientCommands(event.dispatcher as CommandDispatcher<CommandSourceStack>)
+        AbstractModBootstrap.registerClientCommands(event.dispatcher as CommandDispatcher<CommandSourceStack>)
     }
 
+
+
     companion object {
-        private val LOGGER: Logger = AbstractModInitializer.LOGGER
+        private val LOGGER: Logger = AbstractModBootstrap.LOGGER
     }
 }

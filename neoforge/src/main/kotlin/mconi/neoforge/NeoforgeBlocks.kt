@@ -1,6 +1,6 @@
 package mconi.neoforge
 
-import mconi.common.AbstractModInitializer
+import mconi.common.AbstractModBootstrap
 import mconi.common.block.OniBlockFactory
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.Identifier
@@ -16,13 +16,13 @@ import java.util.function.Supplier
 
 object NeoforgeBlocks {
     private val BLOCKS: DeferredRegister<Block> =
-        DeferredRegister.create(Registries.BLOCK, AbstractModInitializer.MOD_ID)
-    private val ITEMS: DeferredRegister.Items = DeferredRegister.createItems(AbstractModInitializer.MOD_ID)
+        DeferredRegister.create(Registries.BLOCK, AbstractModBootstrap.MOD_ID)
+    private val ITEMS: DeferredRegister.Items = DeferredRegister.createItems(AbstractModBootstrap.MOD_ID)
     private val BLOCK_HOLDERS: MutableMap<String, DeferredHolder<Block, Block>> = HashMap()
 
     init {
         for (entry in OniBlockFactory.entries()) {
-            val id = Identifier.tryParse("${AbstractModInitializer.MOD_ID}:${entry.id}")
+            val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:${entry.id}")
                 ?: throw IllegalArgumentException("Invalid block id path: ${entry.id}")
             val holder = BLOCKS.register(entry.id, Supplier { OniBlockFactory.createBlock(entry.id) })
             BLOCK_HOLDERS[entry.id] = holder

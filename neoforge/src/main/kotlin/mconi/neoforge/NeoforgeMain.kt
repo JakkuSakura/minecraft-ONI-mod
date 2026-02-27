@@ -1,28 +1,40 @@
 package mconi.neoforge
 
-import mconi.common.AbstractModInitializer
+import mconi.common.AbstractModBootstrap
 import mconi.common.LoaderType
 import mconi.neoforge.wrappers.NeoForgeModChecker
+import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.common.Mod
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent
 import net.neoforged.fml.event.lifecycle.FMLDedicatedServerSetupEvent
+import net.neoforged.fml.loading.FMLEnvironment
 
 /**
  * main entry point on NeoForge
  */
-@Mod(AbstractModInitializer.MOD_ID)
-class NeoforgeMain(eventBus: IEventBus) : AbstractModInitializer() {
+@Mod(AbstractModBootstrap.MOD_ID)
+class NeoforgeMain(eventBus: IEventBus) : AbstractModBootstrap() {
     init {
         loaderType = LoaderType.NeoForge
         NeoforgeBlocks.register(eventBus)
+        NeoforgeBlockEntities.register(eventBus)
         NeoforgeItems.register(eventBus)
+        NeoforgeMenus.register(eventBus)
         NeoforgeWorldgen.register(eventBus)
-        eventBus.addListener { _: FMLClientSetupEvent -> onInitializeClient() }
-        eventBus.addListener { _: FMLDedicatedServerSetupEvent -> onInitializeServer() }
+        if (FMLEnvironment.getDist() == Dist.CLIENT) {
+            eventBus.addListener(NeoforgeClientModEvents::registerMenuScreens)
+        }
+        eventBus.addListener { _: FMLClientSetupEvent -> onSetupClient() }
+        eventBus.addListener { _: FMLDedicatedServerSetupEvent -> onSetupServer() }
+        eventBus.addListener { _: FMLCommonSetupEvent ->
+            NeoforgeBlockEntities.bindTypes()
+            NeoforgeMenus.bindTypes()
+        }
     }
 
-    override fun createInitialBindings() {
+    override fun createBindings() {
         NeoForgeModChecker()
         // NeoForge static Instances here
     }
@@ -31,7 +43,7 @@ class NeoforgeMain(eventBus: IEventBus) : AbstractModInitializer() {
 
     override fun createClientProxy(): IEventProxy = NeoforgeClientProxy()
 
-    override fun initializeModCompat() {
+    override fun setupModCompat() {
         // config screen hookup if needed
     }
 }

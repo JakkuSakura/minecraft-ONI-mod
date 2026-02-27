@@ -1,6 +1,6 @@
 package mconi.neoforge
 
-import mconi.common.AbstractModInitializer
+import mconi.common.AbstractModBootstrap
 import mconi.common.menu.BlueprintBookMenu
 import mconi.common.menu.OniMenuTypes
 import net.minecraft.core.registries.Registries
@@ -12,7 +12,7 @@ import java.util.function.Supplier
 
 object NeoforgeMenus {
     private val MENUS: DeferredRegister<MenuType<*>> =
-        DeferredRegister.create(Registries.MENU, AbstractModInitializer.MOD_ID)
+        DeferredRegister.create(Registries.MENU, AbstractModBootstrap.MOD_ID)
 
     private val BLUEPRINT_BOOK = MENUS.register("blueprint_book", Supplier {
         MenuType(
