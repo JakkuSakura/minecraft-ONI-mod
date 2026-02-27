@@ -1,6 +1,6 @@
 package mconi.forge
 
-import mconi.common.AbstractModInitializer
+import mconi.common.AbstractModBootstrap
 import mconi.common.menu.BlueprintBookMenu
 import mconi.common.menu.OniMenuTypes
 import net.minecraft.world.flag.FeatureFlagSet
@@ -11,7 +11,7 @@ import net.minecraftforge.registries.ForgeRegistries
 
 object ForgeMenus {
     private val MENUS: DeferredRegister<MenuType<*>> =
-        DeferredRegister.create(ForgeRegistries.MENU_TYPES, AbstractModInitializer.MOD_ID)
+        DeferredRegister.create(ForgeRegistries.MENU_TYPES, AbstractModBootstrap.MOD_ID)
 
     private val BLUEPRINT_BOOK = MENUS.register("blueprint_book") {
         MenuType(
