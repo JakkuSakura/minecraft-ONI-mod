@@ -2,7 +2,6 @@ package mconi.neoforge
 
 import mconi.common.AbstractModInitializer
 import mconi.common.block.OniBlockFactory
-import mconi.common.content.OniBlockIds
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.Identifier
 import net.minecraft.resources.ResourceKey
@@ -22,15 +21,14 @@ object NeoforgeBlocks {
     private val BLOCK_HOLDERS: MutableMap<String, DeferredHolder<Block, Block>> = HashMap()
 
     init {
-        for (path in OniBlockIds.ALL) {
-            val id = Identifier.tryParse("${AbstractModInitializer.MOD_ID}:$path")
-                ?: throw IllegalArgumentException("Invalid block id path: $path")
-            val blockKey = ResourceKey.create(Registries.BLOCK, id)
-            val holder = BLOCKS.register(path, Supplier { OniBlockFactory.createBlock(path, blockKey) })
-            BLOCK_HOLDERS[path] = holder
-            if (OniBlockIds.SOLIDS.contains(path)) {
+        for (entry in OniBlockFactory.entries()) {
+            val id = Identifier.tryParse("${AbstractModInitializer.MOD_ID}:${entry.id}")
+                ?: throw IllegalArgumentException("Invalid block id path: ${entry.id}")
+            val holder = BLOCKS.register(entry.id, Supplier { OniBlockFactory.createBlock(entry.id) })
+            BLOCK_HOLDERS[entry.id] = holder
+            if (OniBlockFactory.SOLIDS.contains(holder.get())) {
                 val itemKey = ResourceKey.create(Registries.ITEM, id)
-                ITEMS.register(path, Supplier { BlockItem(holder.get(), Item.Properties().setId(itemKey)) })
+                ITEMS.register(entry.id, Supplier { BlockItem(holder.get(), Item.Properties().setId(itemKey)) })
             }
         }
     }
@@ -38,5 +36,9 @@ object NeoforgeBlocks {
     fun register(eventBus: IEventBus) {
         BLOCKS.register(eventBus)
         ITEMS.register(eventBus)
+    }
+
+    fun blockHolder(id: String): DeferredHolder<Block, Block> {
+        return BLOCK_HOLDERS[id] ?: throw IllegalArgumentException("Unknown block id: $id")
     }
 }

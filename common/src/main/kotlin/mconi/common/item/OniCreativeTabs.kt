@@ -1,8 +1,8 @@
 package mconi.common.item
 
 import mconi.common.AbstractModInitializer
-import mconi.common.content.OniBlockIds
-import mconi.common.content.OniItemIds
+import mconi.common.block.OniBlockFactory
+import mconi.common.item.OniItemFactory
 import mconi.common.sim.model.SystemLens
 import net.minecraft.core.registries.Registries
 import net.minecraft.network.chat.Component
@@ -43,17 +43,18 @@ object OniCreativeTabs {
             .icon(iconSupplier)
             .displayItems { params, output ->
                 for (lens in SystemLens.values()) {
-                    val path = OniItems.pathForLens(lens) ?: continue
+                    val path = OniItemFactory.pathForLens(lens) ?: continue
                     val id = Identifier.tryParse("${AbstractModInitializer.MOD_ID}:$path") ?: continue
                     val itemKey = ResourceKey.create(Registries.ITEM, id)
                     output.accept(ItemStack(params.holders().lookupOrThrow(Registries.ITEM).getOrThrow(itemKey)))
                 }
-                for (path in OniItemIds.ALL) {
+                for (path in OniItemFactory.ALL) {
                     val id = Identifier.tryParse("${AbstractModInitializer.MOD_ID}:$path") ?: continue
                     val itemKey = ResourceKey.create(Registries.ITEM, id)
                     output.accept(ItemStack(params.holders().lookupOrThrow(Registries.ITEM).getOrThrow(itemKey)))
                 }
-                for (path in OniBlockIds.SOLIDS) {
+                for (block in OniBlockFactory.SOLIDS) {
+                    val path = OniBlockFactory.idOf(block) ?: continue
                     val id = Identifier.tryParse("${AbstractModInitializer.MOD_ID}:$path") ?: continue
                     val itemKey = ResourceKey.create(Registries.ITEM, id)
                     output.accept(ItemStack(params.holders().lookupOrThrow(Registries.ITEM).getOrThrow(itemKey)))
