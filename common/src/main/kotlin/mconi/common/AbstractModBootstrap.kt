@@ -36,11 +36,14 @@ import mconi.common.sim.OniSystemInspector
 import mconi.common.sim.OniWorldFoundation
 import mconi.common.element.OniElements
 import mconi.common.sim.model.LayerProperty
-import mconi.common.sim.model.OniCellState
+import mconi.common.sim.model.OniBlockData
 import mconi.common.sim.model.SystemLens
+import mconi.common.world.OniChunkDataAccess
+import mconi.common.world.OniWorldSampler
 import mconi.common.wrappers.Utils
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.util.Mth
+import net.minecraft.core.BlockPos
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -180,9 +183,14 @@ abstract class AbstractModBootstrap {
                         })
                     .then(literal("step")
                         .executes { context ->
-                            OniServices.simulationRuntime().runOneSimulationStep(
-                                OniServices.simulationRuntime().snapshot().serverTicks()
-                            )
+                            val server = context.source.server
+                            val level = server.overworld()
+                            if (level != null) {
+                                OniServices.simulationRuntime().runOneSimulationStep(
+                                    OniServices.simulationRuntime().snapshot().serverTicks(),
+                                    level
+                                )
+                            }
                             Utils.SendFeedback(context, "ONI Simulation executed one manual step.", true)
                             1
                         })
@@ -208,13 +216,10 @@ abstract class AbstractModBootstrap {
                             val x = Mth.floor(source.position.x)
                             val y = Mth.floor(source.position.y)
                             val z = Mth.floor(source.position.z)
-                            OniServices.simulationRuntime().grid().getOrCreateCellAtBlock(
-                                x,
-                                y,
-                                z,
-                                OniServices.simulationRuntime().config().cellSize()
-                            )
-                            Utils.SendFeedback(context, "Created/loaded simulation cell at current position.", true)
+                            val level = source.level
+                            OniWorldSampler.sampleBox(level, x, y, z, 0)
+                            OniChunkDataAccess.getOrCreate(level, BlockPos(x, y, z))
+                            Utils.SendFeedback(context, "Created/loaded simulation block at current position.", true)
                             1
                         })
                     .then(literal("inspect_here")
@@ -223,15 +228,12 @@ abstract class AbstractModBootstrap {
                             val x = Mth.floor(source.position.x)
                             val y = Mth.floor(source.position.y)
                             val z = Mth.floor(source.position.z)
-                            val cell: OniCellState = OniServices.simulationRuntime().grid().getOrCreateCellAtBlock(
-                                x,
-                                y,
-                                z,
-                                OniServices.simulationRuntime().config().cellSize()
-                            )
+                            val level = source.level
+                            OniWorldSampler.sampleBox(level, x, y, z, 0)
+                            val cell: OniBlockData = OniChunkDataAccess.getOrCreate(level, BlockPos(x, y, z))
                             Utils.SendFeedback(
                                 context,
-                                "Cell: occupancy=${cell.occupancyState()}"
+                                "Block: occupancy=${cell.occupancyState()}"
                                     + " pressure=${String.format("%.2f", cell.pressureKpa())}kPa"
                                     + " tempK=${String.format("%.2f", cell.temperatureK())}"
                                     + " o2Frac=${String.format("%.4f", cell.o2Fraction())}"
@@ -261,12 +263,8 @@ abstract class AbstractModBootstrap {
                                         Utils.SendError(context, "Invalid gas species: $speciesInput. Use O2/CO2/H2.", true)
                                         return@executes 0
                                     }
-                                    val cell: OniCellState = OniServices.simulationRuntime().grid().getOrCreateCellAtBlock(
-                                        x,
-                                        y,
-                                        z,
-                                        OniServices.simulationRuntime().config().cellSize()
-                                    )
+                                    val level = source.level
+                                    val cell: OniBlockData = OniChunkDataAccess.getOrCreate(level, BlockPos(x, y, z))
                                     val updatedMass = cell.gasMassKg(species) + massKg
                                     cell.setGasMassKg(species, updatedMass)
                                     Utils.SendFeedback(context, "Injected $massKg kg of $species into current cell.", true)
@@ -287,12 +285,8 @@ abstract class AbstractModBootstrap {
                                         Utils.SendError(context, "Invalid liquid id. Use water/polluted_water/crude_oil/lava.", true)
                                         return@executes 0
                                     }
-                                    val cell: OniCellState = OniServices.simulationRuntime().grid().getOrCreateCellAtBlock(
-                                        x,
-                                        y,
-                                        z,
-                                        OniServices.simulationRuntime().config().cellSize()
-                                    )
+                                    val level = source.level
+                                    val cell: OniBlockData = OniChunkDataAccess.getOrCreate(level, BlockPos(x, y, z))
                                     cell.setLiquidState(liquidId, massKg)
                                     Utils.SendFeedback(context, "Set liquid $liquidId mass to $massKg kg in current cell.", true)
                                     1
@@ -472,12 +466,9 @@ abstract class AbstractModBootstrap {
                                 val x = Mth.floor(source.position.x)
                                 val y = Mth.floor(source.position.y)
                                 val z = Mth.floor(source.position.z)
-                                val cell: OniCellState = OniServices.simulationRuntime().grid().getOrCreateCellAtBlock(
-                                    x,
-                                    y,
-                                    z,
-                                    OniServices.simulationRuntime().config().cellSize()
-                                )
+                                val level = source.level
+                                OniWorldSampler.sampleBox(level, x, y, z, 0)
+                                val cell: OniBlockData = OniChunkDataAccess.getOrCreate(level, BlockPos(x, y, z))
                                 Utils.SendFeedback(
                                     context,
                                     "System glasses [${systemLens.name}] at ($x,$y,$z):",

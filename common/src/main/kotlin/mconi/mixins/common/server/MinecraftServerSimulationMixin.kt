@@ -4,7 +4,6 @@ import mconi.common.debug.OniDebugHttpServer
 import mconi.common.sim.OniServices
 import mconi.common.world.OniPlayerBreathing
 import mconi.common.world.OniPowerSampler
-import mconi.common.world.OniSimulationPersistence
 import mconi.common.world.OniWorldSampler
 import mconi.common.world.OniWorldWriter
 import net.minecraft.server.MinecraftServer
@@ -21,11 +20,10 @@ class MinecraftServerSimulationMixin {
     private fun `mconi$onServerTick`(hasTimeLeft: BooleanSupplier, ci: CallbackInfo) {
         @Suppress("CAST_NEVER_SUCCEEDS")
         val server = this as MinecraftServer
-        OniSimulationPersistence.ensureLoaded(server.overworld())
         OniPowerSampler.sampleAroundPlayers(server)
         OniWorldSampler.sampleAroundPlayers(server)
         OniDebugHttpServer.ensureStarted(server)
-        OniServices.simulationRuntime().onServerTick()
+        OniServices.simulationRuntime().onServerTick(server)
         OniWorldWriter.applyAroundPlayers(server)
         OniPlayerBreathing.apply(server.overworld())
     }
@@ -35,7 +33,6 @@ class MinecraftServerSimulationMixin {
     private fun `mconi$onServerStop`(ci: CallbackInfo) {
         @Suppress("CAST_NEVER_SUCCEEDS")
         val server = this as MinecraftServer
-        OniSimulationPersistence.save(server.overworld())
         OniDebugHttpServer.stop()
         OniServices.simulationRuntime().onServerStopped()
     }

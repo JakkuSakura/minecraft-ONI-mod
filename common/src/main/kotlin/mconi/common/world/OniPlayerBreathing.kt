@@ -1,7 +1,7 @@
 package mconi.common.world
 
-import mconi.common.sim.OniServices
 import mconi.common.sim.model.BreathingBand
+import mconi.common.world.OniChunkDataAccess
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.effect.MobEffectInstance
@@ -15,13 +15,8 @@ object OniPlayerBreathing {
     fun apply(level: ServerLevel) {
         val gameTime = level.gameTime
         for (player: ServerPlayer in level.players()) {
-            val cell = OniServices.simulationRuntime().grid().getOrCreateCellAtBlock(
-                player.blockPosition().x,
-                player.blockPosition().y,
-                player.blockPosition().z,
-                OniServices.simulationRuntime().config().cellSize()
-            )
-            val band = cell.breathingBand()
+            val data = OniChunkDataAccess.getOrCreate(level, player.blockPosition())
+            val band = data.breathingBand()
             if (band == BreathingBand.HEALTHY) {
                 continue
             }

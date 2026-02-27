@@ -8,6 +8,6 @@ class AtmosphereSubsystem : SimulationSubsystem {
     override fun id(): String = "atmosphere"
 
     override fun run(context: SimulationContext) {
-        kernel.run(context.grid(), context.config())
+        kernel.run(context.level(), context.config())
     }
 }

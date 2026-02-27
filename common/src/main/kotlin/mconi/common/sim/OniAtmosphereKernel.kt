@@ -2,27 +2,30 @@ package mconi.common.sim
 
 import mconi.common.element.OniElements
 import mconi.common.sim.model.OccupancyState
-import mconi.common.sim.model.OniCellCoordinate
-import mconi.common.sim.model.OniCellState
+import mconi.common.sim.model.OniBlockData
+import mconi.common.world.OniChunkDataAccess
+import net.minecraft.core.BlockPos
+import net.minecraft.server.level.ServerLevel
 import java.util.LinkedHashMap
 
 /**
  * Initial atmosphere kernel pass: resolves occupancy and computes pressure from mass.
  */
 class OniAtmosphereKernel {
-    fun run(grid: OniSimulationGrid, config: OniSimulationConfig) {
+    fun run(level: ServerLevel, config: OniSimulationConfig) {
         val cellVolume = Math.pow(config.cellSize().toDouble(), 3.0)
-        for (cell in grid.cells()) {
-            updateCell(cell, config)
+        val entries = OniChunkDataAccess.blockEntries(level)
+        for (entry in entries) {
+            updateCell(entry.data, config)
         }
-        diffuseGases(grid, config)
-        stratifyGases(grid, config)
-        for (cell in grid.cells()) {
-            updatePressure(cell, cellVolume)
+        diffuseGases(level, config, entries)
+        stratifyGases(level, config, entries)
+        for (entry in entries) {
+            updatePressure(entry.data, cellVolume)
         }
     }
 
-    private fun updateCell(cell: OniCellState, config: OniSimulationConfig) {
+    private fun updateCell(cell: OniBlockData, config: OniSimulationConfig) {
         if (cell.occupancyState() == OccupancyState.SOLID) {
             cell.setLiquidState(OniElements.LIQUID_NONE, 0.0)
             for (species in OniElements.GASES) {
@@ -52,7 +55,7 @@ class OniAtmosphereKernel {
         cell.setOccupancyState(OccupancyState.VACUUM)
     }
 
-    private fun updatePressure(cell: OniCellState, cellVolumeM3: Double) {
+    private fun updatePressure(cell: OniBlockData, cellVolumeM3: Double) {
         if (cell.occupancyState() != OccupancyState.GAS) {
             cell.setPressureKpa(0.0)
             return
@@ -65,7 +68,7 @@ class OniAtmosphereKernel {
         cell.setPressureKpa(pressureKpa)
     }
 
-    private fun drainVoid(cell: OniCellState, config: OniSimulationConfig) {
+    private fun drainVoid(cell: OniBlockData, config: OniSimulationConfig) {
         val drainFraction = config.voidGasDrainFraction().coerceIn(0.0, 1.0)
         for (species in OniElements.GASES) {
             val next = cell.gasMassKg(species) * (1.0 - drainFraction)
@@ -79,25 +82,27 @@ class OniAtmosphereKernel {
         }
     }
 
-    private fun diffuseGases(grid: OniSimulationGrid, config: OniSimulationConfig) {
+    private fun diffuseGases(level: ServerLevel, config: OniSimulationConfig, entries: List<mconi.common.world.BlockEntryView>) {
         val maxTransfer = config.gasTransferKgPerStep().coerceAtLeast(0.0)
         if (maxTransfer <= 0.0) {
             return
         }
 
-        val deltas: MutableMap<OniCellCoordinate, MutableMap<OniElements.GasSpec, Double>> = HashMap()
-        for ((coordinate, cell) in grid.cellEntries()) {
+        val deltas: MutableMap<BlockPos, MutableMap<OniElements.GasSpec, Double>> = HashMap()
+        for (entry in entries) {
+            val coordinate = entry.pos
+            val cell = entry.data
             if (cell.occupancyState() != OccupancyState.GAS) {
                 continue
             }
             for (neighbor in neighborsOf(coordinate)) {
-                val other = grid.getCellAtCoordinate(neighbor) ?: continue
+                val other = OniChunkDataAccess.get(level, neighbor) ?: continue
                 if (other.occupancyState() != OccupancyState.GAS) {
                     continue
                 }
-                if (coordinate.cellX() > neighbor.cellX() ||
-                    (coordinate.cellX() == neighbor.cellX() && coordinate.cellY() > neighbor.cellY()) ||
-                    (coordinate.cellX() == neighbor.cellX() && coordinate.cellY() == neighbor.cellY() && coordinate.cellZ() > neighbor.cellZ())
+                if (coordinate.x > neighbor.x ||
+                    (coordinate.x == neighbor.x && coordinate.y > neighbor.y) ||
+                    (coordinate.x == neighbor.x && coordinate.y == neighbor.y && coordinate.z > neighbor.z)
                 ) {
                     continue
                 }
@@ -117,28 +122,30 @@ class OniAtmosphereKernel {
         }
 
         for ((coordinate, speciesDelta) in deltas) {
-            val cell = grid.getOrCreateCellAtCoordinate(coordinate)
+            val cell = OniChunkDataAccess.getOrCreate(level, coordinate)
             for ((species, delta) in speciesDelta) {
                 cell.setGasMassKg(species, cell.gasMassKg(species) + delta)
             }
         }
     }
 
-    private fun stratifyGases(grid: OniSimulationGrid, config: OniSimulationConfig) {
+    private fun stratifyGases(level: ServerLevel, config: OniSimulationConfig, entries: List<mconi.common.world.BlockEntryView>) {
         val maxTransfer = config.gasTransferKgPerStep().coerceAtLeast(0.0)
         if (maxTransfer <= 0.0) {
             return
         }
-        val deltas: MutableMap<OniCellCoordinate, MutableMap<OniElements.GasSpec, Double>> = HashMap()
-        for ((coordinate, cell) in grid.cellEntries()) {
+        val deltas: MutableMap<BlockPos, MutableMap<OniElements.GasSpec, Double>> = HashMap()
+        for (entry in entries) {
+            val coordinate = entry.pos
+            val cell = entry.data
             if (cell.occupancyState() != OccupancyState.GAS) {
                 continue
             }
 
-            val below = OniCellCoordinate(coordinate.cellX(), coordinate.cellY() - 1, coordinate.cellZ())
-            val above = OniCellCoordinate(coordinate.cellX(), coordinate.cellY() + 1, coordinate.cellZ())
-            val belowCell = grid.getCellAtCoordinate(below)
-            val aboveCell = grid.getCellAtCoordinate(above)
+            val below = BlockPos(coordinate.x, coordinate.y - 1, coordinate.z)
+            val above = BlockPos(coordinate.x, coordinate.y + 1, coordinate.z)
+            val belowCell = OniChunkDataAccess.get(level, below)
+            val aboveCell = OniChunkDataAccess.get(level, above)
 
             if (belowCell != null && belowCell.occupancyState() == OccupancyState.GAS) {
                 stratifyDown(OniElements.GAS_CARBON_DIOXIDE, cell, belowCell, maxTransfer, coordinate, below, deltas)
@@ -150,7 +157,7 @@ class OniAtmosphereKernel {
         }
 
         for ((coordinate, speciesDelta) in deltas) {
-            val cell = grid.getOrCreateCellAtCoordinate(coordinate)
+            val cell = OniChunkDataAccess.getOrCreate(level, coordinate)
             for ((species, delta) in speciesDelta) {
                 cell.setGasMassKg(species, cell.gasMassKg(species) + delta)
             }
@@ -159,12 +166,12 @@ class OniAtmosphereKernel {
 
     private fun stratifyDown(
         species: OniElements.GasSpec,
-        cell: OniCellState,
-        belowCell: OniCellState,
+        cell: OniBlockData,
+        belowCell: OniBlockData,
         maxTransfer: Double,
-        from: OniCellCoordinate,
-        to: OniCellCoordinate,
-        deltas: MutableMap<OniCellCoordinate, MutableMap<OniElements.GasSpec, Double>>,
+        from: BlockPos,
+        to: BlockPos,
+        deltas: MutableMap<BlockPos, MutableMap<OniElements.GasSpec, Double>>,
     ) {
         val massA = cell.gasMassKg(species)
         val massB = belowCell.gasMassKg(species)
@@ -181,12 +188,12 @@ class OniAtmosphereKernel {
 
     private fun stratifyUp(
         species: OniElements.GasSpec,
-        cell: OniCellState,
-        aboveCell: OniCellState,
+        cell: OniBlockData,
+        aboveCell: OniBlockData,
         maxTransfer: Double,
-        from: OniCellCoordinate,
-        to: OniCellCoordinate,
-        deltas: MutableMap<OniCellCoordinate, MutableMap<OniElements.GasSpec, Double>>,
+        from: BlockPos,
+        to: BlockPos,
+        deltas: MutableMap<BlockPos, MutableMap<OniElements.GasSpec, Double>>,
     ) {
         val massA = cell.gasMassKg(species)
         val massB = aboveCell.gasMassKg(species)
@@ -201,20 +208,20 @@ class OniAtmosphereKernel {
         addDelta(deltas, to, species, transfer)
     }
 
-    private fun neighborsOf(coordinate: OniCellCoordinate): List<OniCellCoordinate> {
+    private fun neighborsOf(coordinate: BlockPos): List<BlockPos> {
         return listOf(
-            OniCellCoordinate(coordinate.cellX() + 1, coordinate.cellY(), coordinate.cellZ()),
-            OniCellCoordinate(coordinate.cellX() - 1, coordinate.cellY(), coordinate.cellZ()),
-            OniCellCoordinate(coordinate.cellX(), coordinate.cellY() + 1, coordinate.cellZ()),
-            OniCellCoordinate(coordinate.cellX(), coordinate.cellY() - 1, coordinate.cellZ()),
-            OniCellCoordinate(coordinate.cellX(), coordinate.cellY(), coordinate.cellZ() + 1),
-            OniCellCoordinate(coordinate.cellX(), coordinate.cellY(), coordinate.cellZ() - 1),
+            BlockPos(coordinate.x + 1, coordinate.y, coordinate.z),
+            BlockPos(coordinate.x - 1, coordinate.y, coordinate.z),
+            BlockPos(coordinate.x, coordinate.y + 1, coordinate.z),
+            BlockPos(coordinate.x, coordinate.y - 1, coordinate.z),
+            BlockPos(coordinate.x, coordinate.y, coordinate.z + 1),
+            BlockPos(coordinate.x, coordinate.y, coordinate.z - 1),
         )
     }
 
     private fun addDelta(
-        deltas: MutableMap<OniCellCoordinate, MutableMap<OniElements.GasSpec, Double>>,
-        coordinate: OniCellCoordinate,
+        deltas: MutableMap<BlockPos, MutableMap<OniElements.GasSpec, Double>>,
+        coordinate: BlockPos,
         species: OniElements.GasSpec,
         delta: Double,
     ) {

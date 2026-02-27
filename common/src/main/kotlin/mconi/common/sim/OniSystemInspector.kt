@@ -2,7 +2,7 @@ package mconi.common.sim
 
 import mconi.common.element.OniElements
 import mconi.common.sim.model.LayerProperty
-import mconi.common.sim.model.OniCellState
+import mconi.common.sim.model.OniBlockData
 import mconi.common.sim.model.PressureBand
 import mconi.common.sim.model.SystemLens
 import net.minecraft.world.entity.player.Player
@@ -12,7 +12,7 @@ object OniSystemInspector {
     fun inspect(
         runtime: OniSimulationRuntime,
         systemLens: SystemLens,
-        cell: OniCellState,
+        cell: OniBlockData,
         player: Player?
     ): List<LayerProperty> {
         return when (systemLens) {
@@ -27,7 +27,7 @@ object OniSystemInspector {
         }
     }
 
-    private fun atmosphereLayers(cell: OniCellState): List<LayerProperty> {
+    private fun atmosphereLayers(cell: OniBlockData): List<LayerProperty> {
         return listOf(
             LayerProperty("matter", "occupancy", cell.occupancyState().name),
             LayerProperty("pressure", "kPa", "%.3f".format(cell.pressureKpa())),
@@ -39,7 +39,7 @@ object OniSystemInspector {
         )
     }
 
-    private fun liquidLayers(cell: OniCellState): List<LayerProperty> {
+    private fun liquidLayers(cell: OniBlockData): List<LayerProperty> {
         return listOf(
             LayerProperty("liquid", "id", cell.liquidId()),
             LayerProperty("liquid", "mass_kg", "%.3f".format(cell.liquidMassKg())),
@@ -47,7 +47,7 @@ object OniSystemInspector {
         )
     }
 
-    private fun thermalLayers(cell: OniCellState): List<LayerProperty> {
+    private fun thermalLayers(cell: OniBlockData): List<LayerProperty> {
         val zone = when {
             cell.temperatureK() >= 350.0 -> "HOT"
             cell.temperatureK() <= 265.0 -> "COLD"
@@ -61,7 +61,7 @@ object OniSystemInspector {
         )
     }
 
-    private fun oxygenLayers(cell: OniCellState): List<LayerProperty> {
+    private fun oxygenLayers(cell: OniBlockData): List<LayerProperty> {
         return listOf(
             LayerProperty("oxygen", "o2_fraction", "%.4f".format(cell.o2Fraction())),
             LayerProperty("oxygen", "co2_fraction", "%.4f".format(cell.co2Fraction())),

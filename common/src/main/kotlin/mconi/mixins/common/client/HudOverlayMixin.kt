@@ -1,12 +1,13 @@
 package mconi.mixins.common.client
 
 import mconi.common.sim.OniServices
-import mconi.common.sim.model.OniCellCoordinate
+import mconi.common.world.OniChunkDataAccess
 import net.minecraft.client.Minecraft
 import net.minecraft.client.DeltaTracker
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.resources.language.I18n
+import net.minecraft.core.BlockPos
 import net.minecraft.world.level.Level
 import org.spongepowered.asm.mixin.Mixin
 import org.spongepowered.asm.mixin.injection.At
@@ -27,11 +28,10 @@ class HudOverlayMixin {
             return
         }
         val runtime = OniServices.simulationRuntime()
-        val config = runtime.config()
         val pos = player.blockPosition()
-        val cell = runtime.grid().getCellAtCoordinate(
-            OniCellCoordinate.fromBlockPosition(pos.x, pos.y, pos.z, config.cellSize())
-        )
+        val server = minecraft.singleplayerServer ?: return
+        val level = server.overworld() ?: return
+        val cell = OniChunkDataAccess.get(level, BlockPos(pos.x, pos.y, pos.z))
 
         val font = minecraft.font
         var y = 6

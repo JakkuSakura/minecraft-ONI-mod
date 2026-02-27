@@ -2,15 +2,13 @@ package mconi.common.world
 
 import mconi.common.sim.OniServices
 import mconi.common.sim.OniSimulationConfig
-import mconi.common.sim.OniSimulationGrid
 import mconi.common.sim.OniWorldFoundation
 import mconi.common.element.OniElements
 import mconi.common.sim.model.OccupancyState
-import mconi.common.sim.model.OniCellState
+import mconi.common.world.OniChunkDataAccess
 import net.minecraft.core.BlockPos
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerLevel
-import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.level.block.Blocks
 import mconi.common.block.OniBlockLookup
 import mconi.common.block.OniBlockFactory
@@ -39,7 +37,6 @@ object OniWorldSampler {
     @JvmStatic
     fun sampleBox(level: ServerLevel, centerX: Int, centerY: Int, centerZ: Int, radiusBlocks: Int): Int {
         val config = OniServices.simulationRuntime().config()
-        val grid = OniServices.simulationRuntime().grid()
         val cellSize = config.cellSize()
         val minY = level.minY
         val maxY = level.maxY - 1
@@ -55,8 +52,8 @@ object OniWorldSampler {
                 }
                 var z = centerZ - radiusBlocks
                 while (z <= centerZ + radiusBlocks) {
-                    val cell = grid.getOrCreateCellAtBlock(x, y, z, cellSize)
-                    hydrateCellFromWorld(level, x, y, z, minY, maxY, config, grid, cell)
+                    val blockData = OniChunkDataAccess.getOrCreate(level, BlockPos(x, y, z))
+                    hydrateBlockFromWorld(level, x, y, z, minY, maxY, config, blockData)
                     samples++
                     z += cellSize
                 }
@@ -67,7 +64,7 @@ object OniWorldSampler {
         return samples
     }
 
-    private fun hydrateCellFromWorld(
+    private fun hydrateBlockFromWorld(
         level: ServerLevel,
         x: Int,
         y: Int,
@@ -75,20 +72,17 @@ object OniWorldSampler {
         minY: Int,
         maxY: Int,
         config: OniSimulationConfig,
-        grid: OniSimulationGrid,
-        cell: OniCellState
+        blockData: mconi.common.sim.model.OniBlockData
     ) {
         if (!OniWorldFoundation.isWithinHorizontalBounds(x, z, config)) {
-            cell.setOccupancyState(OccupancyState.VOID)
-            clearCellMass(cell)
-            cell.setWorldBlockKey(VOID_BLOCK_KEY)
+            blockData.setOccupancyState(OccupancyState.VOID)
+            clearBlockMass(blockData)
             return
         }
 
         if (OniWorldFoundation.isVoidBand(y, maxY, config)) {
-            cell.setOccupancyState(OccupancyState.VOID)
-            clearCellMass(cell)
-            cell.setWorldBlockKey(VOID_BLOCK_KEY)
+            blockData.setOccupancyState(OccupancyState.VOID)
+            clearBlockMass(blockData)
             return
         }
 
@@ -99,11 +93,11 @@ object OniWorldSampler {
             } else {
                 OniElements.LIQUID_WATER
             }
-            if (cell.occupancyState() != OccupancyState.LIQUID || cell.liquidId() != liquidId) {
-                clearCellMass(cell)
-                cell.setLiquidState(liquidId, OniBlockFactory.liquidMassKg(liquidId).toDouble())
-                cell.setOccupancyState(OccupancyState.LIQUID)
-                cell.setTemperatureK(if (liquidId == OniElements.LIQUID_LAVA) 1300.0 else 293.15)
+            if (blockData.occupancyState() != OccupancyState.LIQUID || blockData.liquidId() != liquidId) {
+                clearBlockMass(blockData)
+                blockData.setLiquidState(liquidId, OniBlockFactory.liquidMassKg(liquidId).toDouble())
+                blockData.setOccupancyState(OccupancyState.LIQUID)
+                blockData.setTemperatureK(if (liquidId == OniElements.LIQUID_LAVA) 1300.0 else 293.15)
             }
             return
         }
@@ -119,10 +113,10 @@ object OniWorldSampler {
                 state.`is`(crudeOilBlock) -> OniElements.LIQUID_CRUDE_OIL
                 else -> OniElements.LIQUID_WATER
             }
-            if (cell.occupancyState() != OccupancyState.LIQUID || cell.liquidId() != liquidId) {
-                cell.setLiquidState(liquidId, OniBlockFactory.liquidMassKg(liquidId).toDouble())
-                cell.setTemperatureK(if (liquidId == OniElements.LIQUID_LAVA) 1300.0 else 293.15)
-                cell.setOccupancyState(OccupancyState.LIQUID)
+            if (blockData.occupancyState() != OccupancyState.LIQUID || blockData.liquidId() != liquidId) {
+                blockData.setLiquidState(liquidId, OniBlockFactory.liquidMassKg(liquidId).toDouble())
+                blockData.setTemperatureK(if (liquidId == OniElements.LIQUID_LAVA) 1300.0 else 293.15)
+                blockData.setOccupancyState(OccupancyState.LIQUID)
             }
             return
         }
@@ -131,58 +125,58 @@ object OniWorldSampler {
         val co2Block = OniBlockLookup.block(OniBlockFactory.CARBON_DIOXIDE_GAS)
         val hydrogenBlock = OniBlockLookup.block(OniBlockFactory.HYDROGEN_GAS)
         if (state.`is`(oxygenBlock)) {
-            if (cell.occupancyState() != OccupancyState.GAS) {
-                clearCellMass(cell)
-                cell.setGasMassKg(OniElements.GAS_OXYGEN, OniElements.GAS_OXYGEN.defaultMassKg)
-                cell.setOccupancyState(OccupancyState.GAS)
-                cell.setTemperatureK(293.15)
+            if (blockData.occupancyState() != OccupancyState.GAS) {
+                clearBlockMass(blockData)
+                blockData.setGasMassKg(OniElements.GAS_OXYGEN, OniElements.GAS_OXYGEN.defaultMassKg)
+                blockData.setOccupancyState(OccupancyState.GAS)
+                blockData.setTemperatureK(293.15)
             }
             return
         }
         if (state.`is`(co2Block)) {
-            if (cell.occupancyState() != OccupancyState.GAS) {
-                clearCellMass(cell)
-                cell.setGasMassKg(OniElements.GAS_CARBON_DIOXIDE, OniElements.GAS_CARBON_DIOXIDE.defaultMassKg)
-                cell.setOccupancyState(OccupancyState.GAS)
-                cell.setTemperatureK(293.15)
+            if (blockData.occupancyState() != OccupancyState.GAS) {
+                clearBlockMass(blockData)
+                blockData.setGasMassKg(OniElements.GAS_CARBON_DIOXIDE, OniElements.GAS_CARBON_DIOXIDE.defaultMassKg)
+                blockData.setOccupancyState(OccupancyState.GAS)
+                blockData.setTemperatureK(293.15)
             }
             return
         }
         if (state.`is`(hydrogenBlock)) {
-            if (cell.occupancyState() != OccupancyState.GAS) {
-                clearCellMass(cell)
-                cell.setGasMassKg(OniElements.GAS_HYDROGEN, OniElements.GAS_HYDROGEN.defaultMassKg)
-                cell.setOccupancyState(OccupancyState.GAS)
-                cell.setTemperatureK(293.15)
+            if (blockData.occupancyState() != OccupancyState.GAS) {
+                clearBlockMass(blockData)
+                blockData.setGasMassKg(OniElements.GAS_HYDROGEN, OniElements.GAS_HYDROGEN.defaultMassKg)
+                blockData.setOccupancyState(OccupancyState.GAS)
+                blockData.setTemperatureK(293.15)
             }
             return
         }
 
         if (!state.isAir) {
-            if (cell.occupancyState() != OccupancyState.SOLID) {
-                cell.setOccupancyState(OccupancyState.SOLID)
-                clearCellMass(cell)
+            if (blockData.occupancyState() != OccupancyState.SOLID) {
+                blockData.setOccupancyState(OccupancyState.SOLID)
+                clearBlockMass(blockData)
             }
-            injectProducerEffects(level, x, y, z, minY, maxY, config, grid)
+            injectProducerEffects(level, x, y, z, minY, maxY)
             return
         }
 
-        if (cell.occupancyState() != OccupancyState.GAS) {
-            cell.setOccupancyState(OccupancyState.GAS)
-            cell.setGasMassKg(OniElements.GAS_OXYGEN, OniElements.GAS_OXYGEN.defaultMassKg)
-            cell.setGasMassKg(OniElements.GAS_CARBON_DIOXIDE, OniElements.GAS_CARBON_DIOXIDE.defaultMassKg)
-            cell.setGasMassKg(OniElements.GAS_HYDROGEN, OniElements.GAS_HYDROGEN.defaultMassKg)
-            cell.setTemperatureK(293.15)
+        if (blockData.occupancyState() != OccupancyState.GAS) {
+            blockData.setOccupancyState(OccupancyState.GAS)
+            blockData.setGasMassKg(OniElements.GAS_OXYGEN, OniElements.GAS_OXYGEN.defaultMassKg)
+            blockData.setGasMassKg(OniElements.GAS_CARBON_DIOXIDE, OniElements.GAS_CARBON_DIOXIDE.defaultMassKg)
+            blockData.setGasMassKg(OniElements.GAS_HYDROGEN, OniElements.GAS_HYDROGEN.defaultMassKg)
+            blockData.setTemperatureK(293.15)
         }
 
         if (OniWorldFoundation.isLavaBand(y, minY, config)) {
             val mass = OniBlockFactory.liquidMassKg(OniElements.LIQUID_LAVA).toDouble()
-            cell.setLiquidState(OniElements.LIQUID_LAVA, mass)
-            cell.setOccupancyState(OccupancyState.LIQUID)
-            cell.setTemperatureK(1300.0)
+            blockData.setLiquidState(OniElements.LIQUID_LAVA, mass)
+            blockData.setOccupancyState(OccupancyState.LIQUID)
+            blockData.setTemperatureK(1300.0)
         }
 
-        injectProducerEffects(level, x, y, z, minY, maxY, config, grid)
+        injectProducerEffects(level, x, y, z, minY, maxY)
     }
 
     private fun injectProducerEffects(
@@ -191,9 +185,7 @@ object OniWorldSampler {
         y: Int,
         z: Int,
         minY: Int,
-        maxY: Int,
-        config: OniSimulationConfig,
-        grid: OniSimulationGrid
+        maxY: Int
     ) {
         val state: BlockState = level.getBlockState(BlockPos(x, y, z))
         val algaeBlock = OniBlockLookup.block(OniBlockFactory.ALGAE)
@@ -207,38 +199,38 @@ object OniWorldSampler {
         val naturalGasGenerator = OniBlockLookup.block(OniBlockFactory.NATURAL_GAS_GENERATOR)
         val petroleumGenerator = OniBlockLookup.block(OniBlockFactory.PETROLEUM_GENERATOR)
         if (state.`is`(Blocks.MOSS_BLOCK) || state.`is`(Blocks.MOSS_CARPET) || state.`is`(Blocks.SEAGRASS) || state.`is`(algaeBlock)) {
-            injectGasAt(grid, x, y + 1, z, minY, maxY, OniElements.GAS_OXYGEN.defaultMassKg, 0.0)
+            injectGasAt(level, x, y + 1, z, minY, maxY, OniElements.GAS_OXYGEN.defaultMassKg, 0.0)
         }
 
         if (state.`is`(Blocks.CAMPFIRE) || state.`is`(Blocks.FURNACE) || state.`is`(Blocks.BLAST_FURNACE)) {
-            injectGasAt(grid, x, y + 1, z, minY, maxY, 0.0, OniElements.GAS_CARBON_DIOXIDE.defaultMassKg)
+            injectGasAt(level, x, y + 1, z, minY, maxY, 0.0, OniElements.GAS_CARBON_DIOXIDE.defaultMassKg)
         }
 
         if (state.`is`(oxygenDiffuser)) {
-            injectGasAt(grid, x, y + 1, z, minY, maxY, OXYGEN_DIFFUSER_O2_KG, 0.0)
+            injectGasAt(level, x, y + 1, z, minY, maxY, OXYGEN_DIFFUSER_O2_KG, 0.0)
         }
         if (state.`is`(algaeDeoxidizer)) {
-            injectGasAt(grid, x, y + 1, z, minY, maxY, ALGAE_DEOXIDIZER_O2_KG, ALGAE_DEOXIDIZER_CO2_KG)
+            injectGasAt(level, x, y + 1, z, minY, maxY, ALGAE_DEOXIDIZER_O2_KG, ALGAE_DEOXIDIZER_CO2_KG)
         }
         if (state.`is`(co2Scrubber)) {
-            scrubGasAt(grid, x, y + 1, z, minY, maxY, CO2_SCRUBBER_CO2_KG, CO2_SCRUBBER_O2_KG)
+            scrubGasAt(level, x, y + 1, z, minY, maxY, CO2_SCRUBBER_CO2_KG, CO2_SCRUBBER_O2_KG)
         }
         if (state.`is`(gasPump)) {
-            pumpGasAt(grid, x, y + 1, z, minY, maxY, GAS_PUMP_KG_PER_STEP)
+            pumpGasAt(level, x, y + 1, z, minY, maxY, GAS_PUMP_KG_PER_STEP)
         }
         if (state.`is`(liquidPump)) {
-            pumpLiquidAt(grid, x, y + 1, z, minY, maxY, LIQUID_PUMP_KG_PER_STEP)
+            pumpLiquidAt(level, x, y + 1, z, minY, maxY, LIQUID_PUMP_KG_PER_STEP)
         }
         if (state.`is`(coalGenerator) || state.`is`(naturalGasGenerator) || state.`is`(petroleumGenerator)) {
-            injectGasAt(grid, x, y + 1, z, minY, maxY, 0.0, GENERATOR_CO2_KG)
+            injectGasAt(level, x, y + 1, z, minY, maxY, 0.0, GENERATOR_CO2_KG)
         }
         if (state.`is`(hydrogenGenerator)) {
-            consumeGasAt(grid, x, y + 1, z, minY, maxY, OniElements.GAS_HYDROGEN, HYDROGEN_GENERATOR_CONSUME_KG)
+            consumeGasAt(level, x, y + 1, z, minY, maxY, OniElements.GAS_HYDROGEN, HYDROGEN_GENERATOR_CONSUME_KG)
         }
     }
 
     private fun injectGasAt(
-        grid: OniSimulationGrid,
+        level: ServerLevel,
         x: Int,
         y: Int,
         z: Int,
@@ -250,21 +242,21 @@ object OniWorldSampler {
         if (y < minY || y > maxY) {
             return
         }
-        val cell = grid.getOrCreateCellAtBlock(x, y, z, OniServices.simulationRuntime().config().cellSize())
+        val cell = OniChunkDataAccess.getOrCreate(level, BlockPos(x, y, z))
         cell.setOccupancyState(OccupancyState.GAS)
         cell.setGasMassKg(OniElements.GAS_OXYGEN, cell.gasMassKg(OniElements.GAS_OXYGEN) + o2Mass)
         cell.setGasMassKg(OniElements.GAS_CARBON_DIOXIDE, cell.gasMassKg(OniElements.GAS_CARBON_DIOXIDE) + co2Mass)
     }
 
-    private fun clearCellMass(cell: OniCellState) {
-        cell.setLiquidState(OniElements.LIQUID_NONE, 0.0)
-        cell.setGasMassKg(OniElements.GAS_OXYGEN, 0.0)
-        cell.setGasMassKg(OniElements.GAS_CARBON_DIOXIDE, 0.0)
-        cell.setGasMassKg(OniElements.GAS_HYDROGEN, 0.0)
+    private fun clearBlockMass(blockData: mconi.common.sim.model.OniBlockData) {
+        blockData.setLiquidState(OniElements.LIQUID_NONE, 0.0)
+        blockData.setGasMassKg(OniElements.GAS_OXYGEN, 0.0)
+        blockData.setGasMassKg(OniElements.GAS_CARBON_DIOXIDE, 0.0)
+        blockData.setGasMassKg(OniElements.GAS_HYDROGEN, 0.0)
     }
 
     private fun scrubGasAt(
-        grid: OniSimulationGrid,
+        level: ServerLevel,
         x: Int,
         y: Int,
         z: Int,
@@ -276,7 +268,7 @@ object OniWorldSampler {
         if (y < minY || y > maxY) {
             return
         }
-        val cell = grid.getOrCreateCellAtBlock(x, y, z, OniServices.simulationRuntime().config().cellSize())
+        val cell = OniChunkDataAccess.getOrCreate(level, BlockPos(x, y, z))
         if (cell.occupancyState() == OccupancyState.SOLID) {
             return
         }
@@ -290,7 +282,7 @@ object OniWorldSampler {
     }
 
     private fun pumpGasAt(
-        grid: OniSimulationGrid,
+        level: ServerLevel,
         x: Int,
         y: Int,
         z: Int,
@@ -301,7 +293,7 @@ object OniWorldSampler {
         if (y < minY || y > maxY) {
             return
         }
-        val cell = grid.getOrCreateCellAtBlock(x, y, z, OniServices.simulationRuntime().config().cellSize())
+        val cell = OniChunkDataAccess.getOrCreate(level, BlockPos(x, y, z))
         if (cell.occupancyState() != OccupancyState.GAS) {
             return
         }
@@ -317,7 +309,7 @@ object OniWorldSampler {
     }
 
     private fun pumpLiquidAt(
-        grid: OniSimulationGrid,
+        level: ServerLevel,
         x: Int,
         y: Int,
         z: Int,
@@ -328,7 +320,7 @@ object OniWorldSampler {
         if (y < minY || y > maxY) {
             return
         }
-        val cell = grid.getOrCreateCellAtBlock(x, y, z, OniServices.simulationRuntime().config().cellSize())
+        val cell = OniChunkDataAccess.getOrCreate(level, BlockPos(x, y, z))
         if (cell.occupancyState() != OccupancyState.LIQUID) {
             return
         }
@@ -345,7 +337,7 @@ object OniWorldSampler {
     }
 
     private fun consumeGasAt(
-        grid: OniSimulationGrid,
+        level: ServerLevel,
         x: Int,
         y: Int,
         z: Int,
@@ -357,7 +349,7 @@ object OniWorldSampler {
         if (y < minY || y > maxY) {
             return
         }
-        val cell = grid.getOrCreateCellAtBlock(x, y, z, OniServices.simulationRuntime().config().cellSize())
+        val cell = OniChunkDataAccess.getOrCreate(level, BlockPos(x, y, z))
         if (cell.occupancyState() != OccupancyState.GAS) {
             return
         }
@@ -366,7 +358,6 @@ object OniWorldSampler {
         cell.setGasMassKg(species, remaining)
     }
 
-    private const val VOID_BLOCK_KEY = "mconi:void"
     private const val OXYGEN_DIFFUSER_O2_KG = 1.6
     private const val ALGAE_DEOXIDIZER_O2_KG = 1.2
     private const val ALGAE_DEOXIDIZER_CO2_KG = 0.05

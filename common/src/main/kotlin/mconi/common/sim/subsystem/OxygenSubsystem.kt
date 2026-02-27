@@ -4,12 +4,14 @@ import mconi.common.sim.model.BreathingBand
 import mconi.common.sim.model.OccupancyState
 import mconi.common.sim.model.PressureBand
 import mconi.common.element.OniElements
+import mconi.common.world.OniChunkDataAccess
 
 class OxygenSubsystem : SimulationSubsystem {
     override fun id(): String = "oxygen"
 
     override fun run(context: SimulationContext) {
-        for (cell in context.grid().cells()) {
+        for (entry in OniChunkDataAccess.blockEntries(context.level())) {
+            val cell = entry.data
             if (cell.occupancyState() != OccupancyState.GAS) {
                 cell.setO2Fraction(0.0)
                 cell.setCO2Fraction(0.0)

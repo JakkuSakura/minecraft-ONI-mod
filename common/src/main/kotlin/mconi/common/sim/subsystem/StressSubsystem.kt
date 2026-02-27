@@ -1,6 +1,7 @@
 package mconi.common.sim.subsystem
 
 import mconi.common.sim.model.BreathingBand
+import mconi.common.world.OniChunkDataAccess
 
 class StressSubsystem : SimulationSubsystem {
     override fun id(): String = "stress"
@@ -9,14 +10,15 @@ class StressSubsystem : SimulationSubsystem {
         val runtime = context.runtime()
         val stress = runtime.stressState()
 
-        val cells = context.grid().cells()
-        if (cells.isEmpty()) {
+        val entries = OniChunkDataAccess.blockEntries(context.level())
+        if (entries.isEmpty()) {
             stress.setScore((stress.score() - 0.2).coerceAtLeast(0.0))
             return
         }
 
         var delta = 0.0
-        for (cell in cells) {
+        for (entry in entries) {
+            val cell = entry.data
             delta += when (cell.breathingBand()) {
                 BreathingBand.HEALTHY -> -0.02
                 BreathingBand.STRESSED -> 0.05
@@ -29,7 +31,7 @@ class StressSubsystem : SimulationSubsystem {
             }
         }
 
-        val normalizedDelta = delta / cells.size.toDouble()
+        val normalizedDelta = delta / entries.size.toDouble()
         stress.setScore(stress.score() + normalizedDelta * 10.0)
     }
 }

@@ -8,6 +8,7 @@ import mconi.common.element.OniElements
 import mconi.common.item.OniBlueprintRegistry
 import mconi.common.sim.OniServices
 import mconi.common.world.OniWorldSampler
+import mconi.common.world.OniChunkDataAccess
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerLevel
 import java.io.OutputStream
@@ -191,8 +192,12 @@ object OniDebugHttpServer {
             val x = query.getValue("x").toInt()
             val y = query.getValue("y").toInt()
             val z = query.getValue("z").toInt()
-            val cellSize = OniServices.simulationRuntime().config().cellSize()
-            val cell = OniServices.simulationRuntime().grid().getOrCreateCellAtBlock(x, y, z, cellSize)
+            val serverRef = minecraftServer
+            val level: ServerLevel = serverRef?.overworld() ?: run {
+                writeJson(exchange, 503, "{\"error\":\"overworld_unavailable\"}")
+                return
+            }
+            val cell = OniChunkDataAccess.getOrCreate(level, net.minecraft.core.BlockPos(x, y, z))
             val body = buildString {
                 append("{")
                 append("\"x\":").append(x)

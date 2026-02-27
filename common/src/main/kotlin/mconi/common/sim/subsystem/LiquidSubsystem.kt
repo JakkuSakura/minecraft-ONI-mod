@@ -2,18 +2,21 @@ package mconi.common.sim.subsystem
 
 import mconi.common.element.OniElements
 import mconi.common.sim.model.OccupancyState
-import mconi.common.sim.model.OniCellCoordinate
+import mconi.common.world.OniChunkDataAccess
+import net.minecraft.core.BlockPos
 
 class LiquidSubsystem : SimulationSubsystem {
     override fun id(): String = "liquid"
 
     override fun run(context: SimulationContext) {
-        val grid = context.grid()
+        val level = context.level()
         val maxTransfer = context.config().liquidTransferKgPerStep().coerceAtLeast(0.0)
         val voidDrain = context.config().voidLiquidDrainFraction().coerceIn(0.0, 1.0)
 
-        val deltas: MutableMap<OniCellCoordinate, MutableMap<String, Double>> = HashMap()
-        for ((coordinate, cell) in grid.cellEntries()) {
+        val deltas: MutableMap<BlockPos, MutableMap<String, Double>> = HashMap()
+        for (entry in OniChunkDataAccess.blockEntries(level)) {
+            val coordinate = entry.pos
+            val cell = entry.data
             if (cell.occupancyState() == OccupancyState.SOLID) {
                 continue
             }
@@ -42,8 +45,8 @@ class LiquidSubsystem : SimulationSubsystem {
                 continue
             }
 
-            val below = OniCellCoordinate(coordinate.cellX(), coordinate.cellY() - 1, coordinate.cellZ())
-            val belowCell = grid.getCellAtCoordinate(below)
+            val below = BlockPos(coordinate.x, coordinate.y - 1, coordinate.z)
+            val belowCell = OniChunkDataAccess.get(level, below)
             if (belowCell != null && belowCell.occupancyState() != OccupancyState.SOLID) {
                 if (belowCell.liquidId() != OniElements.LIQUID_NONE && belowCell.liquidId() != species) {
                     // Do not mix liquids yet.
@@ -62,7 +65,7 @@ class LiquidSubsystem : SimulationSubsystem {
             }
 
             for (neighbor in lateralNeighbors(coordinate)) {
-                val other = grid.getCellAtCoordinate(neighbor) ?: continue
+                val other = OniChunkDataAccess.get(level, neighbor) ?: continue
                 if (other.occupancyState() == OccupancyState.SOLID) {
                     continue
                 }
@@ -86,7 +89,7 @@ class LiquidSubsystem : SimulationSubsystem {
         }
 
         for ((coordinate, speciesDelta) in deltas) {
-            val cell = grid.getOrCreateCellAtCoordinate(coordinate)
+            val cell = OniChunkDataAccess.getOrCreate(level, coordinate)
             for ((species, delta) in speciesDelta) {
                 if (delta == 0.0) {
                     continue
@@ -106,18 +109,18 @@ class LiquidSubsystem : SimulationSubsystem {
         private const val BOIL_OFF_KG_PER_STEP = 1.0
     }
 
-    private fun lateralNeighbors(coordinate: OniCellCoordinate): List<OniCellCoordinate> {
+    private fun lateralNeighbors(coordinate: BlockPos): List<BlockPos> {
         return listOf(
-            OniCellCoordinate(coordinate.cellX() + 1, coordinate.cellY(), coordinate.cellZ()),
-            OniCellCoordinate(coordinate.cellX() - 1, coordinate.cellY(), coordinate.cellZ()),
-            OniCellCoordinate(coordinate.cellX(), coordinate.cellY(), coordinate.cellZ() + 1),
-            OniCellCoordinate(coordinate.cellX(), coordinate.cellY(), coordinate.cellZ() - 1),
+            BlockPos(coordinate.x + 1, coordinate.y, coordinate.z),
+            BlockPos(coordinate.x - 1, coordinate.y, coordinate.z),
+            BlockPos(coordinate.x, coordinate.y, coordinate.z + 1),
+            BlockPos(coordinate.x, coordinate.y, coordinate.z - 1),
         )
     }
 
     private fun addDelta(
-        deltas: MutableMap<OniCellCoordinate, MutableMap<String, Double>>,
-        coordinate: OniCellCoordinate,
+        deltas: MutableMap<BlockPos, MutableMap<String, Double>>,
+        coordinate: BlockPos,
         species: String,
         delta: Double,
     ) {

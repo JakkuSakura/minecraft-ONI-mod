@@ -16,7 +16,6 @@ import java.util.concurrent.atomic.AtomicLong
  */
 class OniSimulationRuntime {
     private val config = OniSimulationConfig()
-    private val grid = OniSimulationGrid()
     private val subsystems: MutableList<SimulationSubsystem> = ArrayList()
     private val powerState = OniPowerState()
     private val stressState = OniStressState()
@@ -25,6 +24,7 @@ class OniSimulationRuntime {
     private val serverTicks = AtomicLong(0L)
     private val simulationTicks = AtomicLong(0L)
     private val lastSimulationTick = AtomicLong(-1L)
+    @Volatile private var lastActiveBlocks = 0
     @Volatile private var started = false
     @Volatile private var paused = false
 
@@ -42,8 +42,6 @@ class OniSimulationRuntime {
     }
 
     fun config(): OniSimulationConfig = config
-
-    fun grid(): OniSimulationGrid = grid
     fun powerState(): OniPowerState = powerState
     fun stressState(): OniStressState = stressState
     fun researchState(): OniResearchState = researchState
@@ -60,7 +58,7 @@ class OniSimulationRuntime {
     fun onServerStopped() {
         started = false
         paused = false
-        grid.clear()
+        lastActiveBlocks = 0
         powerState.setGenerationW(0.0)
         powerState.setDemandW(0.0)
         powerState.setStoredEnergyJ(0.0)
@@ -70,7 +68,7 @@ class OniSimulationRuntime {
         constructionState.clear()
     }
 
-    fun onServerTick() {
+    fun onServerTick(server: net.minecraft.server.MinecraftServer) {
         if (!started) {
             onServerStarted()
         }
@@ -81,7 +79,8 @@ class OniSimulationRuntime {
         }
 
         if ((tick % config.tickInterval()) == 0L) {
-            runOneSimulationStep(tick)
+            val level = server.overworld() ?: return
+            runOneSimulationStep(tick, level)
         }
     }
 
@@ -92,11 +91,12 @@ class OniSimulationRuntime {
         paused = !running
     }
 
-    fun runOneSimulationStep(serverTick: Long) {
-        val context = SimulationContext(serverTick, config, grid, this)
+    fun runOneSimulationStep(serverTick: Long, level: net.minecraft.server.level.ServerLevel) {
+        val context = SimulationContext(serverTick, config, level, this)
         for (subsystem in subsystems) {
             subsystem.run(context)
         }
+        lastActiveBlocks = mconi.common.world.OniChunkDataAccess.blockCount(level)
         lastSimulationTick.set(serverTick)
         simulationTicks.incrementAndGet()
     }
@@ -117,7 +117,7 @@ class OniSimulationRuntime {
             lastSimulationTick.get(),
             config.tickInterval(),
             config.cellSize(),
-            grid.activeCellCount(),
+            lastActiveBlocks,
             powerState.generationW(),
             powerState.demandW(),
             powerState.storedEnergyJ(),

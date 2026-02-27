@@ -6,9 +6,8 @@ import mconi.common.sim.OniServices
 import mconi.common.sim.OniWorldFoundation
 import mconi.common.element.OniElements
 import mconi.common.sim.model.OccupancyState
-import mconi.common.sim.model.OniCellCoordinate
+import mconi.common.world.OniChunkDataAccess
 import net.minecraft.core.BlockPos
-import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.level.block.Blocks
@@ -39,9 +38,14 @@ object OniWorldWriter {
         }
     }
 
-    private fun applyBox(level: ServerLevel, centerX: Int, centerY: Int, centerZ: Int, radiusBlocks: Int) {
+    private fun applyBox(
+        level: ServerLevel,
+        centerX: Int,
+        centerY: Int,
+        centerZ: Int,
+        radiusBlocks: Int
+    ) {
         val config = OniServices.simulationRuntime().config()
-        val grid = OniServices.simulationRuntime().grid()
         val cellSize = config.cellSize()
         val minY = level.minY
         val maxY = level.maxY - 1
@@ -56,7 +60,7 @@ object OniWorldWriter {
                 }
                 var z = centerZ - radiusBlocks
                 while (z <= centerZ + radiusBlocks) {
-                    applyCell(level, x, y, z, minY, maxY, config, grid)
+                    applyCell(level, x, y, z, minY, maxY, config)
                     z += cellSize
                 }
                 y += cellSize
@@ -72,30 +76,27 @@ object OniWorldWriter {
         z: Int,
         minY: Int,
         maxY: Int,
-        config: mconi.common.sim.OniSimulationConfig,
-        grid: mconi.common.sim.OniSimulationGrid
+        config: mconi.common.sim.OniSimulationConfig
     ) {
         if (!OniWorldFoundation.isWithinHorizontalBounds(x, z, config)) {
             return
         }
-        val cell = grid.getCellAtCoordinate(OniCellCoordinate.fromBlockPosition(x, y, z, config.cellSize()))
+        val blockData = OniChunkDataAccess.get(level, BlockPos(x, y, z))
         if (OniWorldFoundation.isVoidBand(y, maxY, config)) {
             val target = Blocks.AIR.stateDefinition.any()
             setIfReplaceable(level, x, y, z, target)
-            cell?.setWorldBlockKey(BuiltInRegistries.BLOCK.getKey(target.block).toString())
             return
         }
         if (OniWorldFoundation.isLavaBand(y, minY, config)) {
             val target = OniBlockLookup.state(OniBlockFactory.LAVA)
             setIfReplaceable(level, x, y, z, target)
-            cell?.setWorldBlockKey(BuiltInRegistries.BLOCK.getKey(target.block).toString())
             return
         }
 
-        if (cell == null) {
+        if (blockData == null) {
             return
         }
-        if (cell.occupancyState() == OccupancyState.SOLID) {
+        if (blockData.occupancyState() == OccupancyState.SOLID) {
             return
         }
 
@@ -111,9 +112,9 @@ object OniWorldWriter {
             return
         }
 
-        when (cell.occupancyState()) {
+        when (blockData.occupancyState()) {
             OccupancyState.LIQUID -> {
-                val target = when (cell.liquidId()) {
+                val target = when (blockData.liquidId()) {
                     OniElements.LIQUID_LAVA -> OniBlockLookup.state(OniBlockFactory.LAVA)
                     OniElements.LIQUID_WATER -> OniBlockLookup.state(OniBlockFactory.WATER)
                     OniElements.LIQUID_POLLUTED_WATER -> OniBlockLookup.state(OniBlockFactory.POLLUTED_WATER)
@@ -121,17 +122,15 @@ object OniWorldWriter {
                     else -> Blocks.AIR.stateDefinition.any()
                 }
                 setIfReplaceable(level, x, y, z, target)
-                cell.setWorldBlockKey(BuiltInRegistries.BLOCK.getKey(target.block).toString())
             }
             OccupancyState.GAS -> {
-                val total = cell.totalGasMassKg()
+                val total = blockData.totalGasMassKg()
                 if (total <= 0.001) {
                     val target = Blocks.AIR.stateDefinition.any()
                     setIfReplaceable(level, x, y, z, target)
-                    cell.setWorldBlockKey(BuiltInRegistries.BLOCK.getKey(target.block).toString())
                     return
                 }
-                val dominant = dominantGas(cell)
+                val dominant = dominantGas(blockData)
                 val gasState = when (dominant) {
                     OniElements.GAS_OXYGEN -> OniBlockLookup.state(OniBlockFactory.OXYGEN_GAS)
                     OniElements.GAS_CARBON_DIOXIDE -> OniBlockLookup.state(OniBlockFactory.CARBON_DIOXIDE_GAS)
@@ -139,20 +138,18 @@ object OniWorldWriter {
                     else -> Blocks.AIR.stateDefinition.any()
                 }
                 setIfReplaceable(level, x, y, z, gasState)
-                cell.setWorldBlockKey(BuiltInRegistries.BLOCK.getKey(gasState.block).toString())
             }
             OccupancyState.VACUUM,
             OccupancyState.VOID -> {
                 val target = Blocks.AIR.stateDefinition.any()
                 setIfReplaceable(level, x, y, z, target)
-                cell.setWorldBlockKey(BuiltInRegistries.BLOCK.getKey(target.block).toString())
             }
             else -> {
             }
         }
     }
 
-    private fun dominantGas(cell: mconi.common.sim.model.OniCellState): OniElements.GasSpec {
+    private fun dominantGas(cell: mconi.common.sim.model.OniBlockData): OniElements.GasSpec {
         var best = OniElements.GAS_OXYGEN
         var bestMass = cell.gasMassKg(OniElements.GAS_OXYGEN)
         val co2 = cell.gasMassKg(OniElements.GAS_CARBON_DIOXIDE)

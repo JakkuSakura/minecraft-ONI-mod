@@ -2,15 +2,18 @@ package mconi.common.sim.subsystem
 
 import mconi.common.element.OniElements
 import mconi.common.sim.model.OccupancyState
-import mconi.common.sim.model.OniCellCoordinate
+import mconi.common.world.OniChunkDataAccess
+import net.minecraft.core.BlockPos
 
 class ThermalSubsystem : SimulationSubsystem {
     override fun id(): String = "thermal"
 
     override fun run(context: SimulationContext) {
-        val grid = context.grid()
-        val deltas: MutableMap<OniCellCoordinate, Double> = HashMap()
-        for ((coordinate, cell) in grid.cellEntries()) {
+        val level = context.level()
+        val deltas: MutableMap<BlockPos, Double> = HashMap()
+        for (entry in OniChunkDataAccess.blockEntries(level)) {
+            val coordinate = entry.pos
+            val cell = entry.data
             val temp = cell.temperatureK()
             val occupancy = cell.occupancyState()
             var next = temp
@@ -33,7 +36,7 @@ class ThermalSubsystem : SimulationSubsystem {
 
             if (conduction > 0.0) {
                 for (neighbor in neighborsOf(coordinate)) {
-                    val other = grid.getCellAtCoordinate(neighbor) ?: continue
+                    val other = OniChunkDataAccess.get(level, neighbor) ?: continue
                     val delta = (other.temperatureK() - temp) * conduction
                     deltas[coordinate] = (deltas[coordinate] ?: 0.0) + delta
                 }
@@ -43,24 +46,25 @@ class ThermalSubsystem : SimulationSubsystem {
         }
 
         for ((coordinate, delta) in deltas) {
-            val cell = grid.getOrCreateCellAtCoordinate(coordinate)
+            val cell = OniChunkDataAccess.getOrCreate(level, coordinate)
             cell.setTemperatureK(cell.temperatureK() + delta)
         }
 
-        for (cell in grid.cells()) {
+        for (entry in OniChunkDataAccess.blockEntries(level)) {
+            val cell = entry.data
             val overheated = cell.temperatureK() >= OVERHEAT_THRESHOLD_K && cell.occupancyState() == OccupancyState.SOLID
             cell.setOverheated(overheated)
         }
     }
 
-    private fun neighborsOf(coordinate: OniCellCoordinate): List<OniCellCoordinate> {
+    private fun neighborsOf(coordinate: BlockPos): List<BlockPos> {
         return listOf(
-            OniCellCoordinate(coordinate.cellX() + 1, coordinate.cellY(), coordinate.cellZ()),
-            OniCellCoordinate(coordinate.cellX() - 1, coordinate.cellY(), coordinate.cellZ()),
-            OniCellCoordinate(coordinate.cellX(), coordinate.cellY() + 1, coordinate.cellZ()),
-            OniCellCoordinate(coordinate.cellX(), coordinate.cellY() - 1, coordinate.cellZ()),
-            OniCellCoordinate(coordinate.cellX(), coordinate.cellY(), coordinate.cellZ() + 1),
-            OniCellCoordinate(coordinate.cellX(), coordinate.cellY(), coordinate.cellZ() - 1),
+            BlockPos(coordinate.x + 1, coordinate.y, coordinate.z),
+            BlockPos(coordinate.x - 1, coordinate.y, coordinate.z),
+            BlockPos(coordinate.x, coordinate.y + 1, coordinate.z),
+            BlockPos(coordinate.x, coordinate.y - 1, coordinate.z),
+            BlockPos(coordinate.x, coordinate.y, coordinate.z + 1),
+            BlockPos(coordinate.x, coordinate.y, coordinate.z - 1),
         )
     }
 
