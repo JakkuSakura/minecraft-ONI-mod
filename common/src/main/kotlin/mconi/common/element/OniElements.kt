@@ -1,6 +1,6 @@
 package mconi.common.element
 
-import mconi.common.AbstractModInitializer
+import mconi.common.AbstractModBootstrap
 import mconi.common.item.OniItemFactory
 import net.minecraft.resources.Identifier
 import net.minecraft.world.item.Item
@@ -26,7 +26,13 @@ object OniElements {
         val massKgPerItem: Double? = null,
         val clotterThresholdItems: Int? = null,
         val transforms: List<ElementTransform> = emptyList()
-    )
+    ) {
+        fun bottledMassKg(): Double = defaultMassKg
+
+        fun bottledTemperatureK(): Double = defaultTemperatureK
+
+        fun itemMassKg(): Double = massKgPerItem ?: defaultMassKg
+    }
 
     data class GasSpec(
         val id: String,
@@ -42,6 +48,7 @@ object OniElements {
         val lowTempTransitionTarget: String,
         val defaultTemperature: Double,
         val defaultPressure: Double,
+        val defaultMassKg: Double,
         val molarMass: Double,
         val toxicity: Double,
         val lightAbsorptionFactor: Double,
@@ -70,6 +77,7 @@ object OniElements {
         lowTempTransitionTarget = "LiquidCarbonDioxide",
         defaultTemperature = 300.0,
         defaultPressure = 139.0,
+        defaultMassKg = 139.0,
         molarMass = 44.01,
         toxicity = 0.0001,
         lightAbsorptionFactor = 0.1,
@@ -98,6 +106,7 @@ object OniElements {
         lowTempTransitionTarget = "LiquidHydrogen",
         defaultTemperature = 300.0,
         defaultPressure = 7.0,
+        defaultMassKg = 7.0,
         molarMass = 1.00794,
         toxicity = 0.0,
         lightAbsorptionFactor = 0.1,
@@ -126,6 +135,7 @@ object OniElements {
         lowTempTransitionTarget = "LiquidOxygen",
         defaultTemperature = 300.0,
         defaultPressure = 101.3,
+        defaultMassKg = 101.3,
         molarMass = 15.9994,
         toxicity = 0.0,
         lightAbsorptionFactor = 0.0,
@@ -187,10 +197,10 @@ object OniElements {
 
     private val liquidById: Map<String, LiquidSpec> = LIQUID_SPECS.associateBy { it.id }
     init {
-        val baseElements: List<ElementSpec> = listOf(
+        val coreElements: List<ElementSpec> = listOf(
             ElementSpec(
                 id = "regolith",
-                itemId = Identifier.parse("${AbstractModInitializer.MOD_ID}:element_regolith"),
+                itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:element_regolith"),
                 phase = ElementPhase.SOLID,
                 thermalConductivityWmK = null,
                 massKgPerItem = null,
@@ -199,7 +209,7 @@ object OniElements {
             ),
             ElementSpec(
                 id = "sedimentary_rock",
-                itemId = Identifier.parse("${AbstractModInitializer.MOD_ID}:element_sedimentary_rock"),
+                itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:element_sedimentary_rock"),
                 phase = ElementPhase.SOLID,
                 thermalConductivityWmK = null,
                 massKgPerItem = null,
@@ -208,7 +218,7 @@ object OniElements {
             ),
             ElementSpec(
                 id = "igneous_rock",
-                itemId = Identifier.parse("${AbstractModInitializer.MOD_ID}:element_igneous_rock"),
+                itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:element_igneous_rock"),
                 phase = ElementPhase.SOLID,
                 thermalConductivityWmK = null,
                 massKgPerItem = null,
@@ -217,7 +227,7 @@ object OniElements {
             ),
             ElementSpec(
                 id = "granite",
-                itemId = Identifier.parse("${AbstractModInitializer.MOD_ID}:element_granite"),
+                itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:element_granite"),
                 phase = ElementPhase.SOLID,
                 thermalConductivityWmK = null,
                 massKgPerItem = null,
@@ -226,7 +236,7 @@ object OniElements {
             ),
             ElementSpec(
                 id = "abyssalite",
-                itemId = Identifier.parse("${AbstractModInitializer.MOD_ID}:element_abyssalite"),
+                itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:element_abyssalite"),
                 phase = ElementPhase.SOLID,
                 thermalConductivityWmK = null,
                 massKgPerItem = null,
@@ -235,7 +245,7 @@ object OniElements {
             ),
             ElementSpec(
                 id = "algae",
-                itemId = Identifier.parse("${AbstractModInitializer.MOD_ID}:element_algae"),
+                itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:element_algae"),
                 phase = ElementPhase.SOLID,
                 thermalConductivityWmK = null,
                 massKgPerItem = null,
@@ -244,7 +254,7 @@ object OniElements {
             ),
             ElementSpec(
                 id = "polluted_dirt",
-                itemId = Identifier.parse("${AbstractModInitializer.MOD_ID}:element_polluted_dirt"),
+                itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:element_polluted_dirt"),
                 phase = ElementPhase.SOLID,
                 thermalConductivityWmK = null,
                 massKgPerItem = null,
@@ -253,7 +263,7 @@ object OniElements {
             ),
             ElementSpec(
                 id = "metal_ore",
-                itemId = Identifier.parse("${AbstractModInitializer.MOD_ID}:element_metal_ore"),
+                itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:element_metal_ore"),
                 phase = ElementPhase.SOLID,
                 thermalConductivityWmK = null,
                 massKgPerItem = null,
@@ -262,7 +272,7 @@ object OniElements {
             ),
             ElementSpec(
                 id = "refined_metal",
-                itemId = Identifier.parse("${AbstractModInitializer.MOD_ID}:element_refined_metal"),
+                itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:element_refined_metal"),
                 phase = ElementPhase.SOLID,
                 thermalConductivityWmK = null,
                 massKgPerItem = null,
@@ -274,16 +284,16 @@ object OniElements {
         val liquidElements = LIQUID_SPECS.map { spec ->
             ElementSpec(
                 id = spec.id,
-                itemId = Identifier.parse("${AbstractModInitializer.MOD_ID}:${spec.bottledItemId}"),
+                itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:${spec.bottledItemId}"),
                 phase = ElementPhase.LIQUID,
                 thermalConductivityWmK = spec.thermalConductivityWmK,
-                massKgPerItem = spec.massKgPerItem ?: spec.defaultMassKg,
+                massKgPerItem = spec.itemMassKg(),
                 clotterThresholdItems = spec.clotterThresholdItems,
                 transforms = spec.transforms
             )
         }
 
-        for (spec in baseElements + liquidElements) {
+        for (spec in coreElements + liquidElements) {
             REGISTRY.register(spec)
         }
     }

@@ -14,12 +14,9 @@ class OniSimulationConfig {
     private var voidBandHeight: Int = 24
     private var lavaBandHeight: Int = 24
     private var gasTransferKgPerStep: Double = 0.25
-    private var fluidTransferKgPerStep: Double = 50.0
+    private var liquidTransferKgPerStep: Double = 50.0
     private var voidGasDrainFraction: Double = 0.35
-    private var voidFluidDrainFraction: Double = 0.35
-    private var baseO2MassKg: Double = 1.0
-    private var baseCO2MassKg: Double = 0.02
-    private var baseH2MassKg: Double = 0.02
+    private var voidLiquidDrainFraction: Double = 0.35
     private var worldSampleRadiusBlocks: Int = 24
     private var worldSampleIntervalTicks: Int = 1
 
@@ -32,12 +29,9 @@ class OniSimulationConfig {
     fun voidBandHeight(): Int = voidBandHeight
     fun lavaBandHeight(): Int = lavaBandHeight
     fun gasTransferKgPerStep(): Double = gasTransferKgPerStep
-    fun fluidTransferKgPerStep(): Double = fluidTransferKgPerStep
+    fun liquidTransferKgPerStep(): Double = liquidTransferKgPerStep
     fun voidGasDrainFraction(): Double = voidGasDrainFraction
-    fun voidFluidDrainFraction(): Double = voidFluidDrainFraction
-    fun baseO2MassKg(): Double = baseO2MassKg
-    fun baseCO2MassKg(): Double = baseCO2MassKg
-    fun baseH2MassKg(): Double = baseH2MassKg
+    fun voidLiquidDrainFraction(): Double = voidLiquidDrainFraction
     fun worldSampleRadiusBlocks(): Int = worldSampleRadiusBlocks
     fun worldSampleIntervalTicks(): Int = worldSampleIntervalTicks
 
@@ -56,9 +50,9 @@ class OniSimulationConfig {
         this.gasTransferKgPerStep = gasTransferKgPerStep
     }
 
-    fun setFluidTransferKgPerStep(fluidTransferKgPerStep: Double) {
-        require(fluidTransferKgPerStep >= 0.0) { "fluidTransferKgPerStep must be >= 0" }
-        this.fluidTransferKgPerStep = fluidTransferKgPerStep
+    fun setLiquidTransferKgPerStep(liquidTransferKgPerStep: Double) {
+        require(liquidTransferKgPerStep >= 0.0) { "liquidTransferKgPerStep must be >= 0" }
+        this.liquidTransferKgPerStep = liquidTransferKgPerStep
     }
 
     fun setVoidGasDrainFraction(voidGasDrainFraction: Double) {
@@ -66,25 +60,11 @@ class OniSimulationConfig {
         this.voidGasDrainFraction = voidGasDrainFraction
     }
 
-    fun setVoidFluidDrainFraction(voidFluidDrainFraction: Double) {
-        require(voidFluidDrainFraction in 0.0..1.0) { "voidFluidDrainFraction must be 0..1" }
-        this.voidFluidDrainFraction = voidFluidDrainFraction
+    fun setVoidLiquidDrainFraction(voidLiquidDrainFraction: Double) {
+        require(voidLiquidDrainFraction in 0.0..1.0) { "voidLiquidDrainFraction must be 0..1" }
+        this.voidLiquidDrainFraction = voidLiquidDrainFraction
     }
 
-    fun setBaseO2MassKg(baseO2MassKg: Double) {
-        require(baseO2MassKg >= 0.0) { "baseO2MassKg must be >= 0" }
-        this.baseO2MassKg = baseO2MassKg
-    }
-
-    fun setBaseCO2MassKg(baseCO2MassKg: Double) {
-        require(baseCO2MassKg >= 0.0) { "baseCO2MassKg must be >= 0" }
-        this.baseCO2MassKg = baseCO2MassKg
-    }
-
-    fun setBaseH2MassKg(baseH2MassKg: Double) {
-        require(baseH2MassKg >= 0.0) { "baseH2MassKg must be >= 0" }
-        this.baseH2MassKg = baseH2MassKg
-    }
 
     fun setWorldSampleRadiusBlocks(worldSampleRadiusBlocks: Int) {
         require(worldSampleRadiusBlocks >= 0) { "worldSampleRadiusBlocks must be >= 0" }
