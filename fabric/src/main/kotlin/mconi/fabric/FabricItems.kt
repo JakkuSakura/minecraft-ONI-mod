@@ -1,13 +1,12 @@
 package mconi.fabric
 
-import mconi.common.AbstractModInitializer
+import mconi.common.AbstractModBootstrap
 import mconi.common.item.BlueprintBookItem
 import mconi.common.item.BlueprintItem
 import mconi.common.item.BottledMatterItem
 import mconi.common.item.ElementItem
 import mconi.common.item.OniBottledItems
 import mconi.common.item.OniCreativeTabs
-import mconi.common.item.OniItems
 import mconi.common.item.OniItemFactory
 import mconi.common.element.OniElements
 import mconi.common.sim.model.SystemLens
@@ -28,11 +27,11 @@ object FabricItems {
         registered = true
 
         for (lens in SystemLens.values()) {
-            val path = OniItems.pathForLens(lens)
+            val path = OniItemFactory.pathForLens(lens)
                 ?: throw IllegalArgumentException("Missing item id path for lens: $lens")
             val id = id(path)
             val key = ResourceKey.create(Registries.ITEM, id)
-            val item = OniItems.createGlassesItem(lens, Item.Properties().setId(key).stacksTo(1))
+            val item = OniItemFactory.createGlassesItem(lens, Item.Properties().setId(key).stacksTo(1))
             Registry.register(BuiltInRegistries.ITEM, id, item)
             OniItemFactory.registerItem(path) { item }
 
@@ -94,7 +93,7 @@ object FabricItems {
     }
 
     private fun id(path: String): Identifier {
-        return Identifier.tryParse("${AbstractModInitializer.MOD_ID}:$path")
+        return Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:$path")
             ?: throw IllegalArgumentException("Invalid item id path: $path")
     }
 }

@@ -1,13 +1,12 @@
 package mconi.forge
 
-import mconi.common.AbstractModInitializer
+import mconi.common.AbstractModBootstrap
 import mconi.common.item.OniItemFactory
 import mconi.common.item.BlueprintBookItem
 import mconi.common.item.BlueprintItem
 import mconi.common.item.BottledMatterItem
 import mconi.common.item.ElementItem
 import mconi.common.item.OniBottledItems
-import mconi.common.item.OniItems
 import mconi.common.element.OniElements
 import mconi.common.sim.model.SystemLens
 import net.minecraft.world.item.Item
@@ -16,13 +15,13 @@ import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 
 object ForgeItems {
-    private val ITEMS: DeferredRegister<Item> = DeferredRegister.create(ForgeRegistries.ITEMS, AbstractModInitializer.MOD_ID)
+    private val ITEMS: DeferredRegister<Item> = DeferredRegister.create(ForgeRegistries.ITEMS, AbstractModBootstrap.MOD_ID)
 
     init {
         for (lens in SystemLens.values()) {
-            val path = OniItems.pathForLens(lens)
+            val path = OniItemFactory.pathForLens(lens)
                 ?: throw IllegalArgumentException("Missing item id path for lens: $lens")
-            val holder = ITEMS.register(path) { OniItems.createGlassesItem(lens) }
+            val holder = ITEMS.register(path) { OniItemFactory.createGlassesItem(lens) }
             OniItemFactory.registerItem(path) { holder.get() }
         }
 

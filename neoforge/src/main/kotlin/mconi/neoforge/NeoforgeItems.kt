@@ -1,6 +1,6 @@
 package mconi.neoforge
 
-import mconi.common.AbstractModInitializer
+import mconi.common.AbstractModBootstrap
 import mconi.common.item.OniItemFactory
 import mconi.common.item.BlueprintBookItem
 import mconi.common.item.BlueprintItem
@@ -8,7 +8,6 @@ import mconi.common.item.BottledMatterItem
 import mconi.common.item.ElementItem
 import mconi.common.item.OniBottledItems
 import mconi.common.item.OniCreativeTabs
-import mconi.common.item.OniItems
 import mconi.common.element.OniElements
 import mconi.common.sim.model.SystemLens
 import net.minecraft.core.registries.Registries
@@ -21,20 +20,20 @@ import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.function.Supplier
 
 object NeoforgeItems {
-    private val ITEMS: DeferredRegister.Items = DeferredRegister.createItems(AbstractModInitializer.MOD_ID)
+    private val ITEMS: DeferredRegister.Items = DeferredRegister.createItems(AbstractModBootstrap.MOD_ID)
     private val TABS: DeferredRegister<net.minecraft.world.item.CreativeModeTab> =
-        DeferredRegister.create(Registries.CREATIVE_MODE_TAB, AbstractModInitializer.MOD_ID)
+        DeferredRegister.create(Registries.CREATIVE_MODE_TAB, AbstractModBootstrap.MOD_ID)
     private var oxygenLensSupplier: Supplier<Item>? = null
 
     init {
         for (lens in SystemLens.values()) {
-            val path = OniItems.pathForLens(lens)
+            val path = OniItemFactory.pathForLens(lens)
                 ?: throw IllegalArgumentException("Missing item id path for lens: $lens")
-            val id = Identifier.tryParse("${AbstractModInitializer.MOD_ID}:$path")
+            val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:$path")
                 ?: throw IllegalArgumentException("Invalid item id path: $path")
             val key = ResourceKey.create(Registries.ITEM, id)
             val holder = ITEMS.register(path, Supplier {
-                OniItems.createGlassesItem(lens, Item.Properties().setId(key).stacksTo(1))
+                OniItemFactory.createGlassesItem(lens, Item.Properties().setId(key).stacksTo(1))
             })
             OniItemFactory.registerItem(path) { holder.get() }
             if (lens == SystemLens.OXYGEN) {
@@ -43,7 +42,7 @@ object NeoforgeItems {
         }
 
         for (spec in OniBottledItems.SPECS) {
-            val id = Identifier.tryParse("${AbstractModInitializer.MOD_ID}:${spec.id}")
+            val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:${spec.id}")
                 ?: throw IllegalArgumentException("Invalid item id path: ${spec.id}")
             val key = ResourceKey.create(Registries.ITEM, id)
             val holder = ITEMS.register(spec.id, Supplier {
@@ -58,7 +57,7 @@ object NeoforgeItems {
         }
 
         run {
-            val id = Identifier.tryParse("${AbstractModInitializer.MOD_ID}:${OniItemFactory.BLUEPRINT_BOOK}")
+            val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:${OniItemFactory.BLUEPRINT_BOOK}")
                 ?: throw IllegalArgumentException("Invalid item id path: ${OniItemFactory.BLUEPRINT_BOOK}")
             val key = ResourceKey.create(Registries.ITEM, id)
             val holder = ITEMS.register(OniItemFactory.BLUEPRINT_BOOK, Supplier {
@@ -68,7 +67,7 @@ object NeoforgeItems {
         }
 
         run {
-            val id = Identifier.tryParse("${AbstractModInitializer.MOD_ID}:${OniItemFactory.BLUEPRINT}")
+            val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:${OniItemFactory.BLUEPRINT}")
                 ?: throw IllegalArgumentException("Invalid item id path: ${OniItemFactory.BLUEPRINT}")
             val key = ResourceKey.create(Registries.ITEM, id)
             val holder = ITEMS.register(OniItemFactory.BLUEPRINT, Supplier {
@@ -78,7 +77,7 @@ object NeoforgeItems {
         }
 
         for (elementId in OniItemFactory.ELEMENTS) {
-            val id = Identifier.tryParse("${AbstractModInitializer.MOD_ID}:$elementId")
+            val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:$elementId")
                 ?: throw IllegalArgumentException("Invalid item id path: $elementId")
             val key = ResourceKey.create(Registries.ITEM, id)
             val holder = ITEMS.register(elementId, Supplier {
@@ -88,7 +87,7 @@ object NeoforgeItems {
         }
 
         run {
-            val id = Identifier.tryParse("${AbstractModInitializer.MOD_ID}:${OniItemFactory.POWER_STATION_TOOLS}")
+            val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:${OniItemFactory.POWER_STATION_TOOLS}")
                 ?: throw IllegalArgumentException("Invalid item id path: ${OniItemFactory.POWER_STATION_TOOLS}")
             val key = ResourceKey.create(Registries.ITEM, id)
             val holder = ITEMS.register(OniItemFactory.POWER_STATION_TOOLS, Supplier {
