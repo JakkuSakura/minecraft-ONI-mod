@@ -36,6 +36,9 @@ icon.png
 jade.mixins.json
 pack.mcmeta
 
+# Temporary work artifacts
+temporary/
+
 # file from notepad++
 *.bak
 

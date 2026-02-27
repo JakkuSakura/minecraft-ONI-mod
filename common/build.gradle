@@ -43,6 +43,37 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
 }
 
+def generatedResourcesDir = "${buildDir}/generated/resources"
+
+tasks.register("generateElementItemModels") {
+    outputs.dir(generatedResourcesDir)
+    doLast {
+        def modelDir = file("${generatedResourcesDir}/assets/mconi/models/item")
+        modelDir.mkdirs()
+        def models = [
+            "element_regolith": "mconi:item/regolith",
+            "element_sedimentary_rock": "mconi:item/sedimentary_rock",
+            "element_igneous_rock": "mconi:item/igneous_rock",
+            "element_granite": "mconi:item/granite",
+            "element_abyssalite": "mconi:item/abyssalite",
+            "element_algae": "mconi:item/algae",
+            "element_polluted_dirt": "mconi:item/polluted_dirt",
+            "element_metal_ore": "minecraft:item/raw_iron",
+            "element_refined_metal": "minecraft:item/iron_ingot"
+        ]
+        models.each { name, texture ->
+            def file = new File(modelDir, "${name}.json")
+            file.text = """{\n  \"parent\": \"minecraft:item/generated\",\n  \"textures\": {\n    \"layer0\": \"${texture}\"\n  }\n}\n"""
+        }
+    }
+}
+
+tasks.named("processResources") {
+    dependsOn tasks.named("generateElementItemModels")
+}
+
+sourceSets.main.resources.srcDir(generatedResourcesDir)
+
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     kotlinOptions {
         jvmTarget = "${rootProject.java_version}"
