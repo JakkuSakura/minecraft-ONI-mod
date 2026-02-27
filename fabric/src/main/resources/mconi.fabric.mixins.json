@@ -11,7 +11,10 @@
         "common.client.TitleScreenButtonMixin"
     ],
     "server": [
-        "common.server.MinecraftServerSimulationMixin"
+        "common.server.MinecraftServerSimulationMixin",
+        "common.server.ChunkAccessMixin",
+        "common.server.SerializableChunkDataMixin",
+        "common.server.LevelChunkMixin"
     ],
     "injectors": {
         "defaultRequire": 1

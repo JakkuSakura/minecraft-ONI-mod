@@ -9,7 +9,10 @@
         "common.client.TitleScreenMixin"
     ],
     "server": [
-        "common.server.MinecraftServerSimulationMixin"
+        "common.server.MinecraftServerSimulationMixin",
+        "common.server.ChunkAccessMixin",
+        "common.server.SerializableChunkDataMixin",
+        "common.server.LevelChunkMixin"
     ],
     "plugin": "mconi.mixins.forge.ForgeMixinPlugin"
 }
