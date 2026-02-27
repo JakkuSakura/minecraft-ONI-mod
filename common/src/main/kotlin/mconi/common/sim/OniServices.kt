@@ -6,12 +6,12 @@ import java.util.concurrent.atomic.AtomicBoolean
  * Central service registry for ONI simulation systems.
  */
 object OniServices {
-    private val initialized = AtomicBoolean(false)
+    private val started = AtomicBoolean(false)
     private val simulationRuntime = OniSimulationRuntime()
 
     @JvmStatic
     fun bootstrap() {
-        if (initialized.compareAndSet(false, true)) {
+        if (started.compareAndSet(false, true)) {
             simulationRuntime.bootstrap()
         }
     }

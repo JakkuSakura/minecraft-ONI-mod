@@ -45,23 +45,23 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 /**
- * Base for all mod loader initializers
+ * Shared mod loader bootstrap
  * and handles most setup.
  *
  * @author James Seibel
  * @author Leander Knuttel
  * @version 02.07.2024
  */
-abstract class AbstractModInitializer {
-    protected abstract fun createInitialBindings()
+abstract class AbstractModBootstrap {
+    protected abstract fun createBindings()
     protected abstract fun createClientProxy(): IEventProxy
     protected abstract fun createServerProxy(isDedicated: Boolean): IEventProxy
-    protected abstract fun initializeModCompat()
+    protected abstract fun setupModCompat()
 
     lateinit var loaderType: LoaderType
 
-    fun onInitializeClient() {
-        LOGGER.info("Initializing $MOD_NAME")
+    fun onSetupClient() {
+        LOGGER.info("Starting $MOD_NAME")
 
         startup()
         printModInfo()
@@ -69,14 +69,14 @@ abstract class AbstractModInitializer {
         createClientProxy().registerEvents()
         createServerProxy(false).registerEvents()
 
-        initializeModCompat()
+        setupModCompat()
         initConfig()
 
-        LOGGER.info("$MOD_NAME Initialized")
+        LOGGER.info("$MOD_NAME Ready")
     }
 
-    fun onInitializeServer() {
-        LOGGER.info("Initializing $MOD_NAME")
+    fun onSetupServer() {
+        LOGGER.info("Starting $MOD_NAME")
 
         startup()
         printModInfo()
@@ -85,12 +85,12 @@ abstract class AbstractModInitializer {
 
         initConfig()
 
-        LOGGER.info("$MOD_NAME Initialized")
+        LOGGER.info("$MOD_NAME Ready")
     }
 
     private fun startup() {
         INSTANCE = this
-        createInitialBindings()
+        createBindings()
         OniServices.bootstrap()
     }
 
@@ -114,7 +114,7 @@ abstract class AbstractModInitializer {
         val LOGGER: Logger = LogManager.getLogger("MCONI")
 
         @JvmField
-        var INSTANCE: AbstractModInitializer? = null
+        var INSTANCE: AbstractModBootstrap? = null
 
         @JvmStatic
         fun registerClientCommands(dispatcher: CommandDispatcher<CommandSourceStack>) {
@@ -237,8 +237,8 @@ abstract class AbstractModInitializer {
                                     + " o2Frac=${String.format("%.4f", cell.o2Fraction())}"
                                     + " co2Frac=${String.format("%.4f", cell.co2Fraction())}"
                                     + " breathBand=${cell.breathingBand()}"
-                                    + " fluid=${cell.fluidId()}"
-                                    + " fluidMassKg=${String.format("%.3f", cell.fluidMassKg())}"
+                                    + " liquid=${cell.liquidId()}"
+                                    + " liquidMassKg=${String.format("%.3f", cell.liquidMassKg())}"
                                     + " O2kg=${String.format("%.3f", cell.gasMassKg(OniElements.GAS_OXYGEN))}"
                                     + " CO2kg=${String.format("%.3f", cell.gasMassKg(OniElements.GAS_CARBON_DIOXIDE))}"
                                     + " H2kg=${String.format("%.3f", cell.gasMassKg(OniElements.GAS_HYDROGEN))}",
@@ -272,7 +272,7 @@ abstract class AbstractModInitializer {
                                     Utils.SendFeedback(context, "Injected $massKg kg of $species into current cell.", true)
                                     1
                                 })))
-                    .then(literal("inject_fluid")
+                    .then(literal("inject_liquid")
                         .then(argument("species", StringArgumentType.word())
                             .then(argument("mass_kg", DoubleArgumentType.doubleArg(0.0, 10000.0))
                                 .executes { context ->
@@ -284,7 +284,7 @@ abstract class AbstractModInitializer {
                                     val massKg = DoubleArgumentType.getDouble(context, "mass_kg")
                                     val liquidId = OniElements.parseLiquidId(speciesInput)
                                     if (liquidId == null) {
-                                        Utils.SendError(context, "Invalid fluid id. Use water/polluted_water/crude_oil/lava.", true)
+                                        Utils.SendError(context, "Invalid liquid id. Use water/polluted_water/crude_oil/lava.", true)
                                         return@executes 0
                                     }
                                     val cell: OniCellState = OniServices.simulationRuntime().grid().getOrCreateCellAtBlock(
@@ -293,8 +293,8 @@ abstract class AbstractModInitializer {
                                         z,
                                         OniServices.simulationRuntime().config().cellSize()
                                     )
-                                    cell.setFluidState(liquidId, massKg)
-                                    Utils.SendFeedback(context, "Set fluid $liquidId mass to $massKg kg in current cell.", true)
+                                    cell.setLiquidState(liquidId, massKg)
+                                    Utils.SendFeedback(context, "Set liquid $liquidId mass to $massKg kg in current cell.", true)
                                     1
                                 })))
                     .then(literal("set_power")
@@ -463,7 +463,7 @@ abstract class AbstractModInitializer {
                                 if (systemLens == null) {
                                     Utils.SendError(
                                         context,
-                                        "Unknown system lens. Use atmosphere/fluid/thermal/oxygen/power/stress/research/construction.",
+                                        "Unknown system lens. Use atmosphere/liquid/thermal/oxygen/power/stress/research/construction.",
                                         true
                                     )
                                     return@executes 0
