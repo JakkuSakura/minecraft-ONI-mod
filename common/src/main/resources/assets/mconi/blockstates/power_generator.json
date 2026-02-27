@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "mconi:block/power_generator"
+    }
+  }
+}

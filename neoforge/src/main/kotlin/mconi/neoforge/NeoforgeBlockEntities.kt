@@ -1,0 +1,30 @@
+package mconi.neoforge
+
+import mconi.common.AbstractModInitializer
+import mconi.common.block.entity.ConstructionSiteBlockEntity
+import mconi.common.block.entity.OniBlockEntityTypes
+import mconi.common.block.OniBlockFactory
+import net.minecraft.core.registries.Registries
+import net.minecraft.world.level.block.entity.BlockEntityType
+import net.neoforged.bus.api.IEventBus
+import net.neoforged.neoforge.registries.DeferredRegister
+import java.util.function.Supplier
+
+object NeoforgeBlockEntities {
+    private val BLOCK_ENTITIES: DeferredRegister<BlockEntityType<*>> =
+        DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, AbstractModInitializer.MOD_ID)
+
+    private val CONSTRUCTION_SITE = BLOCK_ENTITIES.register(OniBlockFactory.CONSTRUCTION_SITE, Supplier {
+        val block = NeoforgeBlocks.blockHolder(OniBlockFactory.CONSTRUCTION_SITE).get()
+        BlockEntityType(::ConstructionSiteBlockEntity, setOf(block))
+    })
+
+    fun register(eventBus: IEventBus) {
+        BLOCK_ENTITIES.register(eventBus)
+    }
+
+    fun bindTypes() {
+        @Suppress("UNCHECKED_CAST")
+        OniBlockEntityTypes.CONSTRUCTION_SITE = CONSTRUCTION_SITE.get() as BlockEntityType<ConstructionSiteBlockEntity>
+    }
+}

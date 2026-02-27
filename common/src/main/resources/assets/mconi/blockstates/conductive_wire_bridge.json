@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "mconi:block/conductive_wire_bridge" }
+  }
+}

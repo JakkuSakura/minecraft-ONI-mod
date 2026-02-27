@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "mconi:block/heavi_watt_joint_plate"
+  }
+}
