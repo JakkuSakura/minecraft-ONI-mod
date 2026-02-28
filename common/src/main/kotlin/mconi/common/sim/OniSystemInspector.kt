@@ -3,7 +3,6 @@ package mconi.common.sim
 import mconi.common.element.OniElements
 import mconi.common.sim.model.LayerProperty
 import mconi.common.sim.model.OccupancyState
-import mconi.common.sim.model.PressureBand
 import mconi.common.sim.model.SystemLens
 import mconi.common.world.OniMatterAccess
 import net.minecraft.core.BlockPos
@@ -11,9 +10,6 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.player.Player
 
 object OniSystemInspector {
-    private const val STANDARD_TEMPERATURE_K = 293.15
-    private const val STANDARD_PRESSURE_KPA = 101.325
-    private const val STANDARD_AIR_DENSITY_KG_PER_M3 = 1.225
     @JvmStatic
     fun inspect(
         runtime: OniSystemRuntime,
@@ -23,7 +19,7 @@ object OniSystemInspector {
         player: Player?
     ): List<LayerProperty> {
         return when (systemLens) {
-            SystemLens.ATMOSPHERE -> atmosphereLayers(level, pos, runtime)
+            SystemLens.ATMOSPHERE -> atmosphereLayers(level, pos)
             SystemLens.LIQUID -> liquidLayers(level, pos)
             SystemLens.THERMAL -> thermalLayers(level, pos)
             SystemLens.GAS -> gasLayers(level, pos)
@@ -34,12 +30,12 @@ object OniSystemInspector {
         }
     }
 
-    private fun atmosphereLayers(level: ServerLevel, pos: BlockPos, runtime: OniSystemRuntime): List<LayerProperty> {
+    private fun atmosphereLayers(level: ServerLevel, pos: BlockPos): List<LayerProperty> {
         val state = level.getBlockState(pos)
         val gasSpec = OniMatterAccess.gasSpec(state)
         val entity = OniMatterAccess.matterEntity(level, pos)
-        val pressure = if (gasSpec != null && entity != null) {
-            gasPressureKpa(entity, runtime.config().cellSize())
+        val gasWeight = if (gasSpec != null && entity != null) {
+            entity.massKg()
         } else {
             0.0
         }
@@ -55,8 +51,7 @@ object OniSystemInspector {
         val total = o2 + co2 + h2
         return listOf(
             LayerProperty("matter", "occupancy", occupancy.name),
-            LayerProperty("pressure", "kPa", "%.3f".format(pressure)),
-            LayerProperty("pressure", "band", PressureBand.fromKpa(pressure).name),
+            LayerProperty("gas", "weight_kg", "%.3f".format(gasWeight)),
             LayerProperty("gas", "O2_kg", "%.3f".format(o2)),
             LayerProperty("gas", "CO2_kg", "%.3f".format(co2)),
             LayerProperty("gas", "H2_kg", "%.3f".format(h2)),
@@ -144,14 +139,6 @@ object OniSystemInspector {
         return listOf(
             LayerProperty("construction", "queue_size", runtime.constructionState().activeCount().toString()),
         )
-    }
-
-    private fun gasPressureKpa(entity: mconi.common.block.entity.OniMatterBlockEntity, cellSize: Int): Double {
-        val cellVolumeM3 = Math.pow(cellSize.toDouble(), 3.0)
-        val scaledDensity = entity.massKg() / maxOf(0.0001, cellVolumeM3)
-        return (scaledDensity / STANDARD_AIR_DENSITY_KG_PER_M3) *
-            (entity.temperatureK() / STANDARD_TEMPERATURE_K) *
-            STANDARD_PRESSURE_KPA
     }
 
 }
