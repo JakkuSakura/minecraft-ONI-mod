@@ -3,6 +3,8 @@ package mconi.common.item
 import mconi.common.AbstractModBootstrap
 import mconi.common.element.OniElements
 import mconi.common.sim.model.SystemLens
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.resources.Identifier
 import net.minecraft.world.item.Item
 import java.util.Collections
 import java.util.EnumMap
@@ -65,6 +67,8 @@ object OniItemFactory {
     )
 
     private val itemSuppliers: MutableMap<String, () -> Item> = LinkedHashMap()
+    private val itemSpecsByRegistryId: MutableMap<String, OniItemSpec> = LinkedHashMap()
+    private val itemSpecsByItem: MutableMap<Item, OniItemSpec> = LinkedHashMap()
     private val glassesItemPaths: EnumMap<SystemLens, String> = EnumMap(SystemLens::class.java)
     private val unimplementedEntries: List<UnimplementedItem> = listOf(
         UnimplementedItem(1, OniItemSource.UNIMPLEMENTED_STRINGS_ITEMS, "PILLS.PLACEBO"),
@@ -408,30 +412,39 @@ object OniItemFactory {
             }
             item(ELEMENT_REGOLITH) {
                 registryId(modId(ELEMENT_REGOLITH))
+                massKg(1.0)
             }
             item(ELEMENT_SEDIMENTARY_ROCK) {
                 registryId(modId(ELEMENT_SEDIMENTARY_ROCK))
+                massKg(1.0)
             }
             item(ELEMENT_IGNEOUS_ROCK) {
                 registryId(modId(ELEMENT_IGNEOUS_ROCK))
+                massKg(1.0)
             }
             item(ELEMENT_GRANITE) {
                 registryId(modId(ELEMENT_GRANITE))
+                massKg(1.0)
             }
             item(ELEMENT_ABYSSALITE) {
                 registryId(modId(ELEMENT_ABYSSALITE))
+                massKg(1.0)
             }
             item(ELEMENT_ALGAE) {
                 registryId(modId(ELEMENT_ALGAE))
+                massKg(1.0)
             }
             item(ELEMENT_POLLUTED_DIRT) {
                 registryId(modId(ELEMENT_POLLUTED_DIRT))
+                massKg(1.0)
             }
             item(ELEMENT_METAL_ORE) {
                 registryId(modId(ELEMENT_METAL_ORE))
+                massKg(1.0)
             }
             item(ELEMENT_REFINED_METAL) {
                 registryId(modId(ELEMENT_REFINED_METAL))
+                massKg(1.0)
             }
             item(POWER_STATION_TOOLS) {
                 registryId(modId(POWER_STATION_TOOLS))
@@ -452,6 +465,11 @@ object OniItemFactory {
                     )
                 )
             )
+        }
+
+        for (spec in coreSpecs + unimplementedSpecs) {
+            val registryId = spec.registryId ?: continue
+            itemSpecsByRegistryId[registryId] = spec
         }
     }
 
@@ -479,10 +497,22 @@ object OniItemFactory {
 
     fun itemById(id: String): Item? {
         val fullId = normalizeId(id)
-        return itemSuppliers[fullId]?.invoke()
+        val item = itemSuppliers[fullId]?.invoke() ?: return null
+        val spec = itemSpecsByRegistryId[fullId]
+        if (spec != null) {
+            itemSpecsByItem.putIfAbsent(item, spec)
+        }
+        return item
+    }
+
+    fun itemByBlockId(blockId: String): Item? {
+        val identifier = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:$blockId") ?: return null
+        return BuiltInRegistries.ITEM.getOptional(identifier).orElse(null)
     }
 
     fun specs(): List<OniItemSpec> = coreSpecs + unimplementedSpecs
+
+    fun specByItem(item: Item): OniItemSpec? = itemSpecsByItem[item]
 
     private fun normalizeId(id: String): String {
         return if (id.contains(":")) {

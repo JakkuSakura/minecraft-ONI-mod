@@ -1,6 +1,7 @@
 package mconi.common.menu
 
 import mconi.common.item.BlueprintItem
+import mconi.common.item.OniBlueprint
 import mconi.common.item.OniBlueprintRegistry
 import mconi.common.item.OniBlueprintSelection
 import mconi.common.item.OniBlueprintSelectionNbt
@@ -31,7 +32,7 @@ class BlueprintBookMenu(
     override fun clickMenuButton(player: Player, id: Int): Boolean {
         val stack = findBlueprintStack(player) ?: return false
         val current = resolveSelection(stack) ?: return false
-        val blueprint = OniBlueprintRegistry.get(current.blueprintId) ?: return false
+        val blueprint = OniBlueprintRegistry.get(current.blueprintId)
 
         return when {
             id == ACTION_PREV_BLUEPRINT -> {
@@ -44,9 +45,23 @@ class BlueprintBookMenu(
                 OniBlueprintSelectionNbt.writeTo(stack, next)
                 true
             }
-            id in ACTION_MATERIAL_RANGE -> {
+            id in ACTION_MATERIAL_RANGE && blueprint != null -> {
                 val (slotIndex, direction) = decodeMaterialAction(id)
                 val updated = shiftMaterial(blueprint, current, slotIndex, direction)
+                OniBlueprintSelectionNbt.writeTo(stack, updated)
+                true
+            }
+            id in ACTION_SET_BLUEPRINT_RANGE -> {
+                val index = decodeBlueprintSelection(id)
+                val blueprintId = blueprintIds.getOrNull(index) ?: return false
+                val nextBlueprint = OniBlueprintRegistry.get(blueprintId) ?: return false
+                val next = OniBlueprintSelectionNbt.starterSelection(nextBlueprint)
+                OniBlueprintSelectionNbt.writeTo(stack, next)
+                true
+            }
+            id in ACTION_SET_MATERIAL_RANGE && blueprint != null -> {
+                val (slotIndex, itemIndex) = decodeMaterialSelection(id)
+                val updated = selectMaterial(blueprint, current, slotIndex, itemIndex)
                 OniBlueprintSelectionNbt.writeTo(stack, updated)
                 true
             }
@@ -66,7 +81,7 @@ class BlueprintBookMenu(
     }
 
     private fun shiftMaterial(
-        blueprint: mconi.common.item.OniBlueprint,
+        blueprint: OniBlueprint,
         selection: OniBlueprintSelection,
         slotIndex: Int,
         direction: Int
@@ -86,6 +101,31 @@ class BlueprintBookMenu(
         val updated = selection.materials.toMutableList()
         val idx = updated.indexOfFirst { it.slotId == slot.slotId }
         val newChoice = OniMaterialChoice(slot.slotId, nextItemId)
+        if (idx >= 0) {
+            updated[idx] = newChoice
+        } else {
+            updated.add(newChoice)
+        }
+        return OniBlueprintSelection(selection.blueprintId, updated)
+    }
+
+    private fun selectMaterial(
+        blueprint: OniBlueprint,
+        selection: OniBlueprintSelection,
+        slotIndex: Int,
+        itemIndex: Int
+    ): OniBlueprintSelection {
+        if (slotIndex < 0 || slotIndex >= blueprint.materialSlots.size) {
+            return selection
+        }
+        val slot = blueprint.materialSlots[slotIndex]
+        if (itemIndex < 0 || itemIndex >= slot.allowedItems.size) {
+            return selection
+        }
+        val itemId = slot.allowedItems[itemIndex]
+        val updated = selection.materials.toMutableList()
+        val idx = updated.indexOfFirst { it.slotId == slot.slotId }
+        val newChoice = OniMaterialChoice(slot.slotId, itemId)
         if (idx >= 0) {
             updated[idx] = newChoice
         } else {
@@ -142,6 +182,16 @@ class BlueprintBookMenu(
         const val ACTION_MATERIAL_BASE = 1000
         val ACTION_MATERIAL_RANGE = 1000..1999
 
+        private const val ACTION_SET_BLUEPRINT_BASE = 2000
+        private const val ACTION_SET_BLUEPRINT_LIMIT = 1000
+        private const val ACTION_SET_MATERIAL_BASE = 4000
+        private const val ACTION_SET_MATERIAL_BUCKET = 256
+        private const val ACTION_SET_MATERIAL_LIMIT = 50
+
+        val ACTION_SET_BLUEPRINT_RANGE = ACTION_SET_BLUEPRINT_BASE until (ACTION_SET_BLUEPRINT_BASE + ACTION_SET_BLUEPRINT_LIMIT)
+        val ACTION_SET_MATERIAL_RANGE = ACTION_SET_MATERIAL_BASE until
+            (ACTION_SET_MATERIAL_BASE + ACTION_SET_MATERIAL_LIMIT * ACTION_SET_MATERIAL_BUCKET)
+
         fun encodeMaterialAction(slotIndex: Int, direction: Int): Int {
             val dir = if (direction >= 0) 1 else 0
             return ACTION_MATERIAL_BASE + slotIndex * 2 + dir
@@ -152,6 +202,25 @@ class BlueprintBookMenu(
             val slotIndex = offset / 2
             val direction = if (offset % 2 == 0) -1 else 1
             return slotIndex to direction
+        }
+
+        fun encodeBlueprintSelection(blueprintIndex: Int): Int {
+            return ACTION_SET_BLUEPRINT_BASE + blueprintIndex
+        }
+
+        fun decodeBlueprintSelection(id: Int): Int {
+            return id - ACTION_SET_BLUEPRINT_BASE
+        }
+
+        fun encodeMaterialSelection(slotIndex: Int, itemIndex: Int): Int {
+            return ACTION_SET_MATERIAL_BASE + slotIndex * ACTION_SET_MATERIAL_BUCKET + itemIndex
+        }
+
+        fun decodeMaterialSelection(id: Int): Pair<Int, Int> {
+            val offset = id - ACTION_SET_MATERIAL_BASE
+            val slotIndex = offset / ACTION_SET_MATERIAL_BUCKET
+            val itemIndex = offset % ACTION_SET_MATERIAL_BUCKET
+            return slotIndex to itemIndex
         }
     }
 }
