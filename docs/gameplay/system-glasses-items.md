@@ -36,7 +36,7 @@ Examples:
 - Atmosphere:
   - `matter.occupancy`
   - `pressure.kPa`
-  - `gas.O2_kg`, `gas.CO2_kg`, `gas.H2_kg`
+  - `gas.O2_mass`, `gas.CO2_mass`, `gas.H2_mass`
 - Oxygen:
   - `oxygen.o2_fraction`
   - `oxygen.co2_fraction`

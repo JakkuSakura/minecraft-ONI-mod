@@ -95,10 +95,10 @@ class ConstructionSiteBlockEntity(pos: BlockPos, state: BlockState) :
                 continue
             }
             val stack = net.minecraft.world.item.ItemStack(item, 1)
-            OniItemMass.setStackWeightKg(stack, slot.depositedAmount.toDouble())
+            OniItemMass.setStackMass(stack, slot.depositedAmount.toDouble())
             refunds.add(stack)
         }
-        return OniItemMass.mergeStacksByWeight(refunds).toMutableList()
+        return OniItemMass.mergeStacksByMass(refunds).toMutableList()
     }
 
     fun appendJadeLines(lines: MutableList<String>) {
@@ -219,11 +219,11 @@ class ConstructionSiteBlockEntity(pos: BlockPos, state: BlockState) :
             if (stack.item != item) {
                 continue
             }
-            val take = minOf(remaining, OniItemMass.stackWeightKg(stack))
+            val take = minOf(remaining, OniItemMass.stackMass(stack))
             if (take <= 0.0) {
                 continue
             }
-            val actual = OniItemMass.takeWeightKg(stack, take)
+            val actual = OniItemMass.takeMass(stack, take)
             deposited += actual
             remaining -= actual
             if (remaining <= 0.0) {

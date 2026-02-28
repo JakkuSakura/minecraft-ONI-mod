@@ -32,7 +32,7 @@ Notes:
 
 Current blueprint materials (ONI wiki reference values for the primary material, plus a secondary MC material to enforce multi-material recipes):
 
-| Blueprint | ONI building | Slot 1 (ONI material) | Amount (kg) | Slot 2 (MC structural material) | Amount |
+| Blueprint | ONI building | Slot 1 (ONI material) | Amount | Slot 2 (MC structural material) | Amount |
 | --- | --- | --- | --- | --- | --- |
 | oxygen_diffuser | Oxygen Diffuser | Metal Ore | 200 | Raw Mineral | 50 |
 | algae_deoxidizer | Oxygen Diffuser (material values) | Metal Ore | 200 | Raw Mineral | 50 |

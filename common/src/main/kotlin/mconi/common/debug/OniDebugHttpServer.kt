@@ -196,7 +196,7 @@ object OniDebugHttpServer {
             val gas = OniMatterAccess.gasSpec(state)
             val liquidId = OniMatterAccess.liquidId(state)
             val entity = OniMatterAccess.matterEntity(level, pos)
-            val weight = entity?.massKg() ?: 0.0
+            val mass = entity?.mass() ?: 0.0
             val tempK = entity?.temperatureK() ?: 293.15
             val body = buildString {
                 append("{")
@@ -212,7 +212,7 @@ object OniDebugHttpServer {
                     }
                 ).append("\"")
                 append(",\"temperatureK\":").append(tempK)
-                append(",\"weightKg\":").append(weight)
+                append(",\"mass\":").append(mass)
                 append(",\"gasId\":\"").append(gas?.id ?: "").append("\"")
                 append(",\"liquidId\":\"").append(liquidId ?: "").append("\"")
                 append("}")

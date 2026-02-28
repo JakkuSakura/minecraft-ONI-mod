@@ -206,7 +206,7 @@ class BlueprintBookScreen(
         val columns = 4
 
         for ((slotIndex, slot) in blueprint.materialSlots.withIndex()) {
-            val title = "Material ${slotIndex + 1}: ${slot.amount} kg"
+            val title = "Material ${slotIndex + 1}: ${slot.amount}"
             guiGraphics.drawString(font, title, startX, y, 0xC0C0C0, false)
             y += 12
 

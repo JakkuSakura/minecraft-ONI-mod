@@ -16,11 +16,11 @@ object OniItemTooltip {
         val tag = data?.copyTag()
 
         if (includeMass) {
-            val hasWeightTag = tag?.contains(OniItemMass.TAG_WEIGHT_KG) == true
-            if (hasWeightTag) {
-                val massKg = OniItemMass.stackWeightKg(stack)
-                if (massKg > 0.0) {
-                    tooltip.accept(Component.literal(String.format("Mass: %.2f kg", massKg)))
+            val hasMassTag = tag?.contains(OniItemMass.TAG_MASS) == true
+            if (hasMassTag) {
+                val mass = OniItemMass.stackMass(stack)
+                if (mass > 0.0) {
+                    tooltip.accept(Component.literal(String.format("Mass: %.2f", mass)))
                 }
             }
         }

@@ -29,7 +29,7 @@ object ForgeItems {
                 BottledMatterItem(
                     Item.Properties(),
                     spec.phase,
-                    spec.massKg,
+                    spec.mass,
                     spec.temperatureK
                 )
             }

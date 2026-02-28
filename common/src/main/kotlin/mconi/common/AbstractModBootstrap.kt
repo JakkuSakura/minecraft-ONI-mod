@@ -222,7 +222,7 @@ abstract class AbstractModBootstrap {
                             val gas = OniMatterAccess.gasSpec(state)
                             val liquidId = OniMatterAccess.liquidId(state)
                             val entity = OniMatterAccess.matterEntity(level, pos)
-                            val weight = entity?.massKg() ?: 0.0
+                            val mass = entity?.mass() ?: 0.0
                             val tempK = entity?.temperatureK() ?: 293.15
                             Utils.SendFeedback(
                                 context,
@@ -235,7 +235,7 @@ abstract class AbstractModBootstrap {
                                     }
                                 }"
                                     + " tempK=${String.format("%.2f", tempK)}"
-                                    + " weightKg=${String.format("%.3f", weight)}"
+                                    + " mass=${String.format("%.3f", mass)}"
                                     + " gas=${gas?.id ?: "none"}"
                                     + " liquid=${liquidId ?: "none"}",
                                 true
@@ -244,14 +244,14 @@ abstract class AbstractModBootstrap {
                         })
                     .then(literal("inject_gas")
                         .then(argument("species", StringArgumentType.word())
-                            .then(argument("mass_kg", DoubleArgumentType.doubleArg(0.0, 1000.0))
+                            .then(argument("mass", DoubleArgumentType.doubleArg(0.0, 1000.0))
                                 .executes { context ->
                                     val source = context.source
                                     val x = Mth.floor(source.position.x)
                                     val y = Mth.floor(source.position.y)
                                     val z = Mth.floor(source.position.z)
                                     val speciesInput = StringArgumentType.getString(context, "species")
-                                    val massKg = DoubleArgumentType.getDouble(context, "mass_kg")
+                                    val mass = DoubleArgumentType.getDouble(context, "mass")
                                     val species = OniElements.parseGas(speciesInput)
                                     if (species == null) {
                                         Utils.SendError(context, "Invalid gas species: $speciesInput. Use O2/CO2/H2.", true)
@@ -272,22 +272,22 @@ abstract class AbstractModBootstrap {
                                     level.setBlock(pos, targetState, 2)
                                     val entity = OniMatterAccess.matterEntity(level, pos)
                                     if (entity != null) {
-                                        entity.setMassKg(entity.massKg() + massKg)
+                                        entity.setMass(entity.mass() + mass)
                                         entity.setTemperatureK(species.defaultTemperature)
                                     }
-                                    Utils.SendFeedback(context, "Injected $massKg kg of ${species.symbol} into current block.", true)
+                                    Utils.SendFeedback(context, "Injected $mass of ${species.symbol} into current block.", true)
                                     1
                                 })))
                     .then(literal("inject_liquid")
                         .then(argument("species", StringArgumentType.word())
-                            .then(argument("mass_kg", DoubleArgumentType.doubleArg(0.0, 10000.0))
+                            .then(argument("mass", DoubleArgumentType.doubleArg(0.0, 10000.0))
                                 .executes { context ->
                                     val source = context.source
                                     val x = Mth.floor(source.position.x)
                                     val y = Mth.floor(source.position.y)
                                     val z = Mth.floor(source.position.z)
                                     val speciesInput = StringArgumentType.getString(context, "species")
-                                    val massKg = DoubleArgumentType.getDouble(context, "mass_kg")
+                                    val mass = DoubleArgumentType.getDouble(context, "mass")
                                     val liquidId = OniElements.parseLiquidId(speciesInput)
                                     if (liquidId == null) {
                                         Utils.SendError(context, "Invalid liquid id. Use water/polluted_water/crude_oil/lava.", true)
@@ -309,13 +309,13 @@ abstract class AbstractModBootstrap {
                                     level.setBlock(pos, targetState, 2)
                                     val entity = OniMatterAccess.matterEntity(level, pos)
                                     if (entity != null) {
-                                        entity.setMassKg(massKg)
+                                        entity.setMass(mass)
                                         val spec = OniElements.liquidSpec(liquidId)
                                         if (spec != null) {
                                             entity.setTemperatureK(spec.defaultTemperatureK)
                                         }
                                     }
-                                    Utils.SendFeedback(context, "Set liquid $liquidId mass to $massKg kg in current block.", true)
+                                    Utils.SendFeedback(context, "Set liquid $liquidId mass to $mass in current block.", true)
                                     1
                                 })))
                     .then(literal("set_power")

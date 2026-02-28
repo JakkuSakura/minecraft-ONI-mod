@@ -22,7 +22,7 @@ class OniItemTooltipTest {
     @Test
     fun showsMassAndTemperatureFromTags() {
         val stack = ItemStack(Items.APPLE, 1)
-        OniItemMass.setStackWeightKg(stack, 3.5)
+        OniItemMass.setStackMass(stack, 3.5)
         CustomData.update(DataComponents.CUSTOM_DATA, stack) { root ->
             root.putDouble(BottledMatterItem.TAG_TEMP_K, 310.0)
         }

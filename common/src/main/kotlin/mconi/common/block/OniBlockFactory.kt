@@ -109,7 +109,7 @@ object OniBlockFactory {
             OniSolidBlock(
                 REGOLITH,
                 elements = listOf(
-                    mconi.common.element.ElementStack("mconi:element_regolith", blockDigYieldKg(REGOLITH).coerceAtLeast(1))
+                    mconi.common.element.ElementStack("mconi:element_regolith", blockDigYield(REGOLITH).coerceAtLeast(1))
                 ),
                 properties = propsFor(REGOLITH).mapColor(MapColor.COLOR_BROWN).strength(0.6f).sound(SoundType.GRAVEL)
             )
@@ -118,7 +118,7 @@ object OniBlockFactory {
             OniSolidBlock(
                 SEDIMENTARY_ROCK,
                 elements = listOf(
-                    mconi.common.element.ElementStack("mconi:element_sedimentary_rock", blockDigYieldKg(SEDIMENTARY_ROCK).coerceAtLeast(1))
+                    mconi.common.element.ElementStack("mconi:element_sedimentary_rock", blockDigYield(SEDIMENTARY_ROCK).coerceAtLeast(1))
                 ),
                 properties = propsFor(SEDIMENTARY_ROCK).mapColor(MapColor.COLOR_YELLOW).strength(1.2f, 3.0f).sound(SoundType.STONE)
             )
@@ -127,7 +127,7 @@ object OniBlockFactory {
             OniSolidBlock(
                 IGNEOUS_ROCK,
                 elements = listOf(
-                    mconi.common.element.ElementStack("mconi:element_igneous_rock", blockDigYieldKg(IGNEOUS_ROCK).coerceAtLeast(1))
+                    mconi.common.element.ElementStack("mconi:element_igneous_rock", blockDigYield(IGNEOUS_ROCK).coerceAtLeast(1))
                 ),
                 properties = propsFor(IGNEOUS_ROCK).mapColor(MapColor.COLOR_GRAY).strength(1.5f, 4.0f).sound(SoundType.STONE)
             )
@@ -136,7 +136,7 @@ object OniBlockFactory {
             OniSolidBlock(
                 GRANITE,
                 elements = listOf(
-                    mconi.common.element.ElementStack("mconi:element_granite", blockDigYieldKg(GRANITE).coerceAtLeast(1))
+                    mconi.common.element.ElementStack("mconi:element_granite", blockDigYield(GRANITE).coerceAtLeast(1))
                 ),
                 properties = propsFor(GRANITE).mapColor(MapColor.COLOR_ORANGE).strength(1.6f, 4.5f).sound(SoundType.STONE)
             )
@@ -145,7 +145,7 @@ object OniBlockFactory {
             OniSolidBlock(
                 ABYSSALITE,
                 elements = listOf(
-                    mconi.common.element.ElementStack("mconi:element_abyssalite", blockDigYieldKg(ABYSSALITE).coerceAtLeast(1))
+                    mconi.common.element.ElementStack("mconi:element_abyssalite", blockDigYield(ABYSSALITE).coerceAtLeast(1))
                 ),
                 properties = propsFor(ABYSSALITE).mapColor(MapColor.COLOR_BLACK).strength(50.0f, 1200.0f).sound(SoundType.STONE)
             )
@@ -154,7 +154,7 @@ object OniBlockFactory {
             OniSolidBlock(
                 ALGAE,
                 elements = listOf(
-                    mconi.common.element.ElementStack("mconi:element_algae", blockDigYieldKg(ALGAE).coerceAtLeast(1))
+                    mconi.common.element.ElementStack("mconi:element_algae", blockDigYield(ALGAE).coerceAtLeast(1))
                 ),
                 properties = propsFor(ALGAE).mapColor(MapColor.COLOR_GREEN).strength(0.4f).sound(SoundType.GRASS)
             )
@@ -163,7 +163,7 @@ object OniBlockFactory {
             OniSolidBlock(
                 POLLUTED_DIRT,
                 elements = listOf(
-                    mconi.common.element.ElementStack("mconi:element_polluted_dirt", blockDigYieldKg(POLLUTED_DIRT).coerceAtLeast(1))
+                    mconi.common.element.ElementStack("mconi:element_polluted_dirt", blockDigYield(POLLUTED_DIRT).coerceAtLeast(1))
                 ),
                 properties = propsFor(POLLUTED_DIRT).mapColor(MapColor.COLOR_BROWN).strength(0.6f).sound(SoundType.GRAVEL)
             )
@@ -172,7 +172,7 @@ object OniBlockFactory {
             PrintingPodBlock(
                 PRINTING_POD,
                 elements = listOf(
-                    mconi.common.element.ElementStack("mconi:element_refined_metal", blockDigYieldKg(PRINTING_POD).coerceAtLeast(1))
+                    mconi.common.element.ElementStack("mconi:element_refined_metal", blockDigYield(PRINTING_POD).coerceAtLeast(1))
                 ),
                 properties = propsFor(PRINTING_POD).mapColor(MapColor.COLOR_LIGHT_GRAY).strength(3.0f, 6.0f).sound(SoundType.METAL)
             )
@@ -362,28 +362,28 @@ object OniBlockFactory {
     private val LIQUID_ENTRIES: List<BlockEntry> = listOf(
         entry(WATER, BlockKind.LIQUID, {
             OniLiquidBlock(
-                massKg = 1000,
+                mass = 1000,
                 properties = propsFor(WATER).mapColor(MapColor.WATER).noCollision().noOcclusion().strength(0.0f)
                     .sound(SoundType.WET_GRASS)
             )
         }),
         entry(POLLUTED_WATER, BlockKind.LIQUID, {
             OniLiquidBlock(
-                massKg = 1000,
+                mass = 1000,
                 properties = propsFor(POLLUTED_WATER).mapColor(MapColor.COLOR_GREEN).noCollision().noOcclusion().strength(0.0f)
                     .sound(SoundType.WET_GRASS)
             )
         }),
         entry(CRUDE_OIL, BlockKind.LIQUID, {
             OniLiquidBlock(
-                massKg = 870,
+                mass = 870,
                 properties = propsFor(CRUDE_OIL).mapColor(MapColor.COLOR_BROWN).noCollision().noOcclusion().strength(0.0f)
                     .sound(SoundType.SLIME_BLOCK)
             )
         }),
         entry(LAVA, BlockKind.LIQUID, {
             OniLiquidBlock(
-                massKg = 1840,
+                mass = 1840,
                 properties = propsFor(LAVA).mapColor(MapColor.COLOR_ORANGE).noCollision().noOcclusion().strength(0.0f)
                     .sound(SoundType.SLIME_BLOCK)
             )
@@ -430,7 +430,7 @@ object OniBlockFactory {
         return key.path
     }
 
-    private val BLOCK_MASS_KG: Map<String, Int> = mapOf(
+    private val BLOCK_MASS: Map<String, Int> = mapOf(
         REGOLITH to 1000,
         SEDIMENTARY_ROCK to 1840,
         IGNEOUS_ROCK to 1840,
@@ -440,11 +440,11 @@ object OniBlockFactory {
         POLLUTED_DIRT to 1000
     )
 
-    fun blockMassKg(id: String): Int {
-        return BLOCK_MASS_KG[id] ?: 1
+    fun blockMass(id: String): Int {
+        return BLOCK_MASS[id] ?: 1
     }
 
-    fun blockDigYieldKg(id: String): Int = blockMassKg(id).coerceAtLeast(1)
+    fun blockDigYield(id: String): Int = blockMass(id).coerceAtLeast(1)
 
     fun createBlock(id: String): Block {
         val entry = ENTRIES_BY_ID[id] ?: throw IllegalArgumentException("Unknown block id: $id")

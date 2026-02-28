@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.storage.loot.LootParams
 
 class OniLiquidBlock(
-    val massKg: Int,
+    val mass: Int,
     properties: BlockBehaviour.Properties
 ) : Block(properties), EntityBlock {
     override fun getDrops(state: BlockState, params: LootParams.Builder): MutableList<ItemStack> {

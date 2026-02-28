@@ -9,13 +9,13 @@ import net.minecraft.world.level.storage.ValueOutput
 class OniMatterBlockEntity(pos: BlockPos, state: BlockState) :
     BlockEntity(OniBlockEntityTypes.MATTER, pos, state) {
 
-    private var massKg: Double = 0.0
+    private var mass: Double = 0.0
     private var temperatureK: Double = 293.15
-    fun massKg(): Double = massKg
+    fun mass(): Double = mass
     fun temperatureK(): Double = temperatureK
 
-    fun setMassKg(value: Double) {
-        massKg = value.coerceAtLeast(0.0)
+    fun setMass(value: Double) {
+        mass = value.coerceAtLeast(0.0)
         setChanged()
     }
 
@@ -26,13 +26,13 @@ class OniMatterBlockEntity(pos: BlockPos, state: BlockState) :
 
     override fun saveAdditional(output: ValueOutput) {
         super.saveAdditional(output)
-        output.putDouble("Weight", massKg)
+        output.putDouble("Mass", mass)
         output.putDouble("TemperatureK", temperatureK)
     }
 
     override fun loadAdditional(input: ValueInput) {
         super.loadAdditional(input)
-        massKg = input.getDoubleOr("Weight", 0.0)
+        mass = input.getDoubleOr("Mass", 0.0)
         temperatureK = input.getDoubleOr("TemperatureK", 293.15)
     }
 }

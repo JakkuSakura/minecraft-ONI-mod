@@ -384,23 +384,23 @@ object OniItemFactory {
             source(OniItemSource.CORE)
             item(BOTTLED_OXYGEN) {
                 registryId(modId(BOTTLED_OXYGEN))
-                massKg(1.0)
+                mass(1.0)
                 temperatureK(295.0)
             }
             item(BOTTLED_CO2) {
                 registryId(modId(BOTTLED_CO2))
-                massKg(1.0)
+                mass(1.0)
                 temperatureK(295.0)
             }
             item(BOTTLED_HYDROGEN) {
                 registryId(modId(BOTTLED_HYDROGEN))
-                massKg(1.0)
+                mass(1.0)
                 temperatureK(295.0)
             }
             for (spec in OniElements.LIQUID_SPECS) {
                 item(spec.bottledItemId) {
                     registryId(modId(spec.bottledItemId))
-                    massKg(spec.bottledMassKg())
+                    mass(spec.bottledMass())
                     temperatureK(spec.bottledTemperatureK())
                 }
             }
@@ -412,39 +412,39 @@ object OniItemFactory {
             }
             item(ELEMENT_REGOLITH) {
                 registryId(modId(ELEMENT_REGOLITH))
-                massKg(1.0)
+                mass(1.0)
             }
             item(ELEMENT_SEDIMENTARY_ROCK) {
                 registryId(modId(ELEMENT_SEDIMENTARY_ROCK))
-                massKg(1.0)
+                mass(1.0)
             }
             item(ELEMENT_IGNEOUS_ROCK) {
                 registryId(modId(ELEMENT_IGNEOUS_ROCK))
-                massKg(1.0)
+                mass(1.0)
             }
             item(ELEMENT_GRANITE) {
                 registryId(modId(ELEMENT_GRANITE))
-                massKg(1.0)
+                mass(1.0)
             }
             item(ELEMENT_ABYSSALITE) {
                 registryId(modId(ELEMENT_ABYSSALITE))
-                massKg(1.0)
+                mass(1.0)
             }
             item(ELEMENT_ALGAE) {
                 registryId(modId(ELEMENT_ALGAE))
-                massKg(1.0)
+                mass(1.0)
             }
             item(ELEMENT_POLLUTED_DIRT) {
                 registryId(modId(ELEMENT_POLLUTED_DIRT))
-                massKg(1.0)
+                mass(1.0)
             }
             item(ELEMENT_METAL_ORE) {
                 registryId(modId(ELEMENT_METAL_ORE))
-                massKg(1.0)
+                mass(1.0)
             }
             item(ELEMENT_REFINED_METAL) {
                 registryId(modId(ELEMENT_REFINED_METAL))
-                massKg(1.0)
+                mass(1.0)
             }
             item(POWER_STATION_TOOLS) {
                 registryId(modId(POWER_STATION_TOOLS))
@@ -560,7 +560,7 @@ enum class OniItemSource {
 }
 
 data class OniItemProperties(
-    val massKg: Double? = null,
+    val mass: Double? = null,
     val temperatureK: Double? = null,
     val overheatTempK: Double? = null,
     val meltingPointK: Double? = null,
@@ -580,7 +580,7 @@ data class OniItemSpec(
 
 private class OniItemSpecDsl(private val key: String, private val source: OniItemSource) {
     private var registryId: String? = null
-    private var massKg: Double? = null
+    private var mass: Double? = null
     private var temperatureK: Double? = null
     private var overheatTempK: Double? = null
     private var meltingPointK: Double? = null
@@ -594,8 +594,8 @@ private class OniItemSpecDsl(private val key: String, private val source: OniIte
         registryId = id
     }
 
-    fun massKg(value: Double) {
-        massKg = value
+    fun mass(value: Double) {
+        mass = value
     }
 
     fun temperatureK(value: Double) {
@@ -636,7 +636,7 @@ private class OniItemSpecDsl(private val key: String, private val source: OniIte
             registryId = registryId,
             source = source,
             properties = OniItemProperties(
-                massKg = massKg,
+                mass = mass,
                 temperatureK = temperatureK,
                 overheatTempK = overheatTempK,
                 meltingPointK = meltingPointK,

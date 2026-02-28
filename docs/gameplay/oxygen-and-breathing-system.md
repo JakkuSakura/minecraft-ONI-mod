@@ -13,7 +13,7 @@ Primary producers:
 Each source defines:
 
 - input requirements
-- output `O2_kg_per_s`
+- output `O2_mass_per_s`
 - heat byproduct
 
 ## 2. Oxygen Sinks

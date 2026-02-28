@@ -12,7 +12,7 @@ class LiquidSystem : OniSystem {
     override fun run(context: SystemContext) {
         val level = context.level()
         val config = context.config()
-        val maxTransfer = config.liquidTransferKgPerStep().coerceAtLeast(0.0)
+        val maxTransfer = config.liquidTransferPerStep().coerceAtLeast(0.0)
         if (maxTransfer <= 0.0) {
             return
         }
@@ -29,7 +29,7 @@ class LiquidSystem : OniSystem {
             val state = level.getBlockState(pos)
             val liquidId = OniMatterAccess.liquidId(state) ?: continue
             val entity = OniMatterAccess.matterEntity(level, pos) ?: continue
-            val mass = entity.massKg()
+            val mass = entity.mass()
             if (mass <= 0.0) {
                 continue
             }
@@ -48,8 +48,8 @@ class LiquidSystem : OniSystem {
             val belowState = level.getBlockState(below)
             val belowLiquid = OniMatterAccess.liquidId(belowState)
             if (belowLiquid == null || belowLiquid == liquidId) {
-                val belowMass = massByPos[below] ?: OniMatterAccess.matterEntity(level, below)?.massKg() ?: 0.0
-                val capacity = MAX_LIQUID_MASS_PER_CELL_KG - belowMass
+                val belowMass = massByPos[below] ?: OniMatterAccess.matterEntity(level, below)?.mass() ?: 0.0
+                val capacity = MAX_LIQUID_MASS_PER_CELL - belowMass
                 if (capacity > 0.0) {
                     val transfer = minOf(maxTransfer, mass, capacity)
                     if (transfer > 0.0) {
@@ -69,12 +69,12 @@ class LiquidSystem : OniSystem {
                 if (neighborLiquid != null && neighborLiquid != liquidId) {
                     continue
                 }
-                val neighborMass = massByPos[neighbor] ?: OniMatterAccess.matterEntity(level, neighbor)?.massKg() ?: 0.0
+                val neighborMass = massByPos[neighbor] ?: OniMatterAccess.matterEntity(level, neighbor)?.mass() ?: 0.0
                 val diff = mass - neighborMass
                 if (diff <= 1.0) {
                     continue
                 }
-                val transfer = minOf(maxTransfer, diff * 0.25, MAX_LIQUID_MASS_PER_CELL_KG - neighborMass)
+                val transfer = minOf(maxTransfer, diff * 0.25, MAX_LIQUID_MASS_PER_CELL - neighborMass)
                 if (transfer <= 0.0) {
                     continue
                 }
@@ -98,12 +98,12 @@ class LiquidSystem : OniSystem {
                 level.setBlock(pos, target, 2)
             }
             val entity = OniMatterAccess.matterEntity(level, pos) ?: continue
-            val next = (entity.massKg() + delta).coerceAtLeast(0.0)
+            val next = (entity.mass() + delta).coerceAtLeast(0.0)
             if (next <= 0.0) {
                 level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2)
                 continue
             }
-            entity.setMassKg(next)
+            entity.setMass(next)
         }
     }
 
@@ -127,6 +127,6 @@ class LiquidSystem : OniSystem {
     }
 
     companion object {
-        private const val MAX_LIQUID_MASS_PER_CELL_KG = 4000.0
+        private const val MAX_LIQUID_MASS_PER_CELL = 4000.0
     }
 }

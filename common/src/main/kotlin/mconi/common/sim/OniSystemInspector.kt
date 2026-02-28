@@ -34,8 +34,8 @@ object OniSystemInspector {
         val state = level.getBlockState(pos)
         val gasSpec = OniMatterAccess.gasSpec(state)
         val entity = OniMatterAccess.matterEntity(level, pos)
-        val gasWeight = if (gasSpec != null && entity != null) {
-            entity.massKg()
+        val gasMass = if (gasSpec != null && entity != null) {
+            entity.mass()
         } else {
             0.0
         }
@@ -45,17 +45,17 @@ object OniSystemInspector {
             state.isAir -> OccupancyState.VACUUM
             else -> OccupancyState.SOLID
         }
-        val o2 = if (gasSpec == OniElements.GAS_OXYGEN) entity?.massKg() ?: 0.0 else 0.0
-        val co2 = if (gasSpec == OniElements.GAS_CARBON_DIOXIDE) entity?.massKg() ?: 0.0 else 0.0
-        val h2 = if (gasSpec == OniElements.GAS_HYDROGEN) entity?.massKg() ?: 0.0 else 0.0
+        val o2 = if (gasSpec == OniElements.GAS_OXYGEN) entity?.mass() ?: 0.0 else 0.0
+        val co2 = if (gasSpec == OniElements.GAS_CARBON_DIOXIDE) entity?.mass() ?: 0.0 else 0.0
+        val h2 = if (gasSpec == OniElements.GAS_HYDROGEN) entity?.mass() ?: 0.0 else 0.0
         val total = o2 + co2 + h2
         return listOf(
             LayerProperty("matter", "occupancy", occupancy.name),
-            LayerProperty("gas", "weight_kg", "%.3f".format(gasWeight)),
-            LayerProperty("gas", "O2_kg", "%.3f".format(o2)),
-            LayerProperty("gas", "CO2_kg", "%.3f".format(co2)),
-            LayerProperty("gas", "H2_kg", "%.3f".format(h2)),
-            LayerProperty("gas", "total_kg", "%.3f".format(total)),
+            LayerProperty("gas", "mass", "%.3f".format(gasMass)),
+            LayerProperty("gas", "O2_mass", "%.3f".format(o2)),
+            LayerProperty("gas", "CO2_mass", "%.3f".format(co2)),
+            LayerProperty("gas", "H2_mass", "%.3f".format(h2)),
+            LayerProperty("gas", "total_mass", "%.3f".format(total)),
         )
     }
 
@@ -63,11 +63,11 @@ object OniSystemInspector {
         val state = level.getBlockState(pos)
         val liquidId = OniMatterAccess.liquidId(state) ?: OniElements.LIQUID_NONE
         val entity = OniMatterAccess.matterEntity(level, pos)
-        val mass = entity?.massKg() ?: 0.0
+        val mass = entity?.mass() ?: 0.0
         val temp = entity?.temperatureK() ?: 0.0
         return listOf(
             LayerProperty("liquid", "id", liquidId),
-            LayerProperty("liquid", "mass_kg", "%.3f".format(mass)),
+            LayerProperty("liquid", "mass", "%.3f".format(mass)),
             LayerProperty("liquid", "boiling_candidate", (temp > 373.15).toString()),
         )
     }

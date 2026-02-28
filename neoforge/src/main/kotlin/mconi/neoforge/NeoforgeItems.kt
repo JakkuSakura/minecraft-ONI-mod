@@ -48,7 +48,7 @@ object NeoforgeItems {
                 BottledMatterItem(
                     Item.Properties().setId(key),
                     spec.phase,
-                    spec.massKg,
+                    spec.mass,
                     spec.temperatureK
                 )
             })

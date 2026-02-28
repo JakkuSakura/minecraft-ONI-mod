@@ -33,7 +33,7 @@ open class OniSolidBlock(
                 continue
             }
             val stack = ItemStack(item, 1)
-            OniItemMass.setStackWeightKg(stack, element.amount.toDouble())
+            OniItemMass.setStackMass(stack, element.amount.toDouble())
             drops.add(stack)
         }
         return drops

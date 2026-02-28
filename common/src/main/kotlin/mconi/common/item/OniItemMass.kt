@@ -7,50 +7,50 @@ import net.minecraft.world.item.component.CustomData
 import kotlin.math.floor
 
 object OniItemMass {
-    const val TAG_WEIGHT_KG: String = "Weight"
+    const val TAG_MASS: String = "Mass"
 
-    fun stackWeightKg(stack: ItemStack): Double {
+    fun stackMass(stack: ItemStack): Double {
         if (stack.isEmpty) {
             return 0.0
         }
         val data = stack.get(DataComponents.CUSTOM_DATA) ?: return stack.count.toDouble()
         val tag = data.copyTag()
-        if (tag.contains(TAG_WEIGHT_KG)) {
-            return tag.getDouble(TAG_WEIGHT_KG).orElse(0.0)
+        if (tag.contains(TAG_MASS)) {
+            return tag.getDouble(TAG_MASS).orElse(0.0)
         }
         return stack.count.toDouble()
     }
 
-    fun setStackWeightKg(stack: ItemStack, weightKg: Double) {
-        if (weightKg <= 0.0) {
+    fun setStackMass(stack: ItemStack, mass: Double) {
+        if (mass <= 0.0) {
             stack.count = 0
             return
         }
         stack.count = 1
         CustomData.update(DataComponents.CUSTOM_DATA, stack) { root ->
-            root.putDouble(TAG_WEIGHT_KG, weightKg)
+            root.putDouble(TAG_MASS, mass)
         }
     }
 
-    fun takeWeightKg(stack: ItemStack, weightKg: Double): Double {
-        if (stack.isEmpty || weightKg <= 0.0) {
+    fun takeMass(stack: ItemStack, mass: Double): Double {
+        if (stack.isEmpty || mass <= 0.0) {
             return 0.0
         }
         val data = stack.get(DataComponents.CUSTOM_DATA)
-        if (data != null && data.copyTag().contains(TAG_WEIGHT_KG)) {
-            val current = stackWeightKg(stack)
-            val take = minOf(current, weightKg)
+        if (data != null && data.copyTag().contains(TAG_MASS)) {
+            val current = stackMass(stack)
+            val take = minOf(current, mass)
             val remaining = current - take
             if (remaining <= 0.0) {
                 stack.count = 0
             } else {
-                setStackWeightKg(stack, remaining)
+                setStackMass(stack, remaining)
             }
             return take
         }
 
         val available = stack.count.toDouble()
-        val take = minOf(available, floor(weightKg + 1e-9))
+        val take = minOf(available, floor(mass + 1e-9))
         if (take <= 0.0) {
             return 0.0
         }
@@ -62,25 +62,25 @@ object OniItemMass {
         if (stack.isEmpty) {
             return stack
         }
-        val capacity = OniInventoryWeights.remainingCapacityKg(container)
+        val capacity = OniInventoryMass.remainingCapacity(container)
         if (capacity <= 0.0) {
             return stack
         }
-        val available = stackWeightKg(stack)
+        val available = stackMass(stack)
         val toAdd = minOf(available, capacity)
         if (toAdd <= 0.0) {
             return stack
         }
         val addStack = ItemStack(stack.item, 1)
-        setStackWeightKg(addStack, toAdd)
-        if (!mergeWeightedStack(container, addStack)) {
+        setStackMass(addStack, toAdd)
+        if (!mergeMassStack(container, addStack)) {
             return stack
         }
-        takeWeightKg(stack, toAdd)
+        takeMass(stack, toAdd)
         return stack
     }
 
-    fun mergeStacksByWeight(stacks: List<ItemStack>): List<ItemStack> {
+    fun mergeStacksByMass(stacks: List<ItemStack>): List<ItemStack> {
         if (stacks.isEmpty()) {
             return emptyList()
         }
@@ -89,24 +89,24 @@ object OniItemMass {
             if (stack.isEmpty) {
                 continue
             }
-            val weight = stackWeightKg(stack)
-            if (weight <= 0.0) {
+            val mass = stackMass(stack)
+            if (mass <= 0.0) {
                 continue
             }
-            grouped[stack.item] = (grouped[stack.item] ?: 0.0) + weight
+            grouped[stack.item] = (grouped[stack.item] ?: 0.0) + mass
         }
         val merged: MutableList<ItemStack> = ArrayList(grouped.size)
-        for ((item, weight) in grouped) {
+        for ((item, mass) in grouped) {
             val mergedStack = ItemStack(item, 1)
-            setStackWeightKg(mergedStack, weight)
+            setStackMass(mergedStack, mass)
             merged.add(mergedStack)
         }
         return merged
     }
 
-    private fun mergeWeightedStack(container: Container, stack: ItemStack): Boolean {
-        val weight = stackWeightKg(stack)
-        if (weight <= 0.0) {
+    private fun mergeMassStack(container: Container, stack: ItemStack): Boolean {
+        val mass = stackMass(stack)
+        if (mass <= 0.0) {
             return false
         }
         val size = container.containerSize
@@ -118,11 +118,11 @@ object OniItemMass {
             if (current.item != stack.item) {
                 continue
             }
-            if (!hasWeightTag(current)) {
+            if (!hasMassTag(current)) {
                 continue
             }
-            val next = stackWeightKg(current) + weight
-            setStackWeightKg(current, next)
+            val next = stackMass(current) + mass
+            setStackMass(current, next)
             container.setChanged()
             return true
         }
@@ -138,8 +138,8 @@ object OniItemMass {
         return false
     }
 
-    private fun hasWeightTag(stack: ItemStack): Boolean {
+    private fun hasMassTag(stack: ItemStack): Boolean {
         val data = stack.get(DataComponents.CUSTOM_DATA) ?: return false
-        return data.copyTag().contains(TAG_WEIGHT_KG)
+        return data.copyTag().contains(TAG_MASS)
     }
 }

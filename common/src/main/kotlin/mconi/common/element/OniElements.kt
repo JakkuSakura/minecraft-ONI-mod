@@ -20,18 +20,18 @@ object OniElements {
         val id: String,
         val elementId: String,
         val bottledItemId: String,
-        val defaultMassKg: Double,
+        val defaultMass: Double,
         val defaultTemperatureK: Double,
         val thermalConductivityWmK: Double? = null,
-        val massKgPerItem: Double? = null,
+        val massPerItem: Double? = null,
         val clotterThresholdItems: Int? = null,
         val transforms: List<ElementTransform> = emptyList()
     ) {
-        fun bottledMassKg(): Double = defaultMassKg
+        fun bottledMass(): Double = defaultMass
 
         fun bottledTemperatureK(): Double = defaultTemperatureK
 
-        fun itemMassKg(): Double = massKgPerItem ?: defaultMassKg
+        fun itemMass(): Double = massPerItem ?: defaultMass
     }
 
     data class GasSpec(
@@ -47,7 +47,7 @@ object OniElements {
         val lowTemp: Double,
         val lowTempTransitionTarget: String,
         val defaultTemperature: Double,
-        val defaultMassKg: Double,
+        val defaultMass: Double,
         val molarMass: Double,
         val toxicity: Double,
         val lightAbsorptionFactor: Double,
@@ -75,7 +75,7 @@ object OniElements {
         lowTemp = 225.0,
         lowTempTransitionTarget = "LiquidCarbonDioxide",
         defaultTemperature = 300.0,
-        defaultMassKg = 139.0,
+        defaultMass = 139.0,
         molarMass = 44.01,
         toxicity = 0.0001,
         lightAbsorptionFactor = 0.1,
@@ -103,7 +103,7 @@ object OniElements {
         lowTemp = 21.0,
         lowTempTransitionTarget = "LiquidHydrogen",
         defaultTemperature = 300.0,
-        defaultMassKg = 7.0,
+        defaultMass = 7.0,
         molarMass = 1.00794,
         toxicity = 0.0,
         lightAbsorptionFactor = 0.1,
@@ -131,7 +131,7 @@ object OniElements {
         lowTemp = 90.19,
         lowTempTransitionTarget = "LiquidOxygen",
         defaultTemperature = 300.0,
-        defaultMassKg = 101.3,
+        defaultMass = 101.3,
         molarMass = 15.9994,
         toxicity = 0.0,
         lightAbsorptionFactor = 0.0,
@@ -162,28 +162,28 @@ object OniElements {
             id = LIQUID_WATER,
             elementId = "Water",
             bottledItemId = OniItemFactory.BOTTLED_WATER,
-            defaultMassKg = 1.0,
+            defaultMass = 1.0,
             defaultTemperatureK = 295.0
         ),
         LiquidSpec(
             id = LIQUID_POLLUTED_WATER,
             elementId = "DirtyWater",
             bottledItemId = OniItemFactory.BOTTLED_POLLUTED_WATER,
-            defaultMassKg = 1.0,
+            defaultMass = 1.0,
             defaultTemperatureK = 295.0
         ),
         LiquidSpec(
             id = LIQUID_CRUDE_OIL,
             elementId = "CrudeOil",
             bottledItemId = OniItemFactory.BOTTLED_CRUDE_OIL,
-            defaultMassKg = 1.0,
+            defaultMass = 1.0,
             defaultTemperatureK = 295.0
         ),
         LiquidSpec(
             id = LIQUID_LAVA,
             elementId = "Magma",
             bottledItemId = OniItemFactory.BOTTLED_LAVA,
-            defaultMassKg = 1.0,
+            defaultMass = 1.0,
             defaultTemperatureK = 1300.0
         )
     )
@@ -199,7 +199,7 @@ object OniElements {
                 itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:element_regolith"),
                 phase = ElementPhase.SOLID,
                 thermalConductivityWmK = null,
-                massKgPerItem = null,
+                massPerItem = null,
                 clotterThresholdItems = null,
                 transforms = emptyList()
             ),
@@ -208,7 +208,7 @@ object OniElements {
                 itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:element_sedimentary_rock"),
                 phase = ElementPhase.SOLID,
                 thermalConductivityWmK = null,
-                massKgPerItem = null,
+                massPerItem = null,
                 clotterThresholdItems = null,
                 transforms = emptyList()
             ),
@@ -217,7 +217,7 @@ object OniElements {
                 itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:element_igneous_rock"),
                 phase = ElementPhase.SOLID,
                 thermalConductivityWmK = null,
-                massKgPerItem = null,
+                massPerItem = null,
                 clotterThresholdItems = null,
                 transforms = emptyList()
             ),
@@ -226,7 +226,7 @@ object OniElements {
                 itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:element_granite"),
                 phase = ElementPhase.SOLID,
                 thermalConductivityWmK = null,
-                massKgPerItem = null,
+                massPerItem = null,
                 clotterThresholdItems = null,
                 transforms = emptyList()
             ),
@@ -235,7 +235,7 @@ object OniElements {
                 itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:element_abyssalite"),
                 phase = ElementPhase.SOLID,
                 thermalConductivityWmK = null,
-                massKgPerItem = null,
+                massPerItem = null,
                 clotterThresholdItems = null,
                 transforms = emptyList()
             ),
@@ -244,7 +244,7 @@ object OniElements {
                 itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:element_algae"),
                 phase = ElementPhase.SOLID,
                 thermalConductivityWmK = null,
-                massKgPerItem = null,
+                massPerItem = null,
                 clotterThresholdItems = null,
                 transforms = emptyList()
             ),
@@ -253,7 +253,7 @@ object OniElements {
                 itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:element_polluted_dirt"),
                 phase = ElementPhase.SOLID,
                 thermalConductivityWmK = null,
-                massKgPerItem = null,
+                massPerItem = null,
                 clotterThresholdItems = null,
                 transforms = emptyList()
             ),
@@ -262,7 +262,7 @@ object OniElements {
                 itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:element_metal_ore"),
                 phase = ElementPhase.SOLID,
                 thermalConductivityWmK = null,
-                massKgPerItem = null,
+                massPerItem = null,
                 clotterThresholdItems = null,
                 transforms = emptyList()
             ),
@@ -271,7 +271,7 @@ object OniElements {
                 itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:element_refined_metal"),
                 phase = ElementPhase.SOLID,
                 thermalConductivityWmK = null,
-                massKgPerItem = null,
+                massPerItem = null,
                 clotterThresholdItems = null,
                 transforms = emptyList()
             )
@@ -283,7 +283,7 @@ object OniElements {
                 itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:${spec.bottledItemId}"),
                 phase = ElementPhase.LIQUID,
                 thermalConductivityWmK = spec.thermalConductivityWmK,
-                massKgPerItem = spec.itemMassKg(),
+                massPerItem = spec.itemMass(),
                 clotterThresholdItems = spec.clotterThresholdItems,
                 transforms = spec.transforms
             )

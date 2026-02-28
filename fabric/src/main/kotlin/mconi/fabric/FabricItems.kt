@@ -50,7 +50,7 @@ object FabricItems {
             val item = BottledMatterItem(
                 Item.Properties().setId(key),
                 spec.phase,
-                spec.massKg,
+                spec.mass,
                 spec.temperatureK
             )
             Registry.register(BuiltInRegistries.ITEM, id, item)

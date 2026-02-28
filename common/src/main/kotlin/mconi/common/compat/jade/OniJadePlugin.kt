@@ -45,7 +45,7 @@ object OniJadeDataProvider : StreamServerDataProvider<BlockAccessor, String> {
         val level = accessor.level as? ServerLevel ?: return null
         val pos = accessor.position
         val elements = OniElementStore.get(level).elementsAt(pos)
-        val totalKg = elements.sumOf { it.amount }
+        val totalMass = elements.sumOf { it.amount }
 
         lines.add("Elements:")
         if (elements.isEmpty()) {
@@ -56,14 +56,14 @@ object OniJadeDataProvider : StreamServerDataProvider<BlockAccessor, String> {
             }
         }
 
-        lines.add("Element weight: ${totalKg}kg")
+        lines.add("Element mass: $totalMass")
 
         val entity = OniMatterAccess.matterEntity(level, pos)
         if (entity != null) {
             val tempK = entity.temperatureK()
             val tempC = tempK - 273.15
             lines.add("Temperature: %.2f K (%.2f C)".format(tempK, tempC))
-            lines.add("Matter weight: %.3fkg".format(entity.massKg()))
+            lines.add("Matter mass: %.3f".format(entity.mass()))
         } else {
             lines.add("Temperature: <unknown>")
         }
@@ -105,7 +105,7 @@ object OniJadeComponentProvider : IBlockComponentProvider {
                             null
                         }
                         val name = if (item != null) ItemStack(item).hoverName.string else itemId
-                        tooltip.add(Component.literal("- $name ${amount}kg"))
+                        tooltip.add(Component.literal("- $name $amount"))
                         continue
                     }
                 }

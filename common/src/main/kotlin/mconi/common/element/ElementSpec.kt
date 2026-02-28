@@ -7,7 +7,7 @@ data class ElementSpec(
     val itemId: Identifier,
     val phase: ElementPhase,
     val thermalConductivityWmK: Double?,
-    val massKgPerItem: Double?,
+    val massPerItem: Double?,
     val clotterThresholdItems: Int?,
     val transforms: List<ElementTransform>,
 )

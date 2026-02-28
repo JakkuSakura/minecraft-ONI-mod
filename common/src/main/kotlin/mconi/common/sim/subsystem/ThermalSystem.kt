@@ -69,14 +69,14 @@ class ThermalSystem : OniSystem {
             val entity = OniMatterAccess.matterEntity(level, pos) ?: continue
             val liquidId = liquidIdByPos[pos] ?: continue
             if ((liquidId == OniElements.LIQUID_WATER || liquidId == OniElements.LIQUID_POLLUTED_WATER) &&
-                entity.massKg() > 0.0 &&
+                entity.mass() > 0.0 &&
                 entity.temperatureK() > BOIL_TEMPERATURE_K
             ) {
-                val nextMass = entity.massKg() - BOIL_OFF_KG_PER_STEP
+                val nextMass = entity.mass() - BOIL_OFF_PER_STEP
                 if (nextMass <= 0.0) {
                     level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2)
                 } else {
-                    entity.setMassKg(nextMass)
+                    entity.setMass(nextMass)
                 }
             }
         }
@@ -91,7 +91,7 @@ class ThermalSystem : OniSystem {
         val blockCoefficient = OniBlockFactory.blockConductivityCoefficient(state)
         val base = when {
             liquidId != null -> liquidConductivity(liquidId)
-            gas != null -> gasConductivity(gas, entity.massKg())
+            gas != null -> gasConductivity(gas, entity.mass())
             else -> DEFAULT_VACUUM_CONDUCTIVITY
         }
         return (base * blockCoefficient).coerceIn(0.0, MAX_CONDUCTIVITY)
@@ -123,7 +123,7 @@ class ThermalSystem : OniSystem {
 
     companion object {
         private const val BOIL_TEMPERATURE_K = 373.15
-        private const val BOIL_OFF_KG_PER_STEP = 1.0
+        private const val BOIL_OFF_PER_STEP = 1.0
         private const val CONDUCTIVITY_SCALE = 0.01
         private const val MAX_CONDUCTIVITY = 0.2
         private const val DEFAULT_LIQUID_CONDUCTIVITY = 0.08

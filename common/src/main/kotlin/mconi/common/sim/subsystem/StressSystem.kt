@@ -40,7 +40,7 @@ class StressSystem : OniSystem {
         val state = level.getBlockState(pos)
         val gas = OniMatterAccess.gasSpec(state) ?: return BreathingBand.CRITICAL
         val entity = OniMatterAccess.matterEntity(level, pos) ?: return BreathingBand.CRITICAL
-        if (entity.massKg() <= 0.0) {
+        if (entity.mass() <= 0.0) {
             return BreathingBand.CRITICAL
         }
         return if (gas == mconi.common.element.OniElements.GAS_OXYGEN) {

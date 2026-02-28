@@ -10,23 +10,23 @@ import org.junit.jupiter.api.TestInstance
 import kotlin.test.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class OniInventoryWeightsTest {
+class OniInventoryMassTest {
     @BeforeAll
     fun bootstrapMinecraft() {
         TestMinecraftBootstrap.ensureBootstrapped()
     }
 
     @Test
-    fun stackWeightUsesDefaultMassForNonOniItems() {
+    fun stackMassUsesDefaultMassForNonOniItems() {
         val stack = ItemStack(Items.APPLE, 10)
-        val weight = OniInventoryWeights.stackWeightKg(stack)
-        assertEquals(10.0, weight, 1e-6)
+        val mass = OniInventoryMass.stackMass(stack)
+        assertEquals(10.0, mass, 1e-6)
     }
 
     @Test
     fun capacityUsesSlotCount() {
         val container = SimpleContainer(2)
-        val capacity = OniInventoryWeights.capacityKg(container)
+        val capacity = OniInventoryMass.capacity(container)
         assertEquals(128.0, capacity, 1e-6)
     }
 }

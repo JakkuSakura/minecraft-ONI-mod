@@ -4,11 +4,11 @@ This system defines how all matter quantities are represented and conserved.
 
 ## 1. Unit and Storage Model
 
-- Canonical unit: `kg` (kilogram).
-- Gas cell stores per-species gas mass in kg:
-  - `gas_mass_kg[species]`
+- Canonical unit: `mass`.
+- Gas cell stores per-species gas mass:
+  - `gas_mass[species]`
 - Liquid cell stores:
-  - `liquid_mass_kg`
+  - `liquid_mass`
   - `liquid_type`
 - `vacuum` means all masses are `0`.
 - `void` is a boundary sink where mass may be removed by rule.
@@ -29,9 +29,9 @@ Mass can only change through:
 
 Per update step, each edge transfer is clamped:
 
-- `transfer_kg <= edge_max_kg_per_step`
-- `transfer_kg <= source_available_kg`
-- `transfer_kg <= destination_capacity_kg`
+- `transfer_mass <= edge_max_mass_per_step`
+- `transfer_mass <= source_available_mass`
+- `transfer_mass <= destination_capacity_mass`
 
 This prevents oscillation and negative mass.
 
@@ -40,12 +40,12 @@ This prevents oscillation and negative mass.
 Pressure is derived from gas mass and temperature.
 
 - Heuristic formula:
-  - `pressure_kpa = f(total_gas_mass_kg, temperature_k, cell_volume_m3)`
+  - `pressure_kpa = f(total_gas_mass, temperature_k, cell_volume_m3)`
 - Keep formula and coefficients centralized in config for tuning.
 
 ## 5. Liquid Mass and Fill Ratio
 
-- `fill_ratio = liquid_mass_kg / liquid_capacity_kg`
+- `fill_ratio = liquid_mass / liquid_capacity`
 - Flow priority:
   1. down-gradient gravity flow
   2. lateral equalization toward lower fill ratio

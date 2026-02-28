@@ -13,8 +13,8 @@ class OniSystemConfig {
     private var worldMaxZ: Int = 255
     private var voidBandHeight: Int = 24
     private var lavaBandHeight: Int = 24
-    private var gasTransferKgPerStep: Double = 0.25
-    private var liquidTransferKgPerStep: Double = 50.0
+    private var gasTransferPerStep: Double = 0.25
+    private var liquidTransferPerStep: Double = 50.0
     private var voidGasDrainFraction: Double = 0.35
     private var voidLiquidDrainFraction: Double = 0.35
     private var worldSampleRadiusBlocks: Int = 24
@@ -28,8 +28,8 @@ class OniSystemConfig {
     fun worldMaxZ(): Int = worldMaxZ
     fun voidBandHeight(): Int = voidBandHeight
     fun lavaBandHeight(): Int = lavaBandHeight
-    fun gasTransferKgPerStep(): Double = gasTransferKgPerStep
-    fun liquidTransferKgPerStep(): Double = liquidTransferKgPerStep
+    fun gasTransferPerStep(): Double = gasTransferPerStep
+    fun liquidTransferPerStep(): Double = liquidTransferPerStep
     fun voidGasDrainFraction(): Double = voidGasDrainFraction
     fun voidLiquidDrainFraction(): Double = voidLiquidDrainFraction
     fun worldSampleRadiusBlocks(): Int = worldSampleRadiusBlocks
@@ -45,14 +45,14 @@ class OniSystemConfig {
         this.cellSize = cellSize
     }
 
-    fun setGasTransferKgPerStep(gasTransferKgPerStep: Double) {
-        require(gasTransferKgPerStep >= 0.0) { "gasTransferKgPerStep must be >= 0" }
-        this.gasTransferKgPerStep = gasTransferKgPerStep
+    fun setGasTransferPerStep(gasTransferPerStep: Double) {
+        require(gasTransferPerStep >= 0.0) { "gasTransferPerStep must be >= 0" }
+        this.gasTransferPerStep = gasTransferPerStep
     }
 
-    fun setLiquidTransferKgPerStep(liquidTransferKgPerStep: Double) {
-        require(liquidTransferKgPerStep >= 0.0) { "liquidTransferKgPerStep must be >= 0" }
-        this.liquidTransferKgPerStep = liquidTransferKgPerStep
+    fun setLiquidTransferPerStep(liquidTransferPerStep: Double) {
+        require(liquidTransferPerStep >= 0.0) { "liquidTransferPerStep must be >= 0" }
+        this.liquidTransferPerStep = liquidTransferPerStep
     }
 
     fun setVoidGasDrainFraction(voidGasDrainFraction: Double) {

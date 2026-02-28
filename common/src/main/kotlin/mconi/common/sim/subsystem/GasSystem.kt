@@ -14,7 +14,7 @@ class GasSystem : OniSystem {
         val radius = config.worldSampleRadiusBlocks()
         val cellSize = config.cellSize()
         val positions = OniWorldScan.positionsAroundPlayers(level, radius, cellSize)
-        val maxTransfer = config.gasTransferKgPerStep().coerceAtLeast(0.0)
+        val maxTransfer = config.gasTransferPerStep().coerceAtLeast(0.0)
         if (maxTransfer <= 0.0) {
             return
         }
@@ -25,7 +25,7 @@ class GasSystem : OniSystem {
             val state = level.getBlockState(pos)
             val gasSpec = OniMatterAccess.gasSpec(state) ?: continue
             val entity = OniMatterAccess.matterEntity(level, pos) ?: continue
-            val mass = entity.massKg()
+            val mass = entity.mass()
             if (mass <= 0.0) {
                 continue
             }
@@ -42,7 +42,7 @@ class GasSystem : OniSystem {
                 if (neighborSpec != gasSpec) {
                     continue
                 }
-                val neighborMass = OniMatterAccess.matterEntity(level, neighbor)?.massKg() ?: 0.0
+                val neighborMass = OniMatterAccess.matterEntity(level, neighbor)?.mass() ?: 0.0
                 val diff = mass - neighborMass
                 if (kotlin.math.abs(diff) < 0.0001) {
                     continue
@@ -66,12 +66,12 @@ class GasSystem : OniSystem {
                 continue
             }
             val entity = OniMatterAccess.matterEntity(level, pos) ?: continue
-            val next = (entity.massKg() + delta).coerceAtLeast(0.0)
+            val next = (entity.mass() + delta).coerceAtLeast(0.0)
             if (next <= 0.0) {
                 level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2)
                 continue
             }
-            entity.setMassKg(next)
+            entity.setMass(next)
         }
     }
 
