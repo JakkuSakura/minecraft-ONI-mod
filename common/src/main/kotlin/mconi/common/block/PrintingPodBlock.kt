@@ -13,9 +13,9 @@ import mconi.common.sim.OniServices
 
 class PrintingPodBlock(
     blockId: String,
-    dropElementId: String? = null,
+    elements: List<mconi.common.element.ElementStack> = emptyList(),
     properties: BlockBehaviour.Properties
-) : OniSolidBlock(blockId, dropElementId, properties) {
+) : OniSolidBlock(blockId, elements, properties) {
     override fun useWithoutItem(
         state: BlockState,
         level: Level,

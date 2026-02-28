@@ -26,8 +26,7 @@ object OniInventoryWeights {
 
     fun stackWeightKg(stack: ItemStack): Double {
         val perItem = perItemMassKg(stack.item, stack)
-        val amount = OniItemAmounts.amountUnits(stack)
-        return perItem * amount
+        return OniItemMass.stackWeightKg(stack)
     }
 
     fun perItemMassKg(item: Item, stack: ItemStack? = null): Double {
@@ -54,7 +53,7 @@ object OniInventoryWeights {
         }
         val data = stack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA) ?: return null
         val tag = data.copyTag()
-        val mass = tag.getDouble(BottledMatterItem.TAG_MASS_KG).orElse(0.0)
+        val mass = tag.getDouble(BottledMatterItem.TAG_WEIGHT_KG).orElse(0.0)
         return if (mass > 0.0) mass else null
     }
 

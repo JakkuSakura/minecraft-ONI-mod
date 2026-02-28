@@ -24,7 +24,7 @@ class BottledMatterItem(
         val data = stack.get(DataComponents.CUSTOM_DATA)
         val tag = data?.copyTag()
         val phaseName = tag?.getString(TAG_PHASE) ?: phase.name
-        val mass = tag?.getDouble(TAG_MASS_KG) ?: massKg
+        val mass = tag?.getDouble(TAG_WEIGHT_KG) ?: massKg
         val temp = tag?.getDouble(TAG_TEMP_K) ?: temperatureK
         tooltip.accept(Component.literal("Phase: $phaseName"))
         tooltip.accept(Component.literal(String.format("Mass: %.2f kg", mass)))
@@ -33,7 +33,7 @@ class BottledMatterItem(
 
     companion object {
         const val TAG_PHASE = "mconi_phase"
-        const val TAG_MASS_KG = "mconi_mass_kg"
+        const val TAG_WEIGHT_KG = "Weight"
         const val TAG_TEMP_K = "mconi_temp_k"
     }
 }

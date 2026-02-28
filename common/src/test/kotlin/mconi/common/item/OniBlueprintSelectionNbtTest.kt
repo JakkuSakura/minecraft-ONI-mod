@@ -1,12 +1,19 @@
 package mconi.common.item
 
+import mconi.common.TestMinecraftBootstrap
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class OniBlueprintSelectionNbtTest {
+    @BeforeTest
+    fun bootstrapMinecraft() {
+        TestMinecraftBootstrap.ensureBootstrapped()
+    }
+
     @Test
     fun roundTripsSelection() {
         val blueprintId = OniBlueprintRegistry.allIds().firstOrNull()

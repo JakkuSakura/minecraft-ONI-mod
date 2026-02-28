@@ -2,7 +2,7 @@ package mconi.common.block
 
 import mconi.common.element.ElementStack
 import mconi.common.item.OniItemFactory
-import mconi.common.item.OniItemAmounts
+import mconi.common.item.OniItemMass
 import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.item.ItemStack
@@ -29,14 +29,12 @@ open class OniSolidBlock(
         val drops: MutableList<ItemStack> = ArrayList()
         for (element in elements) {
             val item = OniItemFactory.itemById(element.itemId) ?: continue
-            val count = if (OniItemFactory.specByItem(item) != null) {
-                OniItemAmounts.countFromUnits(item, element.amount.toDouble())
-            } else {
-                element.amount
+            if (element.amount <= 0) {
+                continue
             }
-            if (count > 0) {
-                drops.add(ItemStack(item, count))
-            }
+            val stack = ItemStack(item, 1)
+            OniItemMass.setStackWeightKg(stack, element.amount.toDouble())
+            drops.add(stack)
         }
         return drops
     }

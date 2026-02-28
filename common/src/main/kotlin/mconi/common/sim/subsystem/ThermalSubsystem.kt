@@ -114,10 +114,6 @@ class ThermalSubsystem : SimulationSubsystem {
         )
     }
 
-    companion object {
-        private const val OVERHEAT_THRESHOLD_K = 450.0
-    }
-
     private fun conductivityFor(level: ServerLevel, pos: BlockPos, cell: OniBlockData): Double {
         return when (cell.occupancyState()) {
             OccupancyState.LIQUID -> liquidConductivity(cell)

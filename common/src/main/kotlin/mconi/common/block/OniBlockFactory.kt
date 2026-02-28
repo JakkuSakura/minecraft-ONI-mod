@@ -162,7 +162,9 @@ object OniBlockFactory {
         solidEntry(PRINTING_POD, SolidBlockSpec(), { _ ->
             PrintingPodBlock(
                 PRINTING_POD,
-                dropElementId = "mconi:element_refined_metal",
+                elements = listOf(
+                    mconi.common.element.ElementStack("mconi:element_refined_metal", blockDigYieldKg(PRINTING_POD).coerceAtLeast(1))
+                ),
                 properties = propsFor(PRINTING_POD).mapColor(MapColor.COLOR_LIGHT_GRAY).strength(3.0f, 6.0f).sound(SoundType.METAL)
             )
         }),

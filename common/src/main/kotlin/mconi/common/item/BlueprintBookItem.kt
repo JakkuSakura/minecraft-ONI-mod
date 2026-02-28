@@ -72,7 +72,10 @@ class BlueprintBookItem(properties: Item.Properties) : Item(properties) {
         if (blueprint != null) {
             OniBlueprintSelectionNbt.writeTo(stack, OniBlueprintSelectionNbt.starterSelection(blueprint))
         }
-        player.inventory.add(stack)
+        val remainder = OniItemMass.mergeIntoContainer(player.inventory, stack)
+        if (!remainder.isEmpty) {
+            player.drop(remainder, false)
+        }
         return stack
     }
 
