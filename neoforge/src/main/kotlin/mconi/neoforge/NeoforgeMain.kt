@@ -2,6 +2,7 @@ package mconi.neoforge
 
 import mconi.common.AbstractModBootstrap
 import mconi.common.LoaderType
+import mconi.common.element.OniElements
 import mconi.neoforge.wrappers.NeoForgeModChecker
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.IEventBus
@@ -31,6 +32,7 @@ class NeoforgeMain(eventBus: IEventBus) : AbstractModBootstrap() {
         eventBus.addListener { _: FMLCommonSetupEvent ->
             NeoforgeBlockEntities.bindTypes()
             NeoforgeMenus.bindTypes()
+            OniElements.refreshElementItems()
         }
     }
 

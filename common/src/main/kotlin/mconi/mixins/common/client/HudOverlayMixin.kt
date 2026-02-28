@@ -31,7 +31,8 @@ class HudOverlayMixin {
         val pos = player.blockPosition()
         val server = minecraft.singleplayerServer ?: return
         val level = server.overworld() ?: return
-        val cell = OniChunkDataAccess.get(level, BlockPos(pos.x, pos.y, pos.z))
+        val chunk = level.getChunkAt(pos)
+        val cell = OniChunkDataAccess.chunkDataIfPresent(chunk)?.get(pos)
 
         val font = minecraft.font
         var y = 6

@@ -7,7 +7,6 @@ import mconi.common.item.BlueprintItem
 import mconi.common.item.BottledMatterItem
 import mconi.common.item.ElementItem
 import mconi.common.item.OniBottledItems
-import mconi.common.element.OniElements
 import mconi.common.sim.model.SystemLens
 import net.minecraft.world.item.Item
 import net.minecraftforge.eventbus.api.bus.BusGroup
@@ -54,7 +53,6 @@ object ForgeItems {
             OniItemFactory.registerItem(OniItemFactory.POWER_STATION_TOOLS) { holder.get() }
         }
 
-        OniElements.refreshElementItems()
     }
 
     fun register(busGroup: BusGroup) {

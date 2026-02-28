@@ -53,8 +53,7 @@ object OniCreativeTabs {
                     val itemKey = ResourceKey.create(Registries.ITEM, id)
                     output.accept(ItemStack(params.holders().lookupOrThrow(Registries.ITEM).getOrThrow(itemKey)))
                 }
-                for (block in OniBlockFactory.SOLIDS) {
-                    val path = OniBlockFactory.idOf(block) ?: continue
+                for (path in OniBlockFactory.SOLID_IDS) {
                     val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:$path") ?: continue
                     val itemKey = ResourceKey.create(Registries.ITEM, id)
                     output.accept(ItemStack(params.holders().lookupOrThrow(Registries.ITEM).getOrThrow(itemKey)))

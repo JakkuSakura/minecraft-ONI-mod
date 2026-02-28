@@ -2,6 +2,7 @@ package mconi.forge
 
 import mconi.common.AbstractModBootstrap
 import mconi.common.LoaderType
+import mconi.common.element.OniElements
 import mconi.forge.wrappers.ForgeModChecker
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
@@ -38,6 +39,7 @@ class ForgeMain : AbstractModBootstrap() {
             fun onCommonSetup(@Suppress("unused") event: FMLCommonSetupEvent) {
                 ForgeBlockEntities.bindTypes()
                 ForgeMenus.bindTypes()
+                OniElements.refreshElementItems()
             }
         })
     }

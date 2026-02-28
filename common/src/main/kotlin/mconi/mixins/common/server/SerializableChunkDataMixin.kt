@@ -27,16 +27,32 @@ class SerializableChunkDataMixin : OniSerializableChunkDataHolder {
         oniChunkTag = tag
     }
 
-    @Inject(method = ["copyOf"], at = [At("RETURN")])
-    private fun `mconi$copyOf`(
-        level: ServerLevel,
-        chunk: ChunkAccess,
-        cir: CallbackInfoReturnable<SerializableChunkData>
-    ) {
-        val data = OniChunkDataAccess.chunkDataIfPresent(chunk) ?: return
-        val tag = OniChunkDataNbt.writeChunkData(data) ?: return
-        val value = cir.returnValue ?: return
-        (value as OniSerializableChunkDataHolder).`mconi$setOniChunkTag`(tag)
+    private companion object {
+        @JvmStatic
+        @Inject(method = ["copyOf"], at = [At("RETURN")])
+        private fun `mconi$copyOf`(
+            level: ServerLevel,
+            chunk: ChunkAccess,
+            cir: CallbackInfoReturnable<SerializableChunkData>
+        ) {
+            val data = OniChunkDataAccess.chunkDataIfPresent(chunk) ?: return
+            val tag = OniChunkDataNbt.writeChunkData(data) ?: return
+            val value = cir.returnValue ?: return
+            (value as OniSerializableChunkDataHolder).`mconi$setOniChunkTag`(tag)
+        }
+
+        @JvmStatic
+        @Inject(method = ["parse"], at = [At("RETURN")])
+        private fun `mconi$parse`(
+            heightAccessor: LevelHeightAccessor,
+            containerFactory: PalettedContainerFactory,
+            tag: CompoundTag,
+            cir: CallbackInfoReturnable<SerializableChunkData>
+        ) {
+            val dataTag = tag.getCompound(OniChunkDataNbt.ROOT_TAG).orElse(null) ?: return
+            val value = cir.returnValue ?: return
+            (value as OniSerializableChunkDataHolder).`mconi$setOniChunkTag`(dataTag)
+        }
     }
 
     @Inject(method = ["write"], at = [At("RETURN")])
@@ -44,18 +60,6 @@ class SerializableChunkDataMixin : OniSerializableChunkDataHolder {
         val tag = oniChunkTag ?: return
         val out = cir.returnValue
         out.put(OniChunkDataNbt.ROOT_TAG, tag)
-    }
-
-    @Inject(method = ["parse"], at = [At("RETURN")])
-    private fun `mconi$parse`(
-        heightAccessor: LevelHeightAccessor,
-        containerFactory: PalettedContainerFactory,
-        tag: CompoundTag,
-        cir: CallbackInfoReturnable<SerializableChunkData>
-    ) {
-        val dataTag = tag.getCompound(OniChunkDataNbt.ROOT_TAG).orElse(null) ?: return
-        val value = cir.returnValue ?: return
-        (value as OniSerializableChunkDataHolder).`mconi$setOniChunkTag`(dataTag)
     }
 
     @Inject(method = ["read"], at = [At("RETURN")])

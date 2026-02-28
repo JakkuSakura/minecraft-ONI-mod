@@ -22,7 +22,7 @@ object ForgeBlocks {
                 ?: throw IllegalArgumentException("Invalid block id path: ${entry.id}")
             val holder = BLOCKS.register(entry.id) { OniBlockFactory.createBlock(entry.id) }
             BLOCK_HOLDERS[entry.id] = holder
-            if (OniBlockFactory.SOLIDS.contains(holder.get())) {
+            if (entry.kind == OniBlockFactory.BlockKind.SOLID) {
                 ITEMS.register(entry.id) { BlockItem(holder.get(), Item.Properties()) }
             }
         }

@@ -7,6 +7,7 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.world.flag.FeatureFlagSet
 import net.minecraft.world.inventory.MenuType
 import net.neoforged.bus.api.IEventBus
+import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import java.util.function.Supplier
 
@@ -14,12 +15,9 @@ object NeoforgeMenus {
     private val MENUS: DeferredRegister<MenuType<*>> =
         DeferredRegister.create(Registries.MENU, AbstractModBootstrap.MOD_ID)
 
-    private val BLUEPRINT_BOOK = MENUS.register("blueprint_book", Supplier {
+    private val BLUEPRINT_BOOK: DeferredHolder<MenuType<*>, MenuType<BlueprintBookMenu>> = MENUS.register("blueprint_book", Supplier {
         MenuType(
-            { containerId, inventory ->
-                @Suppress("UNCHECKED_CAST")
-                BlueprintBookMenu(containerId, inventory, BLUEPRINT_BOOK.get() as MenuType<BlueprintBookMenu>)
-            },
+            { containerId, inventory -> BlueprintBookMenu(containerId, inventory) },
             FeatureFlagSet.of()
         )
     })

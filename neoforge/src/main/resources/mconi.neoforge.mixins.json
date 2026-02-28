@@ -3,6 +3,9 @@
     "minVersion": "0.8",
     "package": "mconi.mixins",
     "mixins": [
+        "common.server.ChunkAccessMixin",
+        "common.server.LevelChunkMixin",
+        "common.server.SerializableChunkDataMixin"
     ],
     "client": [
         "neoforge.client.SplashManagerMixin",
@@ -11,10 +14,7 @@
         "common.client.TitleScreenButtonMixin"
     ],
     "server": [
-        "common.server.MinecraftServerSimulationMixin",
-        "common.server.ChunkAccessMixin",
-        "common.server.SerializableChunkDataMixin",
-        "common.server.LevelChunkMixin"
+        "common.server.MinecraftServerSimulationMixin"
     ],
     "plugin": "mconi.mixins.neoforge.NeoforgeMixinPlugin"
 }

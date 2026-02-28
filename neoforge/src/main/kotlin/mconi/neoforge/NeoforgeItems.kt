@@ -8,7 +8,6 @@ import mconi.common.item.BottledMatterItem
 import mconi.common.item.ElementItem
 import mconi.common.item.OniBottledItems
 import mconi.common.item.OniCreativeTabs
-import mconi.common.element.OniElements
 import mconi.common.sim.model.SystemLens
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.Identifier
@@ -102,7 +101,6 @@ object NeoforgeItems {
             })
         })
 
-        OniElements.refreshElementItems()
     }
 
     fun register(eventBus: IEventBus) {
