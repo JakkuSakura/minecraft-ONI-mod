@@ -2,13 +2,13 @@ package mconi.common.block.entity
 
 import mconi.common.block.OniBlockLookup
 import mconi.common.block.OniBlockFactory
+import mconi.common.item.OniItemAmounts
 import mconi.common.item.OniItemFactory
 import mconi.common.element.ElementStack
 import mconi.common.element.OniElementStore
 import mconi.common.item.OniBlueprintRegistry
 import mconi.common.item.OniBlueprintSelection
 import mconi.common.item.OniBlueprintTargets
-import mconi.common.sim.OniConstructionMaterials
 import mconi.common.sim.OniConstructionRates
 import mconi.common.sim.OniServices
 import net.minecraft.core.BlockPos
@@ -91,7 +91,10 @@ class ConstructionSiteBlockEntity(pos: BlockPos, state: BlockState) :
         val refunds: MutableList<net.minecraft.world.item.ItemStack> = ArrayList()
         for (slot in materialSlots) {
             val item = OniItemFactory.itemById(slot.selectedItemId) ?: continue
-            refunds.addAll(OniConstructionMaterials.refundStacks(item, slot.depositedAmount))
+            if (slot.depositedAmount <= 0) {
+                continue
+            }
+            refunds.add(net.minecraft.world.item.ItemStack(item, slot.depositedAmount))
         }
         return refunds
     }
@@ -146,7 +149,7 @@ class ConstructionSiteBlockEntity(pos: BlockPos, state: BlockState) :
             if (requested > 0) {
                 val remaining = slot.requiredAmount - slot.depositedAmount
                 val toDeposit = minOf(requested, remaining)
-                val deposited = OniConstructionMaterials.depositFromPlayer(player, item, toDeposit)
+                val deposited = depositFromPlayer(player, item, toDeposit)
                 slot.depositedAmount += deposited
                 materialCarry -= deposited.toDouble()
                 pausedReason = when {
@@ -194,6 +197,39 @@ class ConstructionSiteBlockEntity(pos: BlockPos, state: BlockState) :
 
     private fun allMaterialsDelivered(): Boolean {
         return materialSlots.all { it.depositedAmount >= it.requiredAmount }
+    }
+
+    private fun depositFromPlayer(player: Player, item: net.minecraft.world.item.Item, needed: Int): Int {
+        if (needed <= 0) {
+            return 0
+        }
+
+        val inventory = player.inventory
+        var remaining = needed.toDouble()
+        var deposited = 0.0
+
+        val size = inventory.containerSize
+        for (i in 0 until size) {
+            val stack = inventory.getItem(i)
+            if (stack.isEmpty) {
+                continue
+            }
+            if (stack.item != item) {
+                continue
+            }
+            val take = minOf(remaining, OniItemAmounts.amountUnits(stack))
+            if (take <= 0.0) {
+                continue
+            }
+            val actual = OniItemAmounts.takeFromStack(stack, take)
+            deposited += actual
+            remaining -= actual
+            if (remaining <= 0.0) {
+                break
+            }
+        }
+
+        return deposited.toInt()
     }
 
     override fun saveAdditional(output: ValueOutput) {
