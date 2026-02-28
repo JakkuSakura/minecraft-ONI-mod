@@ -1,5 +1,8 @@
 package mconi.common.sim.subsystem
 
+import mconi.common.block.OniBlockFactory
+import mconi.common.block.OniBlockLookup
+import mconi.common.element.OniElements
 import mconi.common.world.OniMatterAccess
 import mconi.common.world.OniWorldScan
 import net.minecraft.core.BlockPos
@@ -19,72 +22,99 @@ class GasSystem : OniSystem {
             return
         }
 
-        val deltas: MutableMap<BlockPos, Double> = HashMap()
-
+        val cells: MutableMap<BlockPos, FluidFlowKernel.CellState> = HashMap()
         for (pos in positions) {
             val state = level.getBlockState(pos)
-            val gasSpec = OniMatterAccess.gasSpec(state) ?: continue
-            val entity = OniMatterAccess.matterEntity(level, pos) ?: continue
-            val mass = entity.mass()
-            if (mass <= 0.0) {
-                continue
-            }
-
-            for (neighbor in neighborsOf(pos)) {
-                if (pos.x > neighbor.x ||
-                    (pos.x == neighbor.x && pos.y > neighbor.y) ||
-                    (pos.x == neighbor.x && pos.y == neighbor.y && pos.z > neighbor.z)
-                ) {
-                    continue
-                }
-                val neighborState = level.getBlockState(neighbor)
-                val neighborSpec = OniMatterAccess.gasSpec(neighborState)
-                if (neighborSpec != gasSpec) {
-                    continue
-                }
-                val neighborMass = OniMatterAccess.matterEntity(level, neighbor)?.mass() ?: 0.0
-                val diff = mass - neighborMass
-                if (kotlin.math.abs(diff) < 0.0001) {
-                    continue
-                }
-                val transfer = (diff * 0.1).coerceIn(-maxTransfer, maxTransfer)
-                if (transfer == 0.0) {
-                    continue
-                }
-                deltas[pos] = (deltas[pos] ?: 0.0) - transfer
-                deltas[neighbor] = (deltas[neighbor] ?: 0.0) + transfer
-            }
-        }
-
-        for ((pos, delta) in deltas) {
-            if (delta == 0.0) {
-                continue
-            }
-            val state = level.getBlockState(pos)
             val gasSpec = OniMatterAccess.gasSpec(state)
-            if (gasSpec == null) {
+            if (gasSpec != null) {
+                val entity = OniMatterAccess.matterEntity(level, pos)
+                val mass = entity?.mass() ?: 0.0
+                val temp = entity?.temperatureK() ?: 293.15
+                cells[pos] = FluidFlowKernel.CellState(
+                    phase = FluidFlowKernel.Phase.GAS,
+                    elementId = gasSpec.id,
+                    mass = mass,
+                    temperatureK = temp
+                )
                 continue
             }
-            val entity = OniMatterAccess.matterEntity(level, pos) ?: continue
-            val next = (entity.mass() + delta).coerceAtLeast(0.0)
-            if (next <= 0.0) {
-                level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2)
+            if (state.isAir) {
+                cells[pos] = FluidFlowKernel.CellState(
+                    phase = FluidFlowKernel.Phase.EMPTY,
+                    elementId = null,
+                    mass = 0.0,
+                    temperatureK = 293.15
+                )
                 continue
             }
-            entity.setMass(next)
+            val liquidId = OniMatterAccess.liquidId(state)
+            if (liquidId != null) {
+                val entity = OniMatterAccess.matterEntity(level, pos)
+                val mass = entity?.mass() ?: 0.0
+                val temp = entity?.temperatureK() ?: 293.15
+                cells[pos] = FluidFlowKernel.CellState(
+                    phase = FluidFlowKernel.Phase.LIQUID,
+                    elementId = liquidId,
+                    mass = mass,
+                    temperatureK = temp
+                )
+                continue
+            }
+            cells[pos] = FluidFlowKernel.CellState(
+                phase = FluidFlowKernel.Phase.SOLID,
+                elementId = null,
+                mass = 0.0,
+                temperatureK = 293.15
+            )
+        }
+
+        val updated = FluidFlowKernel.applyGasFlow(
+            cells,
+            FluidFlowKernel.FlowConfig(
+                maxTransferKgPerStep = maxTransfer,
+                referenceMassKg = GAS_REFERENCE_MASS_KG,
+                downwardBias = 0.0
+            )
+        )
+
+        for ((pos, cell) in updated) {
+            if (cell.phase == FluidFlowKernel.Phase.SOLID) {
+                continue
+            }
+            when (cell.phase) {
+                FluidFlowKernel.Phase.EMPTY -> {
+                    val state = level.getBlockState(pos)
+                    if (!state.isAir) {
+                        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2)
+                    }
+                }
+                FluidFlowKernel.Phase.GAS -> {
+                    val gasSpec = OniElements.parseGas(cell.elementId ?: "") ?: continue
+                    val target = blockStateForGas(gasSpec)
+                    val current = level.getBlockState(pos)
+                    if (current.block != target.block) {
+                        level.setBlock(pos, target, 2)
+                    }
+                    val entity = OniMatterAccess.matterEntity(level, pos) ?: continue
+                    entity.setMass(cell.mass)
+                    entity.setTemperatureK(cell.temperatureK)
+                }
+                else -> {
+                }
+            }
         }
     }
 
-    private fun neighborsOf(coordinate: BlockPos): List<BlockPos> {
-        return listOf(
-            BlockPos(coordinate.x + 1, coordinate.y, coordinate.z),
-            BlockPos(coordinate.x - 1, coordinate.y, coordinate.z),
-            BlockPos(coordinate.x, coordinate.y + 1, coordinate.z),
-            BlockPos(coordinate.x, coordinate.y - 1, coordinate.z),
-            BlockPos(coordinate.x, coordinate.y, coordinate.z + 1),
-            BlockPos(coordinate.x, coordinate.y, coordinate.z - 1),
-        )
+    private fun blockStateForGas(spec: OniElements.GasSpec): net.minecraft.world.level.block.state.BlockState {
+        return when (spec.id) {
+            OniElements.GAS_OXYGEN.id -> OniBlockLookup.state(OniBlockFactory.OXYGEN_GAS)
+            OniElements.GAS_CARBON_DIOXIDE.id -> OniBlockLookup.state(OniBlockFactory.CARBON_DIOXIDE_GAS)
+            OniElements.GAS_HYDROGEN.id -> OniBlockLookup.state(OniBlockFactory.HYDROGEN_GAS)
+            else -> Blocks.AIR.defaultBlockState()
+        }
     }
 
-    companion object
+    companion object {
+        private const val GAS_REFERENCE_MASS_KG = 100.0
+    }
 }
