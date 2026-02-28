@@ -1,38 +1,28 @@
 package mconi.common.sim.subsystem
 
+import mconi.common.sim.power.OniPowerCatalog
+import mconi.common.sim.power.OniPowerNetworkBuilder
+import mconi.common.sim.power.ServerLevelPowerWorldView
+
 class PowerSubsystem : SimulationSubsystem {
     override fun id(): String = "power"
 
     override fun run(context: SimulationContext) {
-        val runtime = context.runtime()
-        val state = runtime.powerState()
-        val generatorCount = state.generatorCount().coerceAtLeast(0)
-        val consumerCount = state.consumerCount().coerceAtLeast(0)
-        val batteryCount = state.batteryCount().coerceAtLeast(0)
-        val wireCount = state.wireCount().coerceAtLeast(0)
+        val state = context.runtime().powerState()
+        val level = context.level()
+        val catalog = OniPowerCatalog()
+        val view = ServerLevelPowerWorldView(level)
+        // Build per-tick power snapshots from the current world state.
+        val builder = OniPowerNetworkBuilder(view, context.config(), catalog, state.batteryEnergyByPos())
+        val result = builder.build()
 
-        val generation = generatorCount * GENERATION_PER_NODE_W
-        val demand = consumerCount * DEMAND_PER_NODE_W
-        val wireCapacity = wireCount * WIRE_CAPACITY_W
-
-        state.setGenerationW(generation)
-        state.setDemandW(demand)
-
-        val effectiveDemand = if (wireCapacity > 0.0) minOf(demand, wireCapacity) else demand
-        val deltaW = generation - effectiveDemand
-        val maxStored = batteryCount * BATTERY_CAPACITY_J
-        val nextStored = (state.storedEnergyJ() + deltaW * context.config().tickInterval()).coerceIn(0.0, maxStored)
-        state.setStoredEnergyJ(nextStored)
-
-        val overload = demand > wireCapacity && wireCapacity > 0.0
-        val deficit = demand > generation && state.storedEnergyJ() <= 0.0
-        state.setTripped(overload || deficit)
-    }
-
-    companion object {
-        private const val GENERATION_PER_NODE_W = 500.0
-        private const val DEMAND_PER_NODE_W = 350.0
-        private const val WIRE_CAPACITY_W = 800.0
-        private const val BATTERY_CAPACITY_J = 50_000.0
+        // Persist aggregate metrics and per-block power state for other subsystems.
+        state.setGenerationW(result.totalGenerationW)
+        state.setDemandW(result.totalDemandW)
+        state.setStoredEnergyJ(result.totalStoredEnergyJ)
+        state.setTripped(result.tripped)
+        state.setBatteryEnergyByPos(result.batteryEnergyByPos)
+        state.setConsumerPoweredByPos(result.consumerPoweredByPos)
+        state.setNetworks(result.networks)
     }
 }

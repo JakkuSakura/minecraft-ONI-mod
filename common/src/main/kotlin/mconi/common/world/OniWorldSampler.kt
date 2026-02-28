@@ -188,6 +188,8 @@ object OniWorldSampler {
         maxY: Int
     ) {
         val state: BlockState = level.getBlockState(BlockPos(x, y, z))
+        val powerState = OniServices.simulationRuntime().powerState()
+        val blockPos = BlockPos(x, y, z)
         val algaeBlock = OniBlockLookup.block(OniBlockFactory.ALGAE)
         val oxygenDiffuser = OniBlockLookup.block(OniBlockFactory.OXYGEN_DIFFUSER)
         val algaeDeoxidizer = OniBlockLookup.block(OniBlockFactory.ALGAE_DEOXIDIZER)
@@ -207,18 +209,33 @@ object OniWorldSampler {
         }
 
         if (state.`is`(oxygenDiffuser)) {
+            if (!powerState.isConsumerPowered(blockPos)) {
+                return
+            }
             injectGasAt(level, x, y + 1, z, minY, maxY, OXYGEN_DIFFUSER_O2_KG, 0.0)
         }
         if (state.`is`(algaeDeoxidizer)) {
+            if (!powerState.isConsumerPowered(blockPos)) {
+                return
+            }
             injectGasAt(level, x, y + 1, z, minY, maxY, ALGAE_DEOXIDIZER_O2_KG, ALGAE_DEOXIDIZER_CO2_KG)
         }
         if (state.`is`(co2Scrubber)) {
+            if (!powerState.isConsumerPowered(blockPos)) {
+                return
+            }
             scrubGasAt(level, x, y + 1, z, minY, maxY, CO2_SCRUBBER_CO2_KG, CO2_SCRUBBER_O2_KG)
         }
         if (state.`is`(gasPump)) {
+            if (!powerState.isConsumerPowered(blockPos)) {
+                return
+            }
             pumpGasAt(level, x, y + 1, z, minY, maxY, GAS_PUMP_KG_PER_STEP)
         }
         if (state.`is`(liquidPump)) {
+            if (!powerState.isConsumerPowered(blockPos)) {
+                return
+            }
             pumpLiquidAt(level, x, y + 1, z, minY, maxY, LIQUID_PUMP_KG_PER_STEP)
         }
         if (state.`is`(coalGenerator) || state.`is`(naturalGasGenerator) || state.`is`(petroleumGenerator)) {

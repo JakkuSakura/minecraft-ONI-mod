@@ -157,10 +157,6 @@ object OniDebugHttpServer {
                 append(",\"demandW\":").append(power.demandW())
                 append(",\"storedEnergyJ\":").append(power.storedEnergyJ())
                 append(",\"tripped\":").append(power.tripped())
-                append(",\"generatorCount\":").append(power.generatorCount())
-                append(",\"consumerCount\":").append(power.consumerCount())
-                append(",\"batteryCount\":").append(power.batteryCount())
-                append(",\"wireCount\":").append(power.wireCount())
                 append("}")
             }
             writeJson(exchange, 200, body)

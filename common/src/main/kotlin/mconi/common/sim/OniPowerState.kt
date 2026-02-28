@@ -5,19 +5,17 @@ class OniPowerState {
     private var demandW: Double = 0.0
     private var storedEnergyJ: Double = 0.0
     private var tripped: Boolean = false
-    private var generatorCount: Int = 0
-    private var consumerCount: Int = 0
-    private var batteryCount: Int = 0
-    private var wireCount: Int = 0
+    private var batteryEnergyByPos: MutableMap<Long, Double> = HashMap()
+    private var consumerPoweredByPos: MutableSet<Long> = HashSet()
+    private var networks: List<mconi.common.sim.power.OniPowerNetwork> = emptyList()
 
     fun generationW(): Double = generationW
     fun demandW(): Double = demandW
     fun storedEnergyJ(): Double = storedEnergyJ
     fun tripped(): Boolean = tripped
-    fun generatorCount(): Int = generatorCount
-    fun consumerCount(): Int = consumerCount
-    fun batteryCount(): Int = batteryCount
-    fun wireCount(): Int = wireCount
+    fun batteryEnergyByPos(): Map<Long, Double> = batteryEnergyByPos
+    fun isConsumerPowered(pos: net.minecraft.core.BlockPos): Boolean = consumerPoweredByPos.contains(pos.asLong())
+    fun networks(): List<mconi.common.sim.power.OniPowerNetwork> = networks
 
     fun setGenerationW(generationW: Double) {
         this.generationW = maxOf(0.0, generationW)
@@ -35,19 +33,15 @@ class OniPowerState {
         this.tripped = tripped
     }
 
-    fun setGeneratorCount(generatorCount: Int) {
-        this.generatorCount = generatorCount.coerceAtLeast(0)
+    fun setBatteryEnergyByPos(next: Map<Long, Double>) {
+        batteryEnergyByPos = HashMap(next)
     }
 
-    fun setConsumerCount(consumerCount: Int) {
-        this.consumerCount = consumerCount.coerceAtLeast(0)
+    fun setConsumerPoweredByPos(next: Set<Long>) {
+        consumerPoweredByPos = HashSet(next)
     }
 
-    fun setBatteryCount(batteryCount: Int) {
-        this.batteryCount = batteryCount.coerceAtLeast(0)
-    }
-
-    fun setWireCount(wireCount: Int) {
-        this.wireCount = wireCount.coerceAtLeast(0)
+    fun setNetworks(next: List<mconi.common.sim.power.OniPowerNetwork>) {
+        networks = next.toList()
     }
 }
