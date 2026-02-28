@@ -1,13 +1,17 @@
 package mconi.common.compat.jade
 
 import mconi.common.AbstractModBootstrap
-import mconi.common.block.ConstructionSiteBlock
-import mconi.common.block.entity.ConstructionSiteBlockEntity
+import mconi.common.element.OniElementStore
+import mconi.common.world.OniChunkDataAccess
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
+import net.minecraft.server.level.ServerLevel
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.block.Block
 import snownee.jade.api.BlockAccessor
 import snownee.jade.api.IBlockComponentProvider
 import snownee.jade.api.IWailaClientRegistration
@@ -21,11 +25,11 @@ import java.util.Optional
 @WailaPlugin
 class OniJadePlugin : IWailaPlugin {
     override fun register(registration: IWailaCommonRegistration) {
-        registration.registerBlockDataProvider(OniJadeDataProvider, ConstructionSiteBlock::class.java)
+        registration.registerBlockDataProvider(OniJadeDataProvider, Block::class.java)
     }
 
     override fun registerClient(registration: IWailaClientRegistration) {
-        registration.registerBlockComponent(OniJadeComponentProvider, ConstructionSiteBlock::class.java)
+        registration.registerBlockComponent(OniJadeComponentProvider, Block::class.java)
     }
 
     companion object {
@@ -38,9 +42,30 @@ class OniJadePlugin : IWailaPlugin {
 object OniJadeDataProvider : StreamServerDataProvider<BlockAccessor, String> {
     override fun streamData(accessor: BlockAccessor): String? {
         val lines = ArrayList<String>()
-        val constructionSite = accessor.blockEntity as? ConstructionSiteBlockEntity
-            ?: return null
-        constructionSite.appendJadeLines(lines)
+        val level = accessor.level as? ServerLevel ?: return null
+        val pos = accessor.pos
+        val elements = OniElementStore.get(level).elementsAt(pos)
+        val totalKg = elements.sumOf { it.amount }
+
+        lines.add("Elements:")
+        if (elements.isEmpty()) {
+            lines.add("- <none>")
+        } else {
+            for (element in elements) {
+                lines.add("element|${element.itemId}|${element.amount}")
+            }
+        }
+
+        lines.add("Weight: ${totalKg}kg")
+
+        val cell = OniChunkDataAccess.get(level, pos)
+        if (cell != null) {
+            val tempK = cell.temperatureK()
+            val tempC = tempK - 273.15
+            lines.add("Temperature: %.2f K (%.2f C)".format(tempK, tempC))
+        } else {
+            lines.add("Temperature: <unknown>")
+        }
         return lines.joinToString("\n")
     }
 
@@ -67,6 +92,22 @@ object OniJadeComponentProvider : IBlockComponentProvider {
         }
         for (line in text.split('\n')) {
             if (line.isNotBlank()) {
+                if (line.startsWith("element|")) {
+                    val parts = line.split('|')
+                    if (parts.size == 3) {
+                        val itemId = parts[1]
+                        val amount = parts[2]
+                        val identifier = Identifier.tryParse(itemId)
+                        val item = if (identifier != null) {
+                            BuiltInRegistries.ITEM.getOptional(identifier).orElse(null)
+                        } else {
+                            null
+                        }
+                        val name = if (item != null) ItemStack(item).hoverName.string else itemId
+                        tooltip.add(Component.literal("- $name ${amount}kg"))
+                        continue
+                    }
+                }
                 tooltip.add(Component.literal(line))
             }
         }
