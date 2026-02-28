@@ -35,7 +35,7 @@ object NeoforgeItems {
                 OniItemFactory.createGlassesItem(lens, Item.Properties().setId(key).stacksTo(1))
             })
             OniItemFactory.registerItem(path) { holder.get() }
-            if (lens == SystemLens.OXYGEN) {
+            if (lens == SystemLens.GAS) {
                 oxygenLensSupplier = Supplier { holder.get() }
             }
         }

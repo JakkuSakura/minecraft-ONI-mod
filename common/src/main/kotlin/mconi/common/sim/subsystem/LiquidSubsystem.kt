@@ -10,10 +10,13 @@ class LiquidSubsystem : SimulationSubsystem {
 
     override fun run(context: SimulationContext) {
         val level = context.level()
-        val maxTransfer = context.config().liquidTransferKgPerStep().coerceAtLeast(0.0)
-        val voidDrain = context.config().voidLiquidDrainFraction().coerceIn(0.0, 1.0)
+        runEntries(OniChunkDataAccess.blockEntries(level), context.config())
+    }
 
-        val entries = OniChunkDataAccess.blockEntries(level)
+    internal fun runEntries(entries: List<mconi.common.world.BlockEntryView>, config: mconi.common.sim.OniSimulationConfig) {
+        val maxTransfer = config.liquidTransferKgPerStep().coerceAtLeast(0.0)
+        val voidDrain = config.voidLiquidDrainFraction().coerceIn(0.0, 1.0)
+
         val massByPos: MutableMap<BlockPos, Double> = HashMap(entries.size)
         val speciesByPos: MutableMap<BlockPos, String> = HashMap(entries.size)
         val occupancyByPos: MutableMap<BlockPos, OccupancyState> = HashMap(entries.size)

@@ -14,12 +14,39 @@ import java.util.LinkedHashMap
 class OniAtmosphereKernel {
     fun run(level: ServerLevel, config: OniSimulationConfig) {
         val cellVolume = Math.pow(config.cellSize().toDouble(), 3.0)
-        val entries = OniChunkDataAccess.blockEntries(level)
+        val entries: List<mconi.common.world.BlockEntryView> = OniChunkDataAccess.blockEntries(level)
         for (entry in entries) {
             updateCell(entry.data, config)
         }
-        diffuseGases(level, config, entries)
-        stratifyGases(level, config, entries)
+        val diffusionDeltas = diffuseGases(entries, config) { pos ->
+            OniChunkDataAccess.get(level, pos)
+        }
+        applyGasDeltas(diffusionDeltas) { pos ->
+            OniChunkDataAccess.getOrCreate(level, pos)
+        }
+        val stratifyDeltas = stratifyGases(entries, config) { pos ->
+            OniChunkDataAccess.get(level, pos)
+        }
+        applyGasDeltas(stratifyDeltas) { pos ->
+            OniChunkDataAccess.getOrCreate(level, pos)
+        }
+        for (entry in entries) {
+            updatePressure(entry.data, cellVolume)
+        }
+    }
+
+    internal fun runOnCells(cells: MutableMap<BlockPos, OniBlockData>, config: OniSimulationConfig) {
+        val cellVolume = Math.pow(config.cellSize().toDouble(), 3.0)
+        val entries: List<mconi.common.world.BlockEntryView> = cells.entries.map { entry ->
+            mconi.common.world.BlockEntryView(entry.key, entry.value)
+        }
+        for (entry in entries) {
+            updateCell(entry.data, config)
+        }
+        val diffusionDeltas = diffuseGases(entries, config) { pos -> cells[pos] }
+        applyGasDeltas(diffusionDeltas) { pos -> cells[pos] }
+        val stratifyDeltas = stratifyGases(entries, config) { pos -> cells[pos] }
+        applyGasDeltas(stratifyDeltas) { pos -> cells[pos] }
         for (entry in entries) {
             updatePressure(entry.data, cellVolume)
         }
@@ -82,10 +109,14 @@ class OniAtmosphereKernel {
         }
     }
 
-    private fun diffuseGases(level: ServerLevel, config: OniSimulationConfig, entries: List<mconi.common.world.BlockEntryView>) {
+    private fun diffuseGases(
+        entries: List<mconi.common.world.BlockEntryView>,
+        config: OniSimulationConfig,
+        lookup: (BlockPos) -> OniBlockData?
+    ): Map<BlockPos, MutableMap<OniElements.GasSpec, Double>> {
         val maxTransfer = config.gasTransferKgPerStep().coerceAtLeast(0.0)
         if (maxTransfer <= 0.0) {
-            return
+            return emptyMap()
         }
 
         val deltas: MutableMap<BlockPos, MutableMap<OniElements.GasSpec, Double>> = HashMap()
@@ -96,7 +127,7 @@ class OniAtmosphereKernel {
                 continue
             }
             for (neighbor in neighborsOf(coordinate)) {
-                val other = OniChunkDataAccess.get(level, neighbor) ?: continue
+                val other = lookup(neighbor) ?: continue
                 if (other.occupancyState() != OccupancyState.GAS) {
                     continue
                 }
@@ -120,19 +151,17 @@ class OniAtmosphereKernel {
                 }
             }
         }
-
-        for ((coordinate, speciesDelta) in deltas) {
-            val cell = OniChunkDataAccess.getOrCreate(level, coordinate)
-            for ((species, delta) in speciesDelta) {
-                cell.setGasMassKg(species, cell.gasMassKg(species) + delta)
-            }
-        }
+        return deltas
     }
 
-    private fun stratifyGases(level: ServerLevel, config: OniSimulationConfig, entries: List<mconi.common.world.BlockEntryView>) {
+    private fun stratifyGases(
+        entries: List<mconi.common.world.BlockEntryView>,
+        config: OniSimulationConfig,
+        lookup: (BlockPos) -> OniBlockData?
+    ): Map<BlockPos, MutableMap<OniElements.GasSpec, Double>> {
         val maxTransfer = config.gasTransferKgPerStep().coerceAtLeast(0.0)
         if (maxTransfer <= 0.0) {
-            return
+            return emptyMap()
         }
         val deltas: MutableMap<BlockPos, MutableMap<OniElements.GasSpec, Double>> = HashMap()
         for (entry in entries) {
@@ -144,8 +173,8 @@ class OniAtmosphereKernel {
 
             val below = BlockPos(coordinate.x, coordinate.y - 1, coordinate.z)
             val above = BlockPos(coordinate.x, coordinate.y + 1, coordinate.z)
-            val belowCell = OniChunkDataAccess.get(level, below)
-            val aboveCell = OniChunkDataAccess.get(level, above)
+            val belowCell = lookup(below)
+            val aboveCell = lookup(above)
 
             if (belowCell != null && belowCell.occupancyState() == OccupancyState.GAS) {
                 stratifyDown(OniElements.GAS_CARBON_DIOXIDE, cell, belowCell, maxTransfer, coordinate, below, deltas)
@@ -156,12 +185,7 @@ class OniAtmosphereKernel {
             }
         }
 
-        for ((coordinate, speciesDelta) in deltas) {
-            val cell = OniChunkDataAccess.getOrCreate(level, coordinate)
-            for ((species, delta) in speciesDelta) {
-                cell.setGasMassKg(species, cell.gasMassKg(species) + delta)
-            }
-        }
+        return deltas
     }
 
     private fun stratifyDown(
@@ -227,6 +251,18 @@ class OniAtmosphereKernel {
     ) {
         val map = deltas.computeIfAbsent(coordinate) { LinkedHashMap() }
         map[species] = (map[species] ?: 0.0) + delta
+    }
+
+    private fun applyGasDeltas(
+        deltas: Map<BlockPos, MutableMap<OniElements.GasSpec, Double>>,
+        cellProvider: (BlockPos) -> OniBlockData?,
+    ) {
+        for ((coordinate, speciesDelta) in deltas) {
+            val cell = cellProvider(coordinate) ?: continue
+            for ((species, delta) in speciesDelta) {
+                cell.setGasMassKg(species, cell.gasMassKg(species) + delta)
+            }
+        }
     }
 
     companion object {
