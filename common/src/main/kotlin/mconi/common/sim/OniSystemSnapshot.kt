@@ -1,10 +1,10 @@
 package mconi.common.sim
 
-class OniSimulationSnapshot(
+class OniSystemSnapshot(
     private val running: Boolean,
     private val serverTicks: Long,
-    private val simulationTicks: Long,
-    private val lastSimulationTick: Long,
+    private val systemTicks: Long,
+    private val lastSystemTick: Long,
     private val tickInterval: Int,
     private val cellSize: Int,
     private val activeCells: Int,
@@ -18,8 +18,8 @@ class OniSimulationSnapshot(
 ) {
     fun running(): Boolean = running
     fun serverTicks(): Long = serverTicks
-    fun simulationTicks(): Long = simulationTicks
-    fun lastSimulationTick(): Long = lastSimulationTick
+    fun systemTicks(): Long = systemTicks
+    fun lastSystemTick(): Long = lastSystemTick
     fun tickInterval(): Int = tickInterval
     fun cellSize(): Int = cellSize
     fun activeCells(): Int = activeCells

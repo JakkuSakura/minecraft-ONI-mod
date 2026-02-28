@@ -4,7 +4,7 @@ import mconi.common.AbstractModBootstrap
 import mconi.common.block.OniBlockLookup
 import mconi.common.block.OniBlockFactory
 import mconi.common.sim.OniServices
-import mconi.common.sim.OniSimulationConfig
+import mconi.common.sim.OniSystemConfig
 import mconi.common.sim.OniWorldFoundation
 import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerLevel
@@ -25,7 +25,7 @@ object OniWorldEnforcer {
         if (level.dimension() != Level.OVERWORLD) {
             return
         }
-        val config: OniSimulationConfig = OniServices.simulationRuntime().config()
+        val config: OniSystemConfig = OniServices.systemRuntime().config()
         val minX = config.worldMinX()
         val maxX = config.worldMaxX()
         val minZ = config.worldMinZ()
@@ -46,7 +46,7 @@ object OniWorldEnforcer {
         if (level.dimension() != Level.OVERWORLD) {
             return
         }
-        val config: OniSimulationConfig = OniServices.simulationRuntime().config()
+        val config: OniSystemConfig = OniServices.systemRuntime().config()
         val minY = level.minY
         val maxY = level.maxY - 1
         val minX = config.worldMinX()

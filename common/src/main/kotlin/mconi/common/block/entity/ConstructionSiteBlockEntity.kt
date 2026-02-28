@@ -134,7 +134,7 @@ class ConstructionSiteBlockEntity(pos: BlockPos, state: BlockState) :
             return
         }
 
-        val multiplier = OniConstructionRates.speedMultiplier(OniServices.simulationRuntime().stressState().score(player))
+        val multiplier = OniConstructionRates.speedMultiplier(OniServices.systemRuntime().stressState().score(player))
         val deltaSeconds = 1.0 / 20.0
 
         if (!allMaterialsDelivered()) {

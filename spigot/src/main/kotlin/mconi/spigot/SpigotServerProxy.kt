@@ -13,7 +13,7 @@ class SpigotServerProxy : AbstractModBootstrap.IEventProxy {
         val plugin = SpigotPlugin.getInstance() ?: return
         if (pluginManager.getPlugin("WorldEdit") != null) {
             pluginManager.registerEvents(SpigotWorldEditCompatListener(), plugin)
-            Bukkit.getLogger().info("Registered WorldEdit compatibility listener for ONI simulation.")
+            Bukkit.getLogger().info("Registered WorldEdit compatibility listener for ONI systems.")
         }
     }
 }

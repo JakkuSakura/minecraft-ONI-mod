@@ -43,7 +43,7 @@ class PrintingPodBlock(
             return InteractionResult.SUCCESS
         }
 
-        val construction = OniServices.simulationRuntime().constructionState()
+        val construction = OniServices.systemRuntime().constructionState()
         val task = construction.nextTaskNeedingMaterials()
         if (task == null) {
             player.displayClientMessage(Component.literal("No pending construction tasks."), true)

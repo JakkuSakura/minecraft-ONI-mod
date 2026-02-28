@@ -4,10 +4,9 @@ import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpHandler
 import com.sun.net.httpserver.HttpServer
 import mconi.common.AbstractModBootstrap
-import mconi.common.element.OniElements
 import mconi.common.item.OniBlueprintRegistry
 import mconi.common.sim.OniServices
-import mconi.common.world.OniChunkDataAccess
+import mconi.common.world.OniMatterAccess
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerLevel
 import java.io.OutputStream
@@ -120,13 +119,13 @@ object OniDebugHttpServer {
                 writeJson(exchange, 405, "{\"error\":\"method_not_allowed\"}")
                 return
             }
-            val snapshot = OniServices.simulationRuntime().snapshot()
+            val snapshot = OniServices.systemRuntime().snapshot()
             val body = buildString {
                 append("{")
                 append("\"running\":").append(snapshot.running())
                 append(",\"serverTicks\":").append(snapshot.serverTicks())
-                append(",\"simulationTicks\":").append(snapshot.simulationTicks())
-                append(",\"lastSimulationTick\":").append(snapshot.lastSimulationTick())
+                append(",\"systemTicks\":").append(snapshot.systemTicks())
+                append(",\"lastSystemTick\":").append(snapshot.lastSystemTick())
                 append(",\"tickInterval\":").append(snapshot.tickInterval())
                 append(",\"cellSize\":").append(snapshot.cellSize())
                 append(",\"activeCells\":").append(snapshot.activeCells())
@@ -149,7 +148,7 @@ object OniDebugHttpServer {
                 writeJson(exchange, 405, "{\"error\":\"method_not_allowed\"}")
                 return
             }
-            val power = OniServices.simulationRuntime().powerState()
+            val power = OniServices.systemRuntime().powerState()
             val body = buildString {
                 append("{")
                 append("\"generationW\":").append(power.generationW())
@@ -192,20 +191,30 @@ object OniDebugHttpServer {
                 writeJson(exchange, 503, "{\"error\":\"overworld_unavailable\"}")
                 return
             }
-            val cell = OniChunkDataAccess.getOrCreate(level, net.minecraft.core.BlockPos(x, y, z))
+            val pos = net.minecraft.core.BlockPos(x, y, z)
+            val state = level.getBlockState(pos)
+            val gas = OniMatterAccess.gasSpec(state)
+            val liquidId = OniMatterAccess.liquidId(state)
+            val entity = OniMatterAccess.matterEntity(level, pos)
+            val weight = entity?.massKg() ?: 0.0
+            val tempK = entity?.temperatureK() ?: 293.15
             val body = buildString {
                 append("{")
                 append("\"x\":").append(x)
                 append(",\"y\":").append(y)
                 append(",\"z\":").append(z)
-                append(",\"occupancy\":\"").append(cell.occupancyState().name).append("\"")
-                append(",\"temperatureK\":").append(cell.temperatureK())
-                append(",\"pressureKpa\":").append(cell.pressureKpa())
-                append(",\"liquidId\":\"").append(cell.liquidId()).append("\"")
-                append(",\"liquidMassKg\":").append(cell.liquidMassKg())
-                append(",\"o2MassKg\":").append(cell.gasMassKg(OniElements.GAS_OXYGEN))
-                append(",\"co2MassKg\":").append(cell.gasMassKg(OniElements.GAS_CARBON_DIOXIDE))
-                append(",\"h2MassKg\":").append(cell.gasMassKg(OniElements.GAS_HYDROGEN))
+                append(",\"occupancy\":\"").append(
+                    when {
+                        gas != null -> "GAS"
+                        liquidId != null -> "LIQUID"
+                        state.isAir -> "VACUUM"
+                        else -> "SOLID"
+                    }
+                ).append("\"")
+                append(",\"temperatureK\":").append(tempK)
+                append(",\"weightKg\":").append(weight)
+                append(",\"gasId\":\"").append(gas?.id ?: "").append("\"")
+                append(",\"liquidId\":\"").append(liquidId ?: "").append("\"")
                 append("}")
             }
             writeJson(exchange, 200, body)

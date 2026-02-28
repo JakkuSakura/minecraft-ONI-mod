@@ -4,6 +4,7 @@ import mconi.common.AbstractModBootstrap
 import mconi.common.block.OniBlockLookup
 import mconi.common.block.entity.ConstructionSiteBlockEntity
 import mconi.common.block.entity.OniBlockEntityTypes
+import mconi.common.block.entity.OniMatterBlockEntity
 import mconi.common.block.OniBlockFactory
 import net.fabricmc.fabric.api.`object`.builder.v1.block.entity.FabricBlockEntityTypeBuilder
 import net.minecraft.core.Registry
@@ -25,5 +26,14 @@ object FabricBlockEntities {
         val type = FabricBlockEntityTypeBuilder.create(::ConstructionSiteBlockEntity, block).build()
         Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id, type)
         OniBlockEntityTypes.CONSTRUCTION_SITE = type
+
+        val matterId = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:matter")
+            ?: throw IllegalArgumentException("Invalid block entity id")
+        val matterBlocks = (OniBlockFactory.GAS_IDS + OniBlockFactory.LIQUID_IDS)
+            .map { OniBlockLookup.block(it) }
+            .toTypedArray()
+        val matterType = FabricBlockEntityTypeBuilder.create(::OniMatterBlockEntity, *matterBlocks).build()
+        Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, matterId, matterType)
+        OniBlockEntityTypes.MATTER = matterType
     }
 }

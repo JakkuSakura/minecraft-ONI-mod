@@ -3,19 +3,19 @@ package mconi.common.sim
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * Central service registry for ONI simulation systems.
+ * Central service registry for ONI world systems.
  */
 object OniServices {
     private val started = AtomicBoolean(false)
-    private val simulationRuntime = OniSimulationRuntime()
+    private val systemRuntime = OniSystemRuntime()
 
     @JvmStatic
     fun bootstrap() {
         if (started.compareAndSet(false, true)) {
-            simulationRuntime.bootstrap()
+            systemRuntime.bootstrap()
         }
     }
 
     @JvmStatic
-    fun simulationRuntime(): OniSimulationRuntime = simulationRuntime
+    fun systemRuntime(): OniSystemRuntime = systemRuntime
 }

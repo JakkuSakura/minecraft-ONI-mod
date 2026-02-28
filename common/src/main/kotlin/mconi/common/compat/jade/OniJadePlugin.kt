@@ -2,7 +2,7 @@ package mconi.common.compat.jade
 
 import mconi.common.AbstractModBootstrap
 import mconi.common.element.OniElementStore
-import mconi.common.world.OniChunkDataAccess
+import mconi.common.world.OniMatterAccess
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
@@ -43,7 +43,7 @@ object OniJadeDataProvider : StreamServerDataProvider<BlockAccessor, String> {
     override fun streamData(accessor: BlockAccessor): String? {
         val lines = ArrayList<String>()
         val level = accessor.level as? ServerLevel ?: return null
-        val pos = accessor.pos
+        val pos = accessor.position
         val elements = OniElementStore.get(level).elementsAt(pos)
         val totalKg = elements.sumOf { it.amount }
 
@@ -56,13 +56,14 @@ object OniJadeDataProvider : StreamServerDataProvider<BlockAccessor, String> {
             }
         }
 
-        lines.add("Weight: ${totalKg}kg")
+        lines.add("Element weight: ${totalKg}kg")
 
-        val cell = OniChunkDataAccess.get(level, pos)
-        if (cell != null) {
-            val tempK = cell.temperatureK()
+        val entity = OniMatterAccess.matterEntity(level, pos)
+        if (entity != null) {
+            val tempK = entity.temperatureK()
             val tempC = tempK - 273.15
             lines.add("Temperature: %.2f K (%.2f C)".format(tempK, tempC))
+            lines.add("Matter weight: %.3fkg".format(entity.massKg()))
         } else {
             lines.add("Temperature: <unknown>")
         }

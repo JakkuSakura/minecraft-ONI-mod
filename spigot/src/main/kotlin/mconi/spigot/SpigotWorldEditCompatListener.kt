@@ -12,7 +12,7 @@ import org.bukkit.scheduler.BukkitTask
 
 /**
  * WorldEdit compatibility guard:
- * pauses simulation briefly when bulk-edit commands are issued.
+ * pauses ONI systems briefly when bulk-edit commands are issued.
  */
 class SpigotWorldEditCompatListener : Listener {
     private var resumeTask: BukkitTask? = null
@@ -32,15 +32,15 @@ class SpigotWorldEditCompatListener : Listener {
             return
         }
 
-        OniServices.simulationRuntime().setRunning(false)
-        Bukkit.getLogger().info("Detected WorldEdit command, pausing ONI simulation for compatibility.")
+        OniServices.systemRuntime().setRunning(false)
+        Bukkit.getLogger().info("Detected WorldEdit command, pausing ONI systems for compatibility.")
 
         resumeTask?.cancel()
 
         val plugin: Plugin = SpigotPlugin.getInstance() ?: return
         resumeTask = Bukkit.getScheduler().runTaskLater(plugin, Runnable {
-            OniServices.simulationRuntime().setRunning(true)
-            Bukkit.getLogger().info("Resumed ONI simulation after WorldEdit compatibility pause.")
+            OniServices.systemRuntime().setRunning(true)
+            Bukkit.getLogger().info("Resumed ONI systems after WorldEdit compatibility pause.")
         }, RESUME_DELAY_TICKS)
     }
 

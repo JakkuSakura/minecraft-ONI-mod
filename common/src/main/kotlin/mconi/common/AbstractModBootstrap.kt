@@ -28,17 +28,18 @@ import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
+import mconi.common.block.OniBlockFactory
+import mconi.common.block.OniBlockLookup
+import mconi.common.element.OniElements
 import mconi.common.item.OniBlueprintRegistry
 import mconi.common.sim.OniConstructionState
 import mconi.common.sim.OniServices
-import mconi.common.sim.OniSimulationSnapshot
 import mconi.common.sim.OniSystemInspector
+import mconi.common.sim.OniSystemSnapshot
 import mconi.common.sim.OniWorldFoundation
-import mconi.common.element.OniElements
 import mconi.common.sim.model.LayerProperty
-import mconi.common.sim.model.OniBlockData
 import mconi.common.sim.model.SystemLens
-import mconi.common.world.OniChunkDataAccess
+import mconi.common.world.OniMatterAccess
 import mconi.common.wrappers.Utils
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.util.Mth
@@ -136,16 +137,16 @@ abstract class AbstractModBootstrap {
         @Suppress("UNUSED_PARAMETER")
         fun registerServerCommands(dispatcher: CommandDispatcher<CommandSourceStack>, _allOrDedicated: Boolean) {
             val oniCommand = literal("oni")
-                .then(literal("sim")
+                .then(literal("system")
                     .then(literal("status")
                         .executes { context ->
-                            val snapshot: OniSimulationSnapshot = OniServices.simulationRuntime().snapshot()
+                            val snapshot: OniSystemSnapshot = OniServices.systemRuntime().snapshot()
                             Utils.SendFeedback(
                                 context,
-                                "ONI Simulation: running=${snapshot.running()}"
+                                "ONI System: running=${snapshot.running()}"
                                     + " serverTicks=${snapshot.serverTicks()}"
-                                    + " simTicks=${snapshot.simulationTicks()}"
-                                    + " lastSimTick=${snapshot.lastSimulationTick()}"
+                                    + " systemTicks=${snapshot.systemTicks()}"
+                                    + " lastSystemTick=${snapshot.lastSystemTick()}"
                                     + " interval=${snapshot.tickInterval()}"
                                     + " cellSize=${snapshot.cellSize()}"
                                     + " activeCells=${snapshot.activeCells()}"
@@ -163,21 +164,21 @@ abstract class AbstractModBootstrap {
                         .executes { context ->
                             Utils.SendFeedback(
                                 context,
-                                "ONI Simulation pipeline: " + OniServices.simulationRuntime().pipelineOrder().joinToString(" -> "),
+                                "ONI System pipeline: " + OniServices.systemRuntime().pipelineOrder().joinToString(" -> "),
                                 true
                             )
                             1
                         })
                     .then(literal("pause")
                         .executes { context ->
-                            OniServices.simulationRuntime().setRunning(false)
-                            Utils.SendFeedback(context, "ONI Simulation paused.", true)
+                            OniServices.systemRuntime().setRunning(false)
+                            Utils.SendFeedback(context, "ONI System paused.", true)
                             1
                         })
                     .then(literal("resume")
                         .executes { context ->
-                            OniServices.simulationRuntime().setRunning(true)
-                            Utils.SendFeedback(context, "ONI Simulation resumed.", true)
+                            OniServices.systemRuntime().setRunning(true)
+                            Utils.SendFeedback(context, "ONI System resumed.", true)
                             1
                         })
                     .then(literal("step")
@@ -185,41 +186,30 @@ abstract class AbstractModBootstrap {
                             val server = context.source.server
                             val level = server.overworld()
                             if (level != null) {
-                                OniServices.simulationRuntime().runOneSimulationStep(
-                                    OniServices.simulationRuntime().snapshot().serverTicks(),
+                                OniServices.systemRuntime().runOneSystemStep(
+                                    OniServices.systemRuntime().snapshot().serverTicks(),
                                     level
                                 )
                             }
-                            Utils.SendFeedback(context, "ONI Simulation executed one manual step.", true)
+                            Utils.SendFeedback(context, "ONI System executed one manual step.", true)
                             1
                         })
                     .then(literal("set_interval")
                         .then(argument("ticks", IntegerArgumentType.integer(1, 1200))
                             .executes { context ->
                                 val ticks = IntegerArgumentType.getInteger(context, "ticks")
-                                OniServices.simulationRuntime().config().setTickInterval(ticks)
-                                Utils.SendFeedback(context, "ONI Simulation interval set to $ticks ticks.", true)
+                                OniServices.systemRuntime().config().setTickInterval(ticks)
+                                Utils.SendFeedback(context, "ONI System interval set to $ticks ticks.", true)
                                 1
                             }))
                     .then(literal("set_cell_size")
                         .then(argument("blocks", IntegerArgumentType.integer(1, 16))
                             .executes { context ->
                                 val size = IntegerArgumentType.getInteger(context, "blocks")
-                                OniServices.simulationRuntime().config().setCellSize(size)
-                                Utils.SendFeedback(context, "ONI Simulation cell size set to $size blocks.", true)
+                                OniServices.systemRuntime().config().setCellSize(size)
+                                Utils.SendFeedback(context, "ONI System cell size set to $size blocks.", true)
                                 1
                             }))
-                    .then(literal("touch_here")
-                        .executes { context ->
-                            val source = context.source
-                            val x = Mth.floor(source.position.x)
-                            val y = Mth.floor(source.position.y)
-                            val z = Mth.floor(source.position.z)
-                            val level = source.level
-                            OniChunkDataAccess.getOrCreate(level, BlockPos(x, y, z))
-                            Utils.SendFeedback(context, "Created/loaded simulation block at current position.", true)
-                            1
-                        })
                     .then(literal("inspect_here")
                         .executes { context ->
                             val source = context.source
@@ -227,18 +217,27 @@ abstract class AbstractModBootstrap {
                             val y = Mth.floor(source.position.y)
                             val z = Mth.floor(source.position.z)
                             val level = source.level
-                            val cell: OniBlockData = OniChunkDataAccess.getOrCreate(level, BlockPos(x, y, z))
+                            val pos = BlockPos(x, y, z)
+                            val state = level.getBlockState(pos)
+                            val gas = OniMatterAccess.gasSpec(state)
+                            val liquidId = OniMatterAccess.liquidId(state)
+                            val entity = OniMatterAccess.matterEntity(level, pos)
+                            val weight = entity?.massKg() ?: 0.0
+                            val tempK = entity?.temperatureK() ?: 293.15
                             Utils.SendFeedback(
                                 context,
-                                "Block: occupancy=${cell.occupancyState()}"
-                                    + " pressure=${String.format("%.2f", cell.pressureKpa())}kPa"
-                                    + " tempK=${String.format("%.2f", cell.temperatureK())}"
-                                    + " breathBand=${cell.breathingBand()}"
-                                    + " liquid=${cell.liquidId()}"
-                                    + " liquidMassKg=${String.format("%.3f", cell.liquidMassKg())}"
-                                    + " O2kg=${String.format("%.3f", cell.gasMassKg(OniElements.GAS_OXYGEN))}"
-                                    + " CO2kg=${String.format("%.3f", cell.gasMassKg(OniElements.GAS_CARBON_DIOXIDE))}"
-                                    + " H2kg=${String.format("%.3f", cell.gasMassKg(OniElements.GAS_HYDROGEN))}",
+                                "Block: occupancy=${
+                                    when {
+                                        gas != null -> "GAS"
+                                        liquidId != null -> "LIQUID"
+                                        state.isAir -> "VACUUM"
+                                        else -> "SOLID"
+                                    }
+                                }"
+                                    + " tempK=${String.format("%.2f", tempK)}"
+                                    + " weightKg=${String.format("%.3f", weight)}"
+                                    + " gas=${gas?.id ?: "none"}"
+                                    + " liquid=${liquidId ?: "none"}",
                                 true
                             )
                             1
@@ -259,10 +258,24 @@ abstract class AbstractModBootstrap {
                                         return@executes 0
                                     }
                                     val level = source.level
-                                    val cell: OniBlockData = OniChunkDataAccess.getOrCreate(level, BlockPos(x, y, z))
-                                    val updatedMass = cell.gasMassKg(species) + massKg
-                                    cell.setGasMassKg(species, updatedMass)
-                                    Utils.SendFeedback(context, "Injected $massKg kg of $species into current cell.", true)
+                                    val pos = BlockPos(x, y, z)
+                                    val targetState = when (species) {
+                                        OniElements.GAS_OXYGEN -> OniBlockLookup.state(OniBlockFactory.OXYGEN_GAS)
+                                        OniElements.GAS_CARBON_DIOXIDE -> OniBlockLookup.state(OniBlockFactory.CARBON_DIOXIDE_GAS)
+                                        OniElements.GAS_HYDROGEN -> OniBlockLookup.state(OniBlockFactory.HYDROGEN_GAS)
+                                        else -> null
+                                    }
+                                    if (targetState == null) {
+                                        Utils.SendError(context, "Unsupported gas species: $speciesInput.", true)
+                                        return@executes 0
+                                    }
+                                    level.setBlock(pos, targetState, 2)
+                                    val entity = OniMatterAccess.matterEntity(level, pos)
+                                    if (entity != null) {
+                                        entity.setMassKg(entity.massKg() + massKg)
+                                        entity.setTemperatureK(species.defaultTemperature)
+                                    }
+                                    Utils.SendFeedback(context, "Injected $massKg kg of ${species.symbol} into current block.", true)
                                     1
                                 })))
                     .then(literal("inject_liquid")
@@ -281,9 +294,28 @@ abstract class AbstractModBootstrap {
                                         return@executes 0
                                     }
                                     val level = source.level
-                                    val cell: OniBlockData = OniChunkDataAccess.getOrCreate(level, BlockPos(x, y, z))
-                                    cell.setLiquidState(liquidId, massKg)
-                                    Utils.SendFeedback(context, "Set liquid $liquidId mass to $massKg kg in current cell.", true)
+                                    val pos = BlockPos(x, y, z)
+                                    val targetState = when (liquidId) {
+                                        OniElements.LIQUID_WATER -> OniBlockLookup.state(OniBlockFactory.WATER)
+                                        OniElements.LIQUID_POLLUTED_WATER -> OniBlockLookup.state(OniBlockFactory.POLLUTED_WATER)
+                                        OniElements.LIQUID_CRUDE_OIL -> OniBlockLookup.state(OniBlockFactory.CRUDE_OIL)
+                                        OniElements.LIQUID_LAVA -> OniBlockLookup.state(OniBlockFactory.LAVA)
+                                        else -> null
+                                    }
+                                    if (targetState == null) {
+                                        Utils.SendError(context, "Unsupported liquid id: $liquidId.", true)
+                                        return@executes 0
+                                    }
+                                    level.setBlock(pos, targetState, 2)
+                                    val entity = OniMatterAccess.matterEntity(level, pos)
+                                    if (entity != null) {
+                                        entity.setMassKg(massKg)
+                                        val spec = OniElements.liquidSpec(liquidId)
+                                        if (spec != null) {
+                                            entity.setTemperatureK(spec.defaultTemperatureK)
+                                        }
+                                    }
+                                    Utils.SendFeedback(context, "Set liquid $liquidId mass to $massKg kg in current block.", true)
                                     1
                                 })))
                     .then(literal("set_power")
@@ -292,8 +324,8 @@ abstract class AbstractModBootstrap {
                                 .executes { context ->
                                     val generationW = DoubleArgumentType.getDouble(context, "generation_w")
                                     val demandW = DoubleArgumentType.getDouble(context, "demand_w")
-                                    OniServices.simulationRuntime().powerState().setGenerationW(generationW)
-                                    OniServices.simulationRuntime().powerState().setDemandW(demandW)
+                                    OniServices.systemRuntime().powerState().setGenerationW(generationW)
+                                    OniServices.systemRuntime().powerState().setDemandW(demandW)
                                     Utils.SendFeedback(context, "Set power generation/demand to $generationW W/$demandW W.", true)
                                     1
                                 })))
@@ -303,10 +335,10 @@ abstract class AbstractModBootstrap {
                                 val score = DoubleArgumentType.getDouble(context, "score")
                                 val player = context.source.player
                                 if (player != null) {
-                                    OniServices.simulationRuntime().stressState().setScore(player, score)
+                                    OniServices.systemRuntime().stressState().setScore(player, score)
                                     Utils.SendFeedback(context, "Set player stress to $score.", true)
                                 } else {
-                                    OniServices.simulationRuntime().stressState().setScore(score)
+                                    OniServices.systemRuntime().stressState().setScore(score)
                                     Utils.SendFeedback(context, "Set colony stress to $score.", true)
                                 }
                                 1
@@ -316,8 +348,8 @@ abstract class AbstractModBootstrap {
                             .executes { context ->
                                 Utils.SendFeedback(
                                     context,
-                                    "Research unlocked nodes: ${OniServices.simulationRuntime().researchState().unlockedCount()} "
-                                        + "${OniServices.simulationRuntime().researchState().unlockedNodes()}",
+                                    "Research unlocked nodes: ${OniServices.systemRuntime().researchState().unlockedCount()} "
+                                        + "${OniServices.systemRuntime().researchState().unlockedNodes()}",
                                     true
                                 )
                                 1
@@ -326,7 +358,7 @@ abstract class AbstractModBootstrap {
                             .then(argument("node", StringArgumentType.word())
                                 .executes { context ->
                                     val node = StringArgumentType.getString(context, "node")
-                                    OniServices.simulationRuntime().researchState().unlock(node)
+                                    OniServices.systemRuntime().researchState().unlock(node)
                                     Utils.SendFeedback(context, "Unlocked research node: $node", true)
                                     1
                                 })))
@@ -335,10 +367,10 @@ abstract class AbstractModBootstrap {
                             .executes { context ->
                                 Utils.SendFeedback(
                                     context,
-                                    "Build queue size: ${OniServices.simulationRuntime().constructionState().activeCount()}",
+                                    "Build queue size: ${OniServices.systemRuntime().constructionState().activeCount()}",
                                     true
                                 )
-                                for (task in OniServices.simulationRuntime().constructionState().tasks()) {
+                                for (task in OniServices.systemRuntime().constructionState().tasks()) {
                                     Utils.SendFeedback(
                                         context,
                                         "- ${task.blueprintId}"
@@ -360,7 +392,7 @@ abstract class AbstractModBootstrap {
                                 .executes { context ->
                                     val blueprint = StringArgumentType.getString(context, "blueprint")
                                     val task: OniConstructionState.BuildTask? =
-                                        OniServices.simulationRuntime().constructionState().queueBlueprint(blueprint)
+                                        OniServices.systemRuntime().constructionState().queueBlueprint(blueprint)
                                     if (task == null) {
                                         Utils.SendError(context, "Unknown blueprint: $blueprint", true)
                                         return@executes 0
@@ -378,7 +410,7 @@ abstract class AbstractModBootstrap {
                                                 val requiredResearch = StringArgumentType.getString(context, "required_research")
                                                 val materials = IntegerArgumentType.getInteger(context, "materials")
                                                 val buildSeconds = IntegerArgumentType.getInteger(context, "build_seconds")
-                                                OniServices.simulationRuntime().constructionState().queueTask(
+                                                OniServices.systemRuntime().constructionState().queueTask(
                                                     OniConstructionState.BuildTask(
                                                         blueprint,
                                                         requiredResearch,
@@ -398,7 +430,7 @@ abstract class AbstractModBootstrap {
                                     .executes { context ->
                                         val index = IntegerArgumentType.getInteger(context, "index")
                                         val materials = IntegerArgumentType.getInteger(context, "materials")
-                                        val tasks = OniServices.simulationRuntime().constructionState().tasks()
+                                        val tasks = OniServices.systemRuntime().constructionState().tasks()
                                         if (index >= tasks.size) {
                                             Utils.SendError(context, "Invalid task index.", true)
                                             return@executes 0
@@ -420,17 +452,17 @@ abstract class AbstractModBootstrap {
                             val inBounds = OniWorldFoundation.isWithinHorizontalBounds(
                                 x,
                                 z,
-                                OniServices.simulationRuntime().config()
+                                OniServices.systemRuntime().config()
                             )
                             val inVoidBand = OniWorldFoundation.isVoidBand(
                                 y,
                                 maxY,
-                                OniServices.simulationRuntime().config()
+                                OniServices.systemRuntime().config()
                             )
                             val inLavaBand = OniWorldFoundation.isLavaBand(
                                 y,
                                 minY,
-                                OniServices.simulationRuntime().config()
+                                OniServices.systemRuntime().config()
                             )
                             Utils.SendFeedback(
                                 context,
@@ -462,7 +494,7 @@ abstract class AbstractModBootstrap {
                                 val y = Mth.floor(source.position.y)
                                 val z = Mth.floor(source.position.z)
                                 val level = source.level
-                                val cell: OniBlockData = OniChunkDataAccess.getOrCreate(level, BlockPos(x, y, z))
+                                val pos = BlockPos(x, y, z)
                                 Utils.SendFeedback(
                                     context,
                                     "System glasses [${systemLens.name}] at ($x,$y,$z):",
@@ -470,9 +502,10 @@ abstract class AbstractModBootstrap {
                                 )
                                 val commandPlayer = context.source.entity as? net.minecraft.world.entity.player.Player
                                 for (property: LayerProperty in OniSystemInspector.inspect(
-                                    OniServices.simulationRuntime(),
+                                    OniServices.systemRuntime(),
                                     systemLens,
-                                    cell,
+                                    level,
+                                    pos,
                                     commandPlayer
                                 )) {
                                     Utils.SendFeedback(context, "[${property.layer()}] ${property.key()}=${property.value()}", true)

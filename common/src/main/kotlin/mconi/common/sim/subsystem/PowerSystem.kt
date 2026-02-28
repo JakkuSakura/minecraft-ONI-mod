@@ -4,10 +4,10 @@ import mconi.common.sim.power.OniPowerCatalog
 import mconi.common.sim.power.OniPowerNetworkBuilder
 import mconi.common.sim.power.ServerLevelPowerWorldView
 
-class PowerSubsystem : SimulationSubsystem {
+class PowerSystem : OniSystem {
     override fun id(): String = "power"
 
-    override fun run(context: SimulationContext) {
+    override fun run(context: SystemContext) {
         val state = context.runtime().powerState()
         val level = context.level()
         val catalog = OniPowerCatalog()

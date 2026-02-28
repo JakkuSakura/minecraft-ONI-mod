@@ -2,17 +2,13 @@
     "required": true,
     "minVersion": "0.8",
     "package": "mconi.mixins",
-    "mixins": [
-        "common.server.ChunkAccessMixin",
-        "common.server.LevelChunkMixin",
-        "common.server.SerializableChunkDataMixin"
-    ],
+    "mixins": [],
     "client": [
         "forge.client.SplashManagerMixin",
         "common.client.TitleScreenMixin"
     ],
     "server": [
-        "common.server.MinecraftServerSimulationMixin"
+        "common.server.MinecraftServerSystemMixin"
     ],
     "plugin": "mconi.mixins.forge.ForgeMixinPlugin"
 }

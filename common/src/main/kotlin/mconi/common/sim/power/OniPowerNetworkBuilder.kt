@@ -1,6 +1,6 @@
 package mconi.common.sim.power
 
-import mconi.common.sim.OniSimulationConfig
+import mconi.common.sim.OniSystemConfig
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import java.util.ArrayDeque
@@ -8,7 +8,7 @@ import kotlin.math.abs
 
 class OniPowerNetworkBuilder(
     private val world: PowerWorldView,
-    private val config: OniSimulationConfig,
+    private val config: OniSystemConfig,
     private val catalog: PowerCatalog,
     private val existingBatteryEnergy: Map<Long, Double>,
 ) {

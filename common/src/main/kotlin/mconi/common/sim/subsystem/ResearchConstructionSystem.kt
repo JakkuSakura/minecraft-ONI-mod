@@ -1,9 +1,9 @@
 package mconi.common.sim.subsystem
 
-class ResearchConstructionSubsystem : SimulationSubsystem {
+class ResearchConstructionSystem : OniSystem {
     override fun id(): String = "research_construction"
 
-    override fun run(context: SimulationContext) {
+    override fun run(context: SystemContext) {
         val runtime = context.runtime()
         val research = runtime.researchState()
         val construction = runtime.constructionState()

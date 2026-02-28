@@ -1,7 +1,7 @@
 package mconi.common.sim.power
 
 import mconi.common.TestMinecraftBootstrap
-import mconi.common.sim.OniSimulationConfig
+import mconi.common.sim.OniSystemConfig
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
@@ -126,7 +126,7 @@ class OniPowerNetworkBuilderTest {
         catalog: PowerCatalog,
         existingBatteryEnergy: Map<BlockPos, Double> = emptyMap()
     ): OniPowerNetworkBuilder.BuildResult {
-        val config = OniSimulationConfig()
+        val config = OniSystemConfig()
         config.setWorldSampleRadiusBlocks(16)
         val view = TestWorldView(states)
         val energyByPos = existingBatteryEnergy.mapKeys { it.key.asLong() }

@@ -2,19 +2,14 @@
     "required": true,
     "minVersion": "0.8",
     "package": "mconi.mixins",
-    "mixins": [
-        "common.server.ChunkAccessMixin",
-        "common.server.LevelChunkMixin",
-        "common.server.SerializableChunkDataMixin"
-    ],
+    "mixins": [],
     "client": [
         "fabric.client.SplashManagerMixin",
-        "common.client.HudOverlayMixin",
         "common.client.TitleScreenMixin",
         "common.client.TitleScreenButtonMixin"
     ],
     "server": [
-        "common.server.MinecraftServerSimulationMixin"
+        "common.server.MinecraftServerSystemMixin"
     ],
     "injectors": {
         "defaultRequire": 1

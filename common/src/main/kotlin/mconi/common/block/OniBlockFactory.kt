@@ -87,12 +87,21 @@ object OniBlockFactory {
         BlockEntry(id, kind, factory)
 
     private val SOLID_SPECS: MutableMap<String, SolidBlockSpec> = LinkedHashMap()
+    private val SOLID_BY_BLOCK: MutableMap<Block, SolidBlockSpec> = LinkedHashMap()
 
     fun solidSpec(id: String): SolidBlockSpec? = SOLID_SPECS[id]
 
     private fun solidEntry(id: String, spec: SolidBlockSpec, factory: (SolidBlockSpec) -> Block): BlockEntry {
         SOLID_SPECS[id] = spec
-        return entry(id, BlockKind.SOLID) { factory(spec) }
+        return entry(id, BlockKind.SOLID) {
+            val block = factory(spec)
+            SOLID_BY_BLOCK[block] = spec
+            block
+        }
+    }
+
+    fun blockConductivityCoefficient(state: net.minecraft.world.level.block.state.BlockState): Double {
+        return SOLID_BY_BLOCK[state.block]?.conductivityCoefficient ?: 1.0
     }
 
     private val SOLID_ENTRIES: List<BlockEntry> = listOf(

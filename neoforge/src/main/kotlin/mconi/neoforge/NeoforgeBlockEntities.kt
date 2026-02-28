@@ -3,6 +3,7 @@ package mconi.neoforge
 import mconi.common.AbstractModBootstrap
 import mconi.common.block.entity.ConstructionSiteBlockEntity
 import mconi.common.block.entity.OniBlockEntityTypes
+import mconi.common.block.entity.OniMatterBlockEntity
 import mconi.common.block.OniBlockFactory
 import net.minecraft.core.registries.Registries
 import net.minecraft.world.level.block.entity.BlockEntityType
@@ -18,6 +19,12 @@ object NeoforgeBlockEntities {
         val block = NeoforgeBlocks.blockHolder(OniBlockFactory.CONSTRUCTION_SITE).get()
         BlockEntityType(::ConstructionSiteBlockEntity, setOf(block))
     })
+    private val MATTER = BLOCK_ENTITIES.register("matter", Supplier {
+        val blocks = (OniBlockFactory.GAS_IDS + OniBlockFactory.LIQUID_IDS)
+            .map { NeoforgeBlocks.blockHolder(it).get() }
+            .toSet()
+        BlockEntityType(::OniMatterBlockEntity, blocks)
+    })
 
     fun register(eventBus: IEventBus) {
         BLOCK_ENTITIES.register(eventBus)
@@ -26,5 +33,7 @@ object NeoforgeBlockEntities {
     fun bindTypes() {
         @Suppress("UNCHECKED_CAST")
         OniBlockEntityTypes.CONSTRUCTION_SITE = CONSTRUCTION_SITE.get() as BlockEntityType<ConstructionSiteBlockEntity>
+        @Suppress("UNCHECKED_CAST")
+        OniBlockEntityTypes.MATTER = MATTER.get() as BlockEntityType<OniMatterBlockEntity>
     }
 }

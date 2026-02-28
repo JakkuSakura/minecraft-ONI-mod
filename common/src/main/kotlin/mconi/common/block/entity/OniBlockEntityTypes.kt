@@ -4,4 +4,5 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 
 object OniBlockEntityTypes {
     lateinit var CONSTRUCTION_SITE: BlockEntityType<ConstructionSiteBlockEntity>
+    lateinit var MATTER: BlockEntityType<OniMatterBlockEntity>
 }

@@ -1,28 +1,29 @@
 package mconi.common.sim
 
-import mconi.common.sim.subsystem.LiquidSubsystem
-import mconi.common.sim.subsystem.GasSubsystem
-import mconi.common.sim.subsystem.PowerSubsystem
-import mconi.common.sim.subsystem.ResearchConstructionSubsystem
-import mconi.common.sim.subsystem.SimulationContext
-import mconi.common.sim.subsystem.SimulationSubsystem
-import mconi.common.sim.subsystem.StressSubsystem
-import mconi.common.sim.subsystem.ThermalSubsystem
+import mconi.common.sim.subsystem.GasSystem
+import mconi.common.sim.subsystem.LiquidSystem
+import mconi.common.sim.subsystem.OniSystem
+import mconi.common.sim.subsystem.PowerSystem
+import mconi.common.sim.subsystem.ResearchConstructionSystem
+import mconi.common.sim.subsystem.StressSystem
+import mconi.common.sim.subsystem.SystemContext
+import mconi.common.sim.subsystem.ThermalSystem
+import mconi.common.world.OniWorldScan
 import java.util.concurrent.atomic.AtomicLong
 
 /**
- * Server-authoritative runtime loop controller for ONI simulation systems.
+ * Server-authoritative runtime loop controller for ONI world systems.
  */
-class OniSimulationRuntime {
-    private val config = OniSimulationConfig()
-    private val subsystems: MutableList<SimulationSubsystem> = ArrayList()
+class OniSystemRuntime {
+    private val config = OniSystemConfig()
+    private val systems: MutableList<OniSystem> = ArrayList()
     private val powerState = OniPowerState()
     private val stressState = OniStressState()
     private val researchState = OniResearchState()
     private val constructionState = OniConstructionState()
     private val serverTicks = AtomicLong(0L)
-    private val simulationTicks = AtomicLong(0L)
-    private val lastSimulationTick = AtomicLong(-1L)
+    private val systemTicks = AtomicLong(0L)
+    private val lastSystemTick = AtomicLong(-1L)
     @Volatile private var lastActiveBlocks = 0
     @Volatile private var started = false
     @Volatile private var paused = false
@@ -30,16 +31,16 @@ class OniSimulationRuntime {
     fun bootstrap() {
         started = false
         paused = false
-        subsystems.clear()
-        subsystems.add(LiquidSubsystem())
-        subsystems.add(ThermalSubsystem())
-        subsystems.add(GasSubsystem())
-        subsystems.add(PowerSubsystem())
-        subsystems.add(StressSubsystem())
-        subsystems.add(ResearchConstructionSubsystem())
+        systems.clear()
+        systems.add(LiquidSystem())
+        systems.add(ThermalSystem())
+        systems.add(GasSystem())
+        systems.add(PowerSystem())
+        systems.add(StressSystem())
+        systems.add(ResearchConstructionSystem())
     }
 
-    fun config(): OniSimulationConfig = config
+    fun config(): OniSystemConfig = config
     fun powerState(): OniPowerState = powerState
     fun stressState(): OniStressState = stressState
     fun researchState(): OniResearchState = researchState
@@ -47,8 +48,8 @@ class OniSimulationRuntime {
 
     fun onServerStarted() {
         serverTicks.set(0L)
-        simulationTicks.set(0L)
-        lastSimulationTick.set(-1L)
+        systemTicks.set(0L)
+        lastSystemTick.set(-1L)
         started = true
         paused = false
     }
@@ -81,7 +82,7 @@ class OniSimulationRuntime {
 
         if ((tick % config.tickInterval()) == 0L) {
             val level = server.overworld() ?: return
-            runOneSimulationStep(tick, level)
+            runOneSystemStep(tick, level)
         }
     }
 
@@ -92,30 +93,34 @@ class OniSimulationRuntime {
         paused = !running
     }
 
-    fun runOneSimulationStep(serverTick: Long, level: net.minecraft.server.level.ServerLevel) {
-        val context = SimulationContext(serverTick, config, level, this)
-        for (subsystem in subsystems) {
-            subsystem.run(context)
+    fun runOneSystemStep(serverTick: Long, level: net.minecraft.server.level.ServerLevel) {
+        val context = SystemContext(serverTick, config, level, this)
+        for (system in systems) {
+            system.run(context)
         }
-        lastActiveBlocks = mconi.common.world.OniChunkDataAccess.blockCount(level)
-        lastSimulationTick.set(serverTick)
-        simulationTicks.incrementAndGet()
+        lastActiveBlocks = OniWorldScan.positionsAroundPlayers(
+            level,
+            config.worldSampleRadiusBlocks(),
+            config.cellSize()
+        ).size
+        lastSystemTick.set(serverTick)
+        systemTicks.incrementAndGet()
     }
 
     fun pipelineOrder(): List<String> {
-        val order: MutableList<String> = ArrayList(subsystems.size)
-        for (subsystem in subsystems) {
-            order.add(subsystem.id())
+        val order: MutableList<String> = ArrayList(systems.size)
+        for (system in systems) {
+            order.add(system.id())
         }
         return order.toList()
     }
 
-    fun snapshot(): OniSimulationSnapshot {
-        return OniSimulationSnapshot(
+    fun snapshot(): OniSystemSnapshot {
+        return OniSystemSnapshot(
             started && !paused,
             serverTicks.get(),
-            simulationTicks.get(),
-            lastSimulationTick.get(),
+            systemTicks.get(),
+            lastSystemTick.get(),
             config.tickInterval(),
             config.cellSize(),
             lastActiveBlocks,

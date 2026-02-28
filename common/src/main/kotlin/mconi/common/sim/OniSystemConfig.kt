@@ -1,10 +1,10 @@
 package mconi.common.sim
 
 /**
- * Runtime configuration for the ONI simulation kernel.
+ * Runtime configuration for the ONI system loop.
  * Values are currently in-memory and intentionally conservative.
  */
-class OniSimulationConfig {
+class OniSystemConfig {
     private var tickInterval: Int = 1
     private var cellSize: Int = 1
     private var worldMinX: Int = -256

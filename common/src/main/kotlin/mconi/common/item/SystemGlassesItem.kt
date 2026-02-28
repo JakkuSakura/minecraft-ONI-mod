@@ -3,7 +3,6 @@ package mconi.common.item
 import mconi.common.sim.OniServices
 import mconi.common.sim.OniSystemInspector
 import mconi.common.sim.model.SystemLens
-import mconi.common.world.OniChunkDataAccess
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
@@ -21,14 +20,13 @@ class SystemGlassesItem(
         if (!level.isClientSide) {
             val serverLevel = level as? ServerLevel ?: return InteractionResult.SUCCESS
             val pos: BlockPos = player.blockPosition()
-            val cell = OniChunkDataAccess.getOrCreate(serverLevel, pos)
             player.displayClientMessage(
                 Component.literal(
                     "System glasses [${systemLens.name}] at (${pos.x},${pos.y},${pos.z}):"
                 ),
                 false
             )
-            for (property in OniSystemInspector.inspect(OniServices.simulationRuntime(), systemLens, cell, player)) {
+            for (property in OniSystemInspector.inspect(OniServices.systemRuntime(), systemLens, serverLevel, pos, player)) {
                 player.displayClientMessage(
                     Component.literal("[${property.layer()}] ${property.key()}=${property.value()}"),
                     false
