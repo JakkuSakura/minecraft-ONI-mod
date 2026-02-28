@@ -58,6 +58,8 @@ object OniBlockFactory {
     const val LAVA = "lava"
     const val LIQUID_CONDUIT = "liquid_conduit"
     const val GAS_CONDUIT = "gas_conduit"
+    const val LIQUID_VENT = "liquid_vent"
+    const val GAS_VENT = "gas_vent"
 
     enum class BlockKind {
         SOLID,
@@ -367,6 +369,18 @@ object OniBlockFactory {
         solidEntry(GAS_CONDUIT, SolidBlockSpec(), { _ ->
             ConduitBlock(
                 propsFor(GAS_CONDUIT).mapColor(MapColor.COLOR_LIGHT_BLUE).noOcclusion().strength(0.4f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(LIQUID_VENT, SolidBlockSpec(), { _ ->
+            OniSolidBlock(
+                LIQUID_VENT,
+                properties = propsFor(LIQUID_VENT).mapColor(MapColor.COLOR_CYAN).noOcclusion().strength(0.6f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(GAS_VENT, SolidBlockSpec(), { _ ->
+            OniSolidBlock(
+                GAS_VENT,
+                properties = propsFor(GAS_VENT).mapColor(MapColor.COLOR_LIGHT_BLUE).noOcclusion().strength(0.6f).sound(SoundType.METAL)
             )
         })
     )
