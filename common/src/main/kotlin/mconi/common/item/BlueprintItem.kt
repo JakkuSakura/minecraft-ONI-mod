@@ -8,7 +8,7 @@ import net.minecraft.world.InteractionResult
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.context.UseOnContext
 
-class BlueprintItem(properties: Item.Properties) : Item(properties) {
+class BlueprintItem(properties: Item.Properties) : OniDescribedItem(properties) {
     override fun useOn(context: UseOnContext): InteractionResult {
         val player = context.player ?: return InteractionResult.PASS
         val level = context.level

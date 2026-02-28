@@ -512,7 +512,23 @@ object OniItemFactory {
 
     fun specs(): List<OniItemSpec> = coreSpecs + unimplementedSpecs
 
-    fun specByItem(item: Item): OniItemSpec? = itemSpecsByItem[item]
+    fun specByItem(item: Item): OniItemSpec? = specByItemId(item)
+
+    fun specByItemId(item: Item): OniItemSpec? {
+        val existing = itemSpecsByItem[item]
+        if (existing != null) {
+            return existing
+        }
+        val id = BuiltInRegistries.ITEM.getKey(item)
+        if (id != null) {
+            val spec = itemSpecsByRegistryId[id.toString()]
+            if (spec != null) {
+                itemSpecsByItem.putIfAbsent(item, spec)
+                return spec
+            }
+        }
+        return null
+    }
 
     private fun normalizeId(id: String): String {
         return if (id.contains(":")) {

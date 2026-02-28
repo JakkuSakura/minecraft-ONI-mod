@@ -1,0 +1,39 @@
+package mconi.common.item
+
+import net.minecraft.core.component.DataComponents
+import net.minecraft.network.chat.Component
+import net.minecraft.world.item.ItemStack
+import java.util.function.Consumer
+
+object OniItemTooltip {
+    fun appendDetails(
+        stack: ItemStack,
+        tooltip: Consumer<Component>,
+        includeMass: Boolean = true,
+        includeTemperature: Boolean = true,
+    ) {
+        val data = stack.get(DataComponents.CUSTOM_DATA)
+        val tag = data?.copyTag()
+
+        if (includeMass) {
+            val hasWeightTag = tag?.contains(OniItemMass.TAG_WEIGHT_KG) == true
+            if (hasWeightTag) {
+                val massKg = OniItemMass.stackWeightKg(stack)
+                if (massKg > 0.0) {
+                    tooltip.accept(Component.literal(String.format("Mass: %.2f kg", massKg)))
+                }
+            }
+        }
+
+        if (includeTemperature) {
+            val tempK = if (tag != null && tag.contains(BottledMatterItem.TAG_TEMP_K)) {
+                tag.getDouble(BottledMatterItem.TAG_TEMP_K).orElse(0.0)
+            } else {
+                0.0
+            }
+            if (tempK > 0.0) {
+                tooltip.accept(Component.literal(String.format("Temp: %.1f K", tempK)))
+            }
+        }
+    }
+}

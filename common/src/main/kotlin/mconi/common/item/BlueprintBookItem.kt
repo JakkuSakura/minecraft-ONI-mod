@@ -14,7 +14,7 @@ import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
 import mconi.common.sim.OniConstructionSitePlacer
 
-class BlueprintBookItem(properties: Item.Properties) : Item(properties) {
+class BlueprintBookItem(properties: Item.Properties) : OniDescribedItem(properties) {
     override fun use(level: Level, player: Player, hand: InteractionHand): InteractionResult {
         if (level.isClientSide) {
             return InteractionResult.SUCCESS

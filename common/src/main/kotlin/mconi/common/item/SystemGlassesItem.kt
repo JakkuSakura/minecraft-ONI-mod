@@ -16,7 +16,7 @@ import net.minecraft.server.level.ServerLevel
 class SystemGlassesItem(
     properties: Item.Properties,
     private val systemLens: SystemLens,
-) : Item(properties) {
+) : OniDescribedItem(properties) {
     override fun use(level: Level, player: Player, hand: InteractionHand): InteractionResult {
         if (!level.isClientSide) {
             val serverLevel = level as? ServerLevel ?: return InteractionResult.SUCCESS
