@@ -2,10 +2,11 @@ package mconi.fabric
 
 import mconi.common.AbstractModBootstrap
 import mconi.common.block.OniBlockLookup
+import mconi.common.block.OniBlockFactory
 import mconi.common.block.entity.ConstructionSiteBlockEntity
 import mconi.common.block.entity.OniBlockEntityTypes
+import mconi.common.block.entity.OniConduitBlockEntity
 import mconi.common.block.entity.OniMatterBlockEntity
-import mconi.common.block.OniBlockFactory
 import net.fabricmc.fabric.api.`object`.builder.v1.block.entity.FabricBlockEntityTypeBuilder
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
@@ -35,5 +36,15 @@ object FabricBlockEntities {
         val matterType = FabricBlockEntityTypeBuilder.create(::OniMatterBlockEntity, *matterBlocks).build()
         Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, matterId, matterType)
         OniBlockEntityTypes.MATTER = matterType
+
+        val conduitId = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:conduit")
+            ?: throw IllegalArgumentException("Invalid block entity id")
+        val conduitBlocks = arrayOf(
+            OniBlockLookup.block(OniBlockFactory.GAS_CONDUIT),
+            OniBlockLookup.block(OniBlockFactory.LIQUID_CONDUIT)
+        )
+        val conduitType = FabricBlockEntityTypeBuilder.create(::OniConduitBlockEntity, *conduitBlocks).build()
+        Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, conduitId, conduitType)
+        OniBlockEntityTypes.CONDUIT = conduitType
     }
 }

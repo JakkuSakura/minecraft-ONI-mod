@@ -3,11 +3,13 @@ package mconi.common.sim
 import mconi.common.sim.subsystem.GasSystem
 import mconi.common.sim.subsystem.LiquidSystem
 import mconi.common.sim.subsystem.OniSystem
+import mconi.common.sim.subsystem.PlumbingSystem
 import mconi.common.sim.subsystem.PowerSystem
 import mconi.common.sim.subsystem.ResearchConstructionSystem
 import mconi.common.sim.subsystem.StressSystem
 import mconi.common.sim.subsystem.SystemContext
 import mconi.common.sim.subsystem.ThermalSystem
+import mconi.common.sim.subsystem.VentilationSystem
 import mconi.common.world.OniWorldScan
 import java.util.concurrent.atomic.AtomicLong
 
@@ -33,8 +35,10 @@ class OniSystemRuntime {
         paused = false
         systems.clear()
         systems.add(LiquidSystem())
+        systems.add(PlumbingSystem())
         systems.add(ThermalSystem())
         systems.add(GasSystem())
+        systems.add(VentilationSystem())
         systems.add(PowerSystem())
         systems.add(StressSystem())
         systems.add(ResearchConstructionSystem())

@@ -56,6 +56,8 @@ object OniBlockFactory {
     const val POLLUTED_WATER = "polluted_water"
     const val CRUDE_OIL = "crude_oil"
     const val LAVA = "lava"
+    const val LIQUID_CONDUIT = "liquid_conduit"
+    const val GAS_CONDUIT = "gas_conduit"
 
     enum class BlockKind {
         SOLID,
@@ -355,6 +357,16 @@ object OniBlockFactory {
             ConstructionSiteBlock(
                 propsFor(CONSTRUCTION_SITE).mapColor(MapColor.COLOR_LIGHT_GRAY).noOcclusion().strength(1.0f, 2.0f)
                     .sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(LIQUID_CONDUIT, SolidBlockSpec(), { _ ->
+            ConduitBlock(
+                propsFor(LIQUID_CONDUIT).mapColor(MapColor.COLOR_CYAN).noOcclusion().strength(0.4f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(GAS_CONDUIT, SolidBlockSpec(), { _ ->
+            ConduitBlock(
+                propsFor(GAS_CONDUIT).mapColor(MapColor.COLOR_LIGHT_BLUE).noOcclusion().strength(0.4f).sound(SoundType.METAL)
             )
         })
     )

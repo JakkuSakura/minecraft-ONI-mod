@@ -2,9 +2,10 @@ package mconi.neoforge
 
 import mconi.common.AbstractModBootstrap
 import mconi.common.block.entity.ConstructionSiteBlockEntity
-import mconi.common.block.entity.OniBlockEntityTypes
-import mconi.common.block.entity.OniMatterBlockEntity
 import mconi.common.block.OniBlockFactory
+import mconi.common.block.entity.OniBlockEntityTypes
+import mconi.common.block.entity.OniConduitBlockEntity
+import mconi.common.block.entity.OniMatterBlockEntity
 import net.minecraft.core.registries.Registries
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.neoforged.bus.api.IEventBus
@@ -25,6 +26,12 @@ object NeoforgeBlockEntities {
             .toSet()
         BlockEntityType(::OniMatterBlockEntity, blocks)
     })
+    private val CONDUIT = BLOCK_ENTITIES.register("conduit", Supplier {
+        val blocks = listOf(OniBlockFactory.GAS_CONDUIT, OniBlockFactory.LIQUID_CONDUIT)
+            .map { NeoforgeBlocks.blockHolder(it).get() }
+            .toSet()
+        BlockEntityType(::OniConduitBlockEntity, blocks)
+    })
 
     fun register(eventBus: IEventBus) {
         BLOCK_ENTITIES.register(eventBus)
@@ -35,5 +42,7 @@ object NeoforgeBlockEntities {
         OniBlockEntityTypes.CONSTRUCTION_SITE = CONSTRUCTION_SITE.get() as BlockEntityType<ConstructionSiteBlockEntity>
         @Suppress("UNCHECKED_CAST")
         OniBlockEntityTypes.MATTER = MATTER.get() as BlockEntityType<OniMatterBlockEntity>
+        @Suppress("UNCHECKED_CAST")
+        OniBlockEntityTypes.CONDUIT = CONDUIT.get() as BlockEntityType<OniConduitBlockEntity>
     }
 }
