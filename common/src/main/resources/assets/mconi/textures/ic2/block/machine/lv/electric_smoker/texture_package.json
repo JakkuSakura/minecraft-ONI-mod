@@ -1,0 +1,14 @@
+{
+	"active_down": "ic2:block/machine/lv/electric_smoker/active_down",
+	"active_east": "ic2:block/machine/lv/electric_smoker/active_east",
+	"active_north": "ic2:block/machine/lv/electric_smoker/active_north",
+	"active_south": "ic2:block/machine/lv/electric_smoker/active_south",
+	"active_up": "ic2:block/machine/lv/electric_smoker/active_up",
+	"active_west": "ic2:block/machine/lv/electric_smoker/active_west",
+	"inactive_down": "ic2:block/machine/lv/electric_smoker/inactive_down",
+	"inactive_east": "ic2:block/machine/lv/electric_smoker/inactive_east",
+	"inactive_north": "ic2:block/machine/lv/electric_smoker/inactive_north",
+	"inactive_south": "ic2:block/machine/lv/electric_smoker/inactive_south",
+	"inactive_up": "ic2:block/machine/lv/electric_smoker/inactive_up",
+	"inactive_west": "ic2:block/machine/lv/electric_smoker/inactive_west"
+}

@@ -1,0 +1,14 @@
+{
+	"active_down": "ic2:block/machine/hv/mass_fabricator/active_down",
+	"active_east": "ic2:block/machine/hv/mass_fabricator/active_east",
+	"active_north": "ic2:block/machine/hv/mass_fabricator/active_north",
+	"active_south": "ic2:block/machine/hv/mass_fabricator/active_south",
+	"active_up": "ic2:block/machine/hv/mass_fabricator/active_up",
+	"active_west": "ic2:block/machine/hv/mass_fabricator/active_west",
+	"inactive_down": "ic2:block/machine/hv/mass_fabricator/inactive_down",
+	"inactive_east": "ic2:block/machine/hv/mass_fabricator/inactive_east",
+	"inactive_north": "ic2:block/machine/hv/mass_fabricator/inactive_north",
+	"inactive_south": "ic2:block/machine/hv/mass_fabricator/inactive_south",
+	"inactive_up": "ic2:block/machine/hv/mass_fabricator/inactive_up",
+	"inactive_west": "ic2:block/machine/hv/mass_fabricator/inactive_west"
+}

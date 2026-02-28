@@ -1,0 +1,8 @@
+{
+	"down": "ic2:block/electric/energy_storage/pesu/down",
+	"east": "ic2:block/electric/energy_storage/pesu/east",
+	"north": "ic2:block/electric/energy_storage/pesu/north",
+	"south": "ic2:block/electric/energy_storage/pesu/south",
+	"up": "ic2:block/electric/energy_storage/pesu/up",
+	"west": "ic2:block/electric/energy_storage/pesu/west"
+}

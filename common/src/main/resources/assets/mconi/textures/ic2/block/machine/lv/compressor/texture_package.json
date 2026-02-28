@@ -1,0 +1,14 @@
+{
+	"active_down": "ic2:block/machine/lv/compressor/active_down",
+	"active_east": "ic2:block/machine/lv/compressor/active_east",
+	"active_north": "ic2:block/machine/lv/compressor/active_north",
+	"active_south": "ic2:block/machine/lv/compressor/active_south",
+	"active_up": "ic2:block/machine/lv/compressor/active_up",
+	"active_west": "ic2:block/machine/lv/compressor/active_west",
+	"inactive_down": "ic2:block/machine/lv/compressor/inactive_down",
+	"inactive_east": "ic2:block/machine/lv/compressor/inactive_east",
+	"inactive_north": "ic2:block/machine/lv/compressor/inactive_north",
+	"inactive_south": "ic2:block/machine/lv/compressor/inactive_south",
+	"inactive_up": "ic2:block/machine/lv/compressor/inactive_up",
+	"inactive_west": "ic2:block/machine/lv/compressor/inactive_west"
+}

@@ -1,0 +1,8 @@
+{
+	"down": "ic2:block/misc/machine_block/down",
+	"east": "ic2:block/misc/machine_block/east",
+	"north": "ic2:block/misc/machine_block/north",
+	"south": "ic2:block/misc/machine_block/south",
+	"up": "ic2:block/misc/machine_block/up",
+	"west": "ic2:block/misc/machine_block/west"
+}

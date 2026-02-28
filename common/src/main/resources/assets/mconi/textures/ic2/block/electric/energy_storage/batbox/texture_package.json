@@ -1,0 +1,8 @@
+{
+	"down": "ic2:block/electric/energy_storage/batbox/down",
+	"east": "ic2:block/electric/energy_storage/batbox/east",
+	"north": "ic2:block/electric/energy_storage/batbox/north",
+	"south": "ic2:block/electric/energy_storage/batbox/south",
+	"up": "ic2:block/electric/energy_storage/batbox/up",
+	"west": "ic2:block/electric/energy_storage/batbox/west"
+}

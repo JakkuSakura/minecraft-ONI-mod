@@ -1,0 +1,20 @@
+{
+	"active_down": "ic2:block/electric/generator/thermal/active_down",
+	"active_east": "ic2:block/electric/generator/thermal/active_east",
+	"active_north": "ic2:block/electric/generator/thermal/active_north",
+	"active_south": "ic2:block/electric/generator/thermal/active_south",
+	"active_up": "ic2:block/electric/generator/thermal/active_up",
+	"active_west": "ic2:block/electric/generator/thermal/active_west",
+	"inactive_down": "ic2:block/electric/generator/thermal/inactive_down",
+	"inactive_east": "ic2:block/electric/generator/thermal/inactive_east",
+	"inactive_north": "ic2:block/electric/generator/thermal/inactive_north",
+	"inactive_south": "ic2:block/electric/generator/thermal/inactive_south",
+	"inactive_up": "ic2:block/electric/generator/thermal/inactive_up",
+	"inactive_west": "ic2:block/electric/generator/thermal/inactive_west",
+	"passive_down": "ic2:block/electric/generator/thermal/passive_down",
+	"passive_east": "ic2:block/electric/generator/thermal/passive_east",
+	"passive_north": "ic2:block/electric/generator/thermal/passive_north",
+	"passive_south": "ic2:block/electric/generator/thermal/passive_south",
+	"passive_up": "ic2:block/electric/generator/thermal/passive_up",
+	"passive_west": "ic2:block/electric/generator/thermal/passive_west"
+}

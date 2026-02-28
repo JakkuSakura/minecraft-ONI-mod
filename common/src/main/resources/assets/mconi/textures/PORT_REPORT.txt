@@ -1,0 +1,102 @@
+OK common/src/main/resources/assets/mconi/textures/block/lava.png <= common/src/main/resources/assets/mconi/textures/ic2/item/armor/modules/lava.png
+MISS common/src/main/resources/assets/mconi/textures/block/power_transformer_small.png
+OK common/src/main/resources/assets/mconi/textures/block/polluted_dirt.png <= common/src/main/resources/assets/mconi/textures/oni/sharedassets0/polluted_dirt.png
+MISS common/src/main/resources/assets/mconi/textures/block/battery.png
+MISS common/src/main/resources/assets/mconi/textures/block/conductive_wire.png
+MISS common/src/main/resources/assets/mconi/textures/block/power_generator.png
+MISS common/src/main/resources/assets/mconi/textures/block/heavi_watt_conductive_wire.png
+MISS common/src/main/resources/assets/mconi/textures/block/algae_deoxidizer.png
+MISS common/src/main/resources/assets/mconi/textures/block/heavi_watt_wire.png
+MISS common/src/main/resources/assets/mconi/textures/block/oxygen_diffuser.png
+OK common/src/main/resources/assets/mconi/textures/block/algae.png <= common/src/main/resources/assets/mconi/textures/oni/sharedassets0/algae.png
+MISS common/src/main/resources/assets/mconi/textures/block/research_desk.png
+MISS common/src/main/resources/assets/mconi/textures/block/heavi_watt_conductive_joint_plate.png
+MISS common/src/main/resources/assets/mconi/textures/block/liquid_pump.png
+MISS common/src/main/resources/assets/mconi/textures/block/construction_site.png
+MISS common/src/main/resources/assets/mconi/textures/block/natural_gas_generator.png
+OK common/src/main/resources/assets/mconi/textures/block/regolith.png <= common/src/main/resources/assets/mconi/textures/oni/sharedassets0/regolith.png
+MISS common/src/main/resources/assets/mconi/textures/block/jumbo_battery.png
+MISS common/src/main/resources/assets/mconi/textures/block/power_control_station.png
+OK common/src/main/resources/assets/mconi/textures/block/sedimentary_rock.png <= common/src/main/resources/assets/mconi/textures/oni/sharedassets0/sedimentary_rock.png
+MISS common/src/main/resources/assets/mconi/textures/block/manual_generator.png
+MISS common/src/main/resources/assets/mconi/textures/block/power_transformer.png
+MISS common/src/main/resources/assets/mconi/textures/block/gas.png
+MISS common/src/main/resources/assets/mconi/textures/block/power_wire.png
+MISS common/src/main/resources/assets/mconi/textures/block/hydrogen_generator.png
+OK common/src/main/resources/assets/mconi/textures/block/igneous_rock.png <= common/src/main/resources/assets/mconi/textures/oni/sharedassets0/igneous_rock.png
+MISS common/src/main/resources/assets/mconi/textures/block/petroleum_generator.png
+OK common/src/main/resources/assets/mconi/textures/block/water.png <= common/src/main/resources/assets/mconi/textures/ic2/item/cells/water.png
+MISS common/src/main/resources/assets/mconi/textures/block/polluted_water.png
+MISS common/src/main/resources/assets/mconi/textures/block/co2_scrubber.png
+MISS common/src/main/resources/assets/mconi/textures/block/power_switch.png
+MISS common/src/main/resources/assets/mconi/textures/block/coal_generator.png
+MISS common/src/main/resources/assets/mconi/textures/block/printing_pod.png
+MISS common/src/main/resources/assets/mconi/textures/block/wire.png
+MISS common/src/main/resources/assets/mconi/textures/block/gas_pump.png
+MISS common/src/main/resources/assets/mconi/textures/block/smart_battery.png
+MISS common/src/main/resources/assets/mconi/textures/block/crude_oil.png
+MISS common/src/main/resources/assets/mconi/textures/block/heavi_watt_joint_plate.png
+MISS common/src/main/resources/assets/mconi/textures/block/conductive_wire_bridge.png
+MISS common/src/main/resources/assets/mconi/textures/block/wire_bridge.png
+OK common/src/main/resources/assets/mconi/textures/block/granite.png <= common/src/main/resources/assets/mconi/textures/oni/sharedassets0/granite.png
+MISS common/src/main/resources/assets/mconi/textures/block/abyssalite.png
+MISS common/src/main/resources/assets/mconi/textures/block/power_shutoff.png
+MISS common/src/main/resources/assets/mconi/textures/item/power_transformer_small.png
+MISS common/src/main/resources/assets/mconi/textures/item/power_glasses.png
+OK common/src/main/resources/assets/mconi/textures/item/polluted_dirt.png <= common/src/main/resources/assets/mconi/textures/oni/sharedassets0/polluted_dirt.png
+MISS common/src/main/resources/assets/mconi/textures/item/battery.png
+MISS common/src/main/resources/assets/mconi/textures/item/conductive_wire.png
+MISS common/src/main/resources/assets/mconi/textures/item/power_generator.png
+MISS common/src/main/resources/assets/mconi/textures/item/metal_ore.png
+MISS common/src/main/resources/assets/mconi/textures/item/heavi_watt_conductive_wire.png
+MISS common/src/main/resources/assets/mconi/textures/item/blueprint.png
+MISS common/src/main/resources/assets/mconi/textures/item/algae_deoxidizer.png
+MISS common/src/main/resources/assets/mconi/textures/item/heavi_watt_wire.png
+MISS common/src/main/resources/assets/mconi/textures/item/oxygen_diffuser.png
+OK common/src/main/resources/assets/mconi/textures/item/algae.png <= common/src/main/resources/assets/mconi/textures/oni/sharedassets0/algae.png
+MISS common/src/main/resources/assets/mconi/textures/item/atmosphere_glasses.png
+MISS common/src/main/resources/assets/mconi/textures/item/research_desk.png
+MISS common/src/main/resources/assets/mconi/textures/item/thermal_glasses.png
+MISS common/src/main/resources/assets/mconi/textures/item/heavi_watt_conductive_joint_plate.png
+MISS common/src/main/resources/assets/mconi/textures/item/liquid_pump.png
+MISS common/src/main/resources/assets/mconi/textures/item/construction_site.png
+MISS common/src/main/resources/assets/mconi/textures/item/natural_gas_generator.png
+MISS common/src/main/resources/assets/mconi/textures/item/power_station_tools.png
+OK common/src/main/resources/assets/mconi/textures/item/regolith.png <= common/src/main/resources/assets/mconi/textures/oni/sharedassets0/regolith.png
+MISS common/src/main/resources/assets/mconi/textures/item/stress_glasses.png
+MISS common/src/main/resources/assets/mconi/textures/item/jumbo_battery.png
+MISS common/src/main/resources/assets/mconi/textures/item/power_control_station.png
+MISS common/src/main/resources/assets/mconi/textures/item/bottled_water.png
+MISS common/src/main/resources/assets/mconi/textures/item/refined_metal.png
+OK common/src/main/resources/assets/mconi/textures/item/sedimentary_rock.png <= common/src/main/resources/assets/mconi/textures/oni/sharedassets0/sedimentary_rock.png
+MISS common/src/main/resources/assets/mconi/textures/item/fluid_glasses.png
+MISS common/src/main/resources/assets/mconi/textures/item/manual_generator.png
+MISS common/src/main/resources/assets/mconi/textures/item/power_transformer.png
+MISS common/src/main/resources/assets/mconi/textures/item/power_wire.png
+MISS common/src/main/resources/assets/mconi/textures/item/hydrogen_generator.png
+OK common/src/main/resources/assets/mconi/textures/item/igneous_rock.png <= common/src/main/resources/assets/mconi/textures/oni/sharedassets0/igneous_rock.png
+MISS common/src/main/resources/assets/mconi/textures/item/blueprint_book.png
+MISS common/src/main/resources/assets/mconi/textures/item/bottled_oxygen.png
+MISS common/src/main/resources/assets/mconi/textures/item/bottled_polluted_water.png
+MISS common/src/main/resources/assets/mconi/textures/item/bottled_lava.png
+MISS common/src/main/resources/assets/mconi/textures/item/petroleum_generator.png
+MISS common/src/main/resources/assets/mconi/textures/item/co2_scrubber.png
+MISS common/src/main/resources/assets/mconi/textures/item/liquid_glasses.png
+MISS common/src/main/resources/assets/mconi/textures/item/bottled_co2.png
+MISS common/src/main/resources/assets/mconi/textures/item/power_switch.png
+MISS common/src/main/resources/assets/mconi/textures/item/coal_generator.png
+MISS common/src/main/resources/assets/mconi/textures/item/printing_pod.png
+MISS common/src/main/resources/assets/mconi/textures/item/wire.png
+MISS common/src/main/resources/assets/mconi/textures/item/gas_pump.png
+MISS common/src/main/resources/assets/mconi/textures/item/research_glasses.png
+MISS common/src/main/resources/assets/mconi/textures/item/construction_glasses.png
+MISS common/src/main/resources/assets/mconi/textures/item/smart_battery.png
+MISS common/src/main/resources/assets/mconi/textures/item/bottled_crude_oil.png
+MISS common/src/main/resources/assets/mconi/textures/item/heavi_watt_joint_plate.png
+MISS common/src/main/resources/assets/mconi/textures/item/oxygen_glasses.png
+MISS common/src/main/resources/assets/mconi/textures/item/conductive_wire_bridge.png
+MISS common/src/main/resources/assets/mconi/textures/item/wire_bridge.png
+OK common/src/main/resources/assets/mconi/textures/item/granite.png <= common/src/main/resources/assets/mconi/textures/oni/sharedassets0/granite.png
+MISS common/src/main/resources/assets/mconi/textures/item/abyssalite.png
+MISS common/src/main/resources/assets/mconi/textures/item/power_shutoff.png
+MISS common/src/main/resources/assets/mconi/textures/item/bottled_hydrogen.png

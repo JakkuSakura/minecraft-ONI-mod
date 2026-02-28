@@ -1,0 +1,14 @@
+{
+	"active_down": "ic2:block/electric/generator/wind_turbine/active_down",
+	"active_east": "ic2:block/electric/generator/wind_turbine/active_east",
+	"active_north": "ic2:block/electric/generator/wind_turbine/active_north",
+	"active_south": "ic2:block/electric/generator/wind_turbine/active_south",
+	"active_up": "ic2:block/electric/generator/wind_turbine/active_up",
+	"active_west": "ic2:block/electric/generator/wind_turbine/active_west",
+	"inactive_down": "ic2:block/electric/generator/wind_turbine/inactive_down",
+	"inactive_east": "ic2:block/electric/generator/wind_turbine/inactive_east",
+	"inactive_north": "ic2:block/electric/generator/wind_turbine/inactive_north",
+	"inactive_south": "ic2:block/electric/generator/wind_turbine/inactive_south",
+	"inactive_up": "ic2:block/electric/generator/wind_turbine/inactive_up",
+	"inactive_west": "ic2:block/electric/generator/wind_turbine/inactive_west"
+}

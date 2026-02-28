@@ -1,0 +1,8 @@
+{
+	"down": "ic2:block/crops/planter_pot/down",
+	"east": "ic2:block/crops/planter_pot/east",
+	"north": "ic2:block/crops/planter_pot/north",
+	"south": "ic2:block/crops/planter_pot/south",
+	"up": "ic2:block/crops/planter_pot/up",
+	"west": "ic2:block/crops/planter_pot/west"
+}

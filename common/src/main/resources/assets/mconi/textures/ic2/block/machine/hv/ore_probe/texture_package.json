@@ -1,0 +1,14 @@
+{
+	"active_down": "ic2:block/machine/hv/ore_probe/active_down",
+	"active_east": "ic2:block/machine/hv/ore_probe/active_east",
+	"active_north": "ic2:block/machine/hv/ore_probe/active_north",
+	"active_south": "ic2:block/machine/hv/ore_probe/active_south",
+	"active_up": "ic2:block/machine/hv/ore_probe/active_up",
+	"active_west": "ic2:block/machine/hv/ore_probe/active_west",
+	"inactive_down": "ic2:block/machine/hv/ore_probe/inactive_down",
+	"inactive_east": "ic2:block/machine/hv/ore_probe/inactive_east",
+	"inactive_north": "ic2:block/machine/hv/ore_probe/inactive_north",
+	"inactive_south": "ic2:block/machine/hv/ore_probe/inactive_south",
+	"inactive_up": "ic2:block/machine/hv/ore_probe/inactive_up",
+	"inactive_west": "ic2:block/machine/hv/ore_probe/inactive_west"
+}

@@ -1,0 +1,8 @@
+{
+	"down": "ic2:block/personal/energy_o_mat/down",
+	"east": "ic2:block/personal/energy_o_mat/east",
+	"north": "ic2:block/personal/energy_o_mat/north",
+	"south": "ic2:block/personal/energy_o_mat/south",
+	"up": "ic2:block/personal/energy_o_mat/up",
+	"west": "ic2:block/personal/energy_o_mat/west"
+}

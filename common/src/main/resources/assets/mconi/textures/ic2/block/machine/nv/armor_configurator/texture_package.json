@@ -1,0 +1,8 @@
+{
+	"down": "ic2:block/machine/nv/armor_configurator/down",
+	"east": "ic2:block/machine/nv/armor_configurator/east",
+	"north": "ic2:block/machine/nv/armor_configurator/north",
+	"south": "ic2:block/machine/nv/armor_configurator/south",
+	"up": "ic2:block/machine/nv/armor_configurator/up",
+	"west": "ic2:block/machine/nv/armor_configurator/west"
+}

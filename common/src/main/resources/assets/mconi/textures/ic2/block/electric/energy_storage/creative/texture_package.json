@@ -1,0 +1,8 @@
+{
+	"down": "ic2:block/electric/energy_storage/creative/down",
+	"east": "ic2:block/electric/energy_storage/creative/east",
+	"north": "ic2:block/electric/energy_storage/creative/north",
+	"south": "ic2:block/electric/energy_storage/creative/south",
+	"up": "ic2:block/electric/energy_storage/creative/up",
+	"west": "ic2:block/electric/energy_storage/creative/west"
+}

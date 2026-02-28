@@ -1,0 +1,8 @@
+{
+	"charged_side": "ic2:block/electric/charging_bench/iv/charged_side",
+	"charging_side": "ic2:block/electric/charging_bench/iv/charging_side",
+	"down": "ic2:block/electric/charging_bench/iv/down",
+	"empty_side": "ic2:block/electric/charging_bench/iv/empty_side",
+	"missing_side": "ic2:block/electric/charging_bench/iv/missing_side",
+	"up": "ic2:block/electric/charging_bench/iv/up"
+}

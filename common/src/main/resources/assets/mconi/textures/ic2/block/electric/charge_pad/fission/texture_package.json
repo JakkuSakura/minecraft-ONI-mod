@@ -1,0 +1,14 @@
+{
+	"active_down": "ic2:block/electric/charge_pad/fission/active_down",
+	"active_east": "ic2:block/electric/charge_pad/fission/active_east",
+	"active_north": "ic2:block/electric/charge_pad/fission/active_north",
+	"active_south": "ic2:block/electric/charge_pad/fission/active_south",
+	"active_up": "ic2:block/electric/charge_pad/fission/active_up",
+	"active_west": "ic2:block/electric/charge_pad/fission/active_west",
+	"inactive_down": "ic2:block/electric/charge_pad/fission/inactive_down",
+	"inactive_east": "ic2:block/electric/charge_pad/fission/inactive_east",
+	"inactive_north": "ic2:block/electric/charge_pad/fission/inactive_north",
+	"inactive_south": "ic2:block/electric/charge_pad/fission/inactive_south",
+	"inactive_up": "ic2:block/electric/charge_pad/fission/inactive_up",
+	"inactive_west": "ic2:block/electric/charge_pad/fission/inactive_west"
+}
