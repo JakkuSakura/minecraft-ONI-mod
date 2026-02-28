@@ -6,6 +6,7 @@ out/
 *.iml
 .gradle/
 .gradle-cache/
+.kotlin/
 output/
 bin/
 libs/
