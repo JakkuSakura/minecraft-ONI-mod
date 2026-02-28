@@ -69,6 +69,10 @@ object OniBlockFactory {
         val factory: () -> Block
     )
 
+    data class SolidBlockSpec(
+        val conductivityCoefficient: Double = 1.0
+    )
+
     private fun blockKey(id: String): ResourceKey<Block> {
         val identifier = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:$id")
             ?: throw IllegalArgumentException("Invalid block id: $id")
@@ -82,238 +86,261 @@ object OniBlockFactory {
     private fun entry(id: String, kind: BlockKind, factory: () -> Block): BlockEntry =
         BlockEntry(id, kind, factory)
 
+    private val SOLID_SPECS: MutableMap<String, SolidBlockSpec> = LinkedHashMap()
+
+    fun solidSpec(id: String): SolidBlockSpec? = SOLID_SPECS[id]
+
+    private fun solidEntry(id: String, spec: SolidBlockSpec, factory: (SolidBlockSpec) -> Block): BlockEntry {
+        SOLID_SPECS[id] = spec
+        return entry(id, BlockKind.SOLID) { factory(spec) }
+    }
+
     private val SOLID_ENTRIES: List<BlockEntry> = listOf(
-        entry(REGOLITH, BlockKind.SOLID, {
+        solidEntry(REGOLITH, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 REGOLITH,
-                dropElementId = "mconi:element_regolith",
-                propsFor(REGOLITH).mapColor(MapColor.COLOR_BROWN).strength(0.6f).sound(SoundType.GRAVEL)
+                elements = listOf(
+                    mconi.common.element.ElementStack("mconi:element_regolith", blockDigYieldKg(REGOLITH).coerceAtLeast(1))
+                ),
+                properties = propsFor(REGOLITH).mapColor(MapColor.COLOR_BROWN).strength(0.6f).sound(SoundType.GRAVEL)
             )
         }),
-        entry(SEDIMENTARY_ROCK, BlockKind.SOLID, {
+        solidEntry(SEDIMENTARY_ROCK, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 SEDIMENTARY_ROCK,
-                dropElementId = "mconi:element_sedimentary_rock",
-                propsFor(SEDIMENTARY_ROCK).mapColor(MapColor.COLOR_YELLOW).strength(1.2f, 3.0f).sound(SoundType.STONE)
+                elements = listOf(
+                    mconi.common.element.ElementStack("mconi:element_sedimentary_rock", blockDigYieldKg(SEDIMENTARY_ROCK).coerceAtLeast(1))
+                ),
+                properties = propsFor(SEDIMENTARY_ROCK).mapColor(MapColor.COLOR_YELLOW).strength(1.2f, 3.0f).sound(SoundType.STONE)
             )
         }),
-        entry(IGNEOUS_ROCK, BlockKind.SOLID, {
+        solidEntry(IGNEOUS_ROCK, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 IGNEOUS_ROCK,
-                dropElementId = "mconi:element_igneous_rock",
-                propsFor(IGNEOUS_ROCK).mapColor(MapColor.COLOR_GRAY).strength(1.5f, 4.0f).sound(SoundType.STONE)
+                elements = listOf(
+                    mconi.common.element.ElementStack("mconi:element_igneous_rock", blockDigYieldKg(IGNEOUS_ROCK).coerceAtLeast(1))
+                ),
+                properties = propsFor(IGNEOUS_ROCK).mapColor(MapColor.COLOR_GRAY).strength(1.5f, 4.0f).sound(SoundType.STONE)
             )
         }),
-        entry(GRANITE, BlockKind.SOLID, {
+        solidEntry(GRANITE, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 GRANITE,
-                dropElementId = "mconi:element_granite",
-                propsFor(GRANITE).mapColor(MapColor.COLOR_ORANGE).strength(1.6f, 4.5f).sound(SoundType.STONE)
+                elements = listOf(
+                    mconi.common.element.ElementStack("mconi:element_granite", blockDigYieldKg(GRANITE).coerceAtLeast(1))
+                ),
+                properties = propsFor(GRANITE).mapColor(MapColor.COLOR_ORANGE).strength(1.6f, 4.5f).sound(SoundType.STONE)
             )
         }),
-        entry(ABYSSALITE, BlockKind.SOLID, {
+        solidEntry(ABYSSALITE, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 ABYSSALITE,
-                dropElementId = "mconi:element_abyssalite",
-                propsFor(ABYSSALITE).mapColor(MapColor.COLOR_BLACK).strength(50.0f, 1200.0f).sound(SoundType.STONE)
+                elements = listOf(
+                    mconi.common.element.ElementStack("mconi:element_abyssalite", blockDigYieldKg(ABYSSALITE).coerceAtLeast(1))
+                ),
+                properties = propsFor(ABYSSALITE).mapColor(MapColor.COLOR_BLACK).strength(50.0f, 1200.0f).sound(SoundType.STONE)
             )
         }),
-        entry(ALGAE, BlockKind.SOLID, {
+        solidEntry(ALGAE, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 ALGAE,
-                dropElementId = "mconi:element_algae",
-                propsFor(ALGAE).mapColor(MapColor.COLOR_GREEN).strength(0.4f).sound(SoundType.GRASS)
+                elements = listOf(
+                    mconi.common.element.ElementStack("mconi:element_algae", blockDigYieldKg(ALGAE).coerceAtLeast(1))
+                ),
+                properties = propsFor(ALGAE).mapColor(MapColor.COLOR_GREEN).strength(0.4f).sound(SoundType.GRASS)
             )
         }),
-        entry(POLLUTED_DIRT, BlockKind.SOLID, {
+        solidEntry(POLLUTED_DIRT, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 POLLUTED_DIRT,
-                dropElementId = "mconi:element_polluted_dirt",
-                propsFor(POLLUTED_DIRT).mapColor(MapColor.COLOR_BROWN).strength(0.6f).sound(SoundType.GRAVEL)
+                elements = listOf(
+                    mconi.common.element.ElementStack("mconi:element_polluted_dirt", blockDigYieldKg(POLLUTED_DIRT).coerceAtLeast(1))
+                ),
+                properties = propsFor(POLLUTED_DIRT).mapColor(MapColor.COLOR_BROWN).strength(0.6f).sound(SoundType.GRAVEL)
             )
         }),
-        entry(PRINTING_POD, BlockKind.SOLID, {
+        solidEntry(PRINTING_POD, SolidBlockSpec(), { _ ->
             PrintingPodBlock(
                 PRINTING_POD,
                 dropElementId = "mconi:element_refined_metal",
-                propsFor(PRINTING_POD).mapColor(MapColor.COLOR_LIGHT_GRAY).strength(3.0f, 6.0f).sound(SoundType.METAL)
+                properties = propsFor(PRINTING_POD).mapColor(MapColor.COLOR_LIGHT_GRAY).strength(3.0f, 6.0f).sound(SoundType.METAL)
             )
         }),
-        entry(OXYGEN_DIFFUSER, BlockKind.SOLID, {
+        solidEntry(OXYGEN_DIFFUSER, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 OXYGEN_DIFFUSER,
                 properties = propsFor(OXYGEN_DIFFUSER).mapColor(MapColor.COLOR_LIGHT_BLUE).strength(2.0f, 5.0f).sound(SoundType.METAL)
             )
         }),
-        entry(ALGAE_DEOXIDIZER, BlockKind.SOLID, {
+        solidEntry(ALGAE_DEOXIDIZER, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 ALGAE_DEOXIDIZER,
                 properties = propsFor(ALGAE_DEOXIDIZER).mapColor(MapColor.COLOR_GREEN).strength(2.0f, 5.0f).sound(SoundType.METAL)
             )
         }),
-        entry(CO2_SCRUBBER, BlockKind.SOLID, {
+        solidEntry(CO2_SCRUBBER, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 CO2_SCRUBBER,
                 properties = propsFor(CO2_SCRUBBER).mapColor(MapColor.COLOR_GRAY).strength(2.0f, 5.0f).sound(SoundType.METAL)
             )
         }),
-        entry(LIQUID_PUMP, BlockKind.SOLID, {
+        solidEntry(LIQUID_PUMP, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 LIQUID_PUMP,
                 properties = propsFor(LIQUID_PUMP).mapColor(MapColor.COLOR_CYAN).strength(2.0f, 5.0f).sound(SoundType.METAL)
             )
         }),
-        entry(GAS_PUMP, BlockKind.SOLID, {
+        solidEntry(GAS_PUMP, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 GAS_PUMP,
                 properties = propsFor(GAS_PUMP).mapColor(MapColor.COLOR_LIGHT_GRAY).strength(2.0f, 5.0f).sound(SoundType.METAL)
             )
         }),
-        entry(MANUAL_GENERATOR, BlockKind.SOLID, {
+        solidEntry(MANUAL_GENERATOR, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 MANUAL_GENERATOR,
                 properties = propsFor(MANUAL_GENERATOR).mapColor(MapColor.COLOR_ORANGE).strength(2.0f, 5.0f).sound(SoundType.METAL)
             )
         }),
-        entry(BATTERY, BlockKind.SOLID, {
+        solidEntry(BATTERY, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 BATTERY,
                 properties = propsFor(BATTERY).mapColor(MapColor.COLOR_YELLOW).strength(2.0f, 5.0f).sound(SoundType.METAL)
             )
         }),
-        entry(POWER_WIRE, BlockKind.SOLID, {
+        solidEntry(POWER_WIRE, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 POWER_WIRE,
                 properties = propsFor(POWER_WIRE).mapColor(MapColor.COLOR_BROWN).noOcclusion().strength(0.6f).sound(SoundType.METAL)
             )
         }),
-        entry(WIRE, BlockKind.SOLID, {
+        solidEntry(WIRE, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 WIRE,
                 properties = propsFor(WIRE).mapColor(MapColor.COLOR_RED).noOcclusion().strength(0.4f).sound(SoundType.METAL)
             )
         }),
-        entry(WIRE_BRIDGE, BlockKind.SOLID, {
+        solidEntry(WIRE_BRIDGE, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 WIRE_BRIDGE,
                 properties = propsFor(WIRE_BRIDGE).mapColor(MapColor.COLOR_RED).strength(0.6f).sound(SoundType.METAL)
             )
         }),
-        entry(CONDUCTIVE_WIRE, BlockKind.SOLID, {
+        solidEntry(CONDUCTIVE_WIRE, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 CONDUCTIVE_WIRE,
                 properties = propsFor(CONDUCTIVE_WIRE).mapColor(MapColor.COLOR_YELLOW).noOcclusion().strength(0.4f).sound(SoundType.METAL)
             )
         }),
-        entry(CONDUCTIVE_WIRE_BRIDGE, BlockKind.SOLID, {
+        solidEntry(CONDUCTIVE_WIRE_BRIDGE, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 CONDUCTIVE_WIRE_BRIDGE,
                 properties = propsFor(CONDUCTIVE_WIRE_BRIDGE).mapColor(MapColor.COLOR_YELLOW).strength(0.6f).sound(SoundType.METAL)
             )
         }),
-        entry(HEAVI_WATT_WIRE, BlockKind.SOLID, {
+        solidEntry(HEAVI_WATT_WIRE, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 HEAVI_WATT_WIRE,
                 properties = propsFor(HEAVI_WATT_WIRE).mapColor(MapColor.COLOR_ORANGE).noOcclusion().strength(0.8f).sound(SoundType.METAL)
             )
         }),
-        entry(HEAVI_WATT_JOINT_PLATE, BlockKind.SOLID, {
+        solidEntry(HEAVI_WATT_JOINT_PLATE, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 HEAVI_WATT_JOINT_PLATE,
                 properties = propsFor(HEAVI_WATT_JOINT_PLATE).mapColor(MapColor.COLOR_ORANGE).strength(1.0f).sound(SoundType.METAL)
             )
         }),
-        entry(HEAVI_WATT_CONDUCTIVE_WIRE, BlockKind.SOLID, {
+        solidEntry(HEAVI_WATT_CONDUCTIVE_WIRE, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 HEAVI_WATT_CONDUCTIVE_WIRE,
                 properties = propsFor(HEAVI_WATT_CONDUCTIVE_WIRE).mapColor(MapColor.COLOR_YELLOW).noOcclusion().strength(0.8f).sound(SoundType.METAL)
             )
         }),
-        entry(HEAVI_WATT_CONDUCTIVE_JOINT_PLATE, BlockKind.SOLID, {
+        solidEntry(HEAVI_WATT_CONDUCTIVE_JOINT_PLATE, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 HEAVI_WATT_CONDUCTIVE_JOINT_PLATE,
                 properties = propsFor(HEAVI_WATT_CONDUCTIVE_JOINT_PLATE).mapColor(MapColor.COLOR_YELLOW).strength(1.0f).sound(SoundType.METAL)
             )
         }),
-        entry(POWER_TRANSFORMER, BlockKind.SOLID, {
+        solidEntry(POWER_TRANSFORMER, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 POWER_TRANSFORMER,
                 properties = propsFor(POWER_TRANSFORMER).mapColor(MapColor.COLOR_GRAY).strength(3.0f, 6.0f).sound(SoundType.METAL)
             )
         }),
-        entry(POWER_TRANSFORMER_SMALL, BlockKind.SOLID, {
+        solidEntry(POWER_TRANSFORMER_SMALL, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 POWER_TRANSFORMER_SMALL,
                 properties = propsFor(POWER_TRANSFORMER_SMALL).mapColor(MapColor.COLOR_GRAY).strength(2.5f, 5.0f).sound(SoundType.METAL)
             )
         }),
-        entry(SMART_BATTERY, BlockKind.SOLID, {
+        solidEntry(SMART_BATTERY, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 SMART_BATTERY,
                 properties = propsFor(SMART_BATTERY).mapColor(MapColor.COLOR_YELLOW).strength(2.0f, 5.0f).sound(SoundType.METAL)
             )
         }),
-        entry(JUMBO_BATTERY, BlockKind.SOLID, {
+        solidEntry(JUMBO_BATTERY, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 JUMBO_BATTERY,
                 properties = propsFor(JUMBO_BATTERY).mapColor(MapColor.COLOR_YELLOW).strength(2.5f, 5.5f).sound(SoundType.METAL)
             )
         }),
-        entry(COAL_GENERATOR, BlockKind.SOLID, {
+        solidEntry(COAL_GENERATOR, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 COAL_GENERATOR,
                 properties = propsFor(COAL_GENERATOR).mapColor(MapColor.COLOR_BLACK).strength(4.0f, 8.0f).sound(SoundType.METAL)
             )
         }),
-        entry(HYDROGEN_GENERATOR, BlockKind.SOLID, {
+        solidEntry(HYDROGEN_GENERATOR, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 HYDROGEN_GENERATOR,
                 properties = propsFor(HYDROGEN_GENERATOR).mapColor(MapColor.COLOR_LIGHT_BLUE).strength(4.0f, 8.0f).sound(SoundType.METAL)
             )
         }),
-        entry(NATURAL_GAS_GENERATOR, BlockKind.SOLID, {
+        solidEntry(NATURAL_GAS_GENERATOR, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 NATURAL_GAS_GENERATOR,
                 properties = propsFor(NATURAL_GAS_GENERATOR).mapColor(MapColor.COLOR_GREEN).strength(4.0f, 8.0f).sound(SoundType.METAL)
             )
         }),
-        entry(PETROLEUM_GENERATOR, BlockKind.SOLID, {
+        solidEntry(PETROLEUM_GENERATOR, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 PETROLEUM_GENERATOR,
                 properties = propsFor(PETROLEUM_GENERATOR).mapColor(MapColor.COLOR_BROWN).strength(4.0f, 8.0f).sound(SoundType.METAL)
             )
         }),
-        entry(POWER_CONTROL_STATION, BlockKind.SOLID, {
+        solidEntry(POWER_CONTROL_STATION, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 POWER_CONTROL_STATION,
                 properties = propsFor(POWER_CONTROL_STATION).mapColor(MapColor.COLOR_CYAN).strength(2.5f, 5.0f).sound(SoundType.METAL)
             )
         }),
-        entry(POWER_SWITCH, BlockKind.SOLID, {
+        solidEntry(POWER_SWITCH, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 POWER_SWITCH,
                 properties = propsFor(POWER_SWITCH).mapColor(MapColor.COLOR_RED).strength(1.5f, 3.0f).sound(SoundType.METAL)
             )
         }),
-        entry(POWER_SHUTOFF, BlockKind.SOLID, {
+        solidEntry(POWER_SHUTOFF, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 POWER_SHUTOFF,
                 properties = propsFor(POWER_SHUTOFF).mapColor(MapColor.COLOR_RED).strength(1.5f, 3.0f).sound(SoundType.METAL)
             )
         }),
-        entry(POWER_GENERATOR, BlockKind.SOLID, {
+        solidEntry(POWER_GENERATOR, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 POWER_GENERATOR,
                 properties = propsFor(POWER_GENERATOR).mapColor(MapColor.COLOR_ORANGE).strength(2.0f, 5.0f).sound(SoundType.METAL)
             )
         }),
-        entry(RESEARCH_DESK, BlockKind.SOLID, {
+        solidEntry(RESEARCH_DESK, SolidBlockSpec(), { _ ->
             OniSolidBlock(
                 RESEARCH_DESK,
                 properties = propsFor(RESEARCH_DESK).mapColor(MapColor.COLOR_LIGHT_GRAY).strength(2.0f, 5.0f).sound(SoundType.METAL)
             )
         }),
-        entry(CONSTRUCTION_SITE, BlockKind.SOLID, {
+        solidEntry(CONSTRUCTION_SITE, SolidBlockSpec(), { _ ->
             ConstructionSiteBlock(
                 propsFor(CONSTRUCTION_SITE).mapColor(MapColor.COLOR_LIGHT_GRAY).noOcclusion().strength(1.0f, 2.0f)
                     .sound(SoundType.METAL)
@@ -407,11 +434,6 @@ object OniBlockFactory {
     }
 
     fun blockDigYieldKg(id: String): Int = blockMassKg(id).coerceAtLeast(1)
-
-    fun liquidMassKg(liquidId: String): Int {
-        val block = OniBlockLookup.block(liquidId)
-        return (block as? OniLiquidBlock)?.massKg ?: 0
-    }
 
     fun createBlock(id: String): Block {
         val entry = ENTRIES_BY_ID[id] ?: throw IllegalArgumentException("Unknown block id: $id")

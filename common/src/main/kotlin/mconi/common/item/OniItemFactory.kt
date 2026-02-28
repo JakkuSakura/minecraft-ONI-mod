@@ -374,7 +374,7 @@ object OniItemFactory {
         glassesItemPaths[SystemLens.ATMOSPHERE] = "atmosphere_glasses"
         glassesItemPaths[SystemLens.LIQUID] = "liquid_glasses"
         glassesItemPaths[SystemLens.THERMAL] = "thermal_glasses"
-        glassesItemPaths[SystemLens.OXYGEN] = "oxygen_glasses"
+        glassesItemPaths[SystemLens.GAS] = "oxygen_glasses"
         glassesItemPaths[SystemLens.POWER] = "power_glasses"
         glassesItemPaths[SystemLens.STRESS] = "stress_glasses"
         glassesItemPaths[SystemLens.RESEARCH] = "research_glasses"

@@ -39,7 +39,6 @@ import mconi.common.sim.model.LayerProperty
 import mconi.common.sim.model.OniBlockData
 import mconi.common.sim.model.SystemLens
 import mconi.common.world.OniChunkDataAccess
-import mconi.common.world.OniWorldSampler
 import mconi.common.wrappers.Utils
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.util.Mth
@@ -217,7 +216,6 @@ abstract class AbstractModBootstrap {
                             val y = Mth.floor(source.position.y)
                             val z = Mth.floor(source.position.z)
                             val level = source.level
-                            OniWorldSampler.sampleBox(level, x, y, z, 0)
                             OniChunkDataAccess.getOrCreate(level, BlockPos(x, y, z))
                             Utils.SendFeedback(context, "Created/loaded simulation block at current position.", true)
                             1
@@ -229,15 +227,12 @@ abstract class AbstractModBootstrap {
                             val y = Mth.floor(source.position.y)
                             val z = Mth.floor(source.position.z)
                             val level = source.level
-                            OniWorldSampler.sampleBox(level, x, y, z, 0)
                             val cell: OniBlockData = OniChunkDataAccess.getOrCreate(level, BlockPos(x, y, z))
                             Utils.SendFeedback(
                                 context,
                                 "Block: occupancy=${cell.occupancyState()}"
                                     + " pressure=${String.format("%.2f", cell.pressureKpa())}kPa"
                                     + " tempK=${String.format("%.2f", cell.temperatureK())}"
-                                    + " o2Frac=${String.format("%.4f", cell.o2Fraction())}"
-                                    + " co2Frac=${String.format("%.4f", cell.co2Fraction())}"
                                     + " breathBand=${cell.breathingBand()}"
                                     + " liquid=${cell.liquidId()}"
                                     + " liquidMassKg=${String.format("%.3f", cell.liquidMassKg())}"
@@ -457,7 +452,7 @@ abstract class AbstractModBootstrap {
                                 if (systemLens == null) {
                                     Utils.SendError(
                                         context,
-                                        "Unknown system lens. Use atmosphere/liquid/thermal/oxygen/power/stress/research/construction.",
+                                        "Unknown system lens. Use atmosphere/liquid/thermal/gas/power/stress/research/construction.",
                                         true
                                     )
                                     return@executes 0
@@ -467,7 +462,6 @@ abstract class AbstractModBootstrap {
                                 val y = Mth.floor(source.position.y)
                                 val z = Mth.floor(source.position.z)
                                 val level = source.level
-                                OniWorldSampler.sampleBox(level, x, y, z, 0)
                                 val cell: OniBlockData = OniChunkDataAccess.getOrCreate(level, BlockPos(x, y, z))
                                 Utils.SendFeedback(
                                     context,

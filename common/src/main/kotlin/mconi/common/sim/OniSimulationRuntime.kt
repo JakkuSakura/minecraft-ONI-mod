@@ -1,8 +1,7 @@
 package mconi.common.sim
 
-import mconi.common.sim.subsystem.AtmosphereSubsystem
 import mconi.common.sim.subsystem.LiquidSubsystem
-import mconi.common.sim.subsystem.OxygenSubsystem
+import mconi.common.sim.subsystem.GasSubsystem
 import mconi.common.sim.subsystem.PowerSubsystem
 import mconi.common.sim.subsystem.ResearchConstructionSubsystem
 import mconi.common.sim.subsystem.SimulationContext
@@ -33,9 +32,8 @@ class OniSimulationRuntime {
         paused = false
         subsystems.clear()
         subsystems.add(LiquidSubsystem())
-        subsystems.add(AtmosphereSubsystem())
         subsystems.add(ThermalSubsystem())
-        subsystems.add(OxygenSubsystem())
+        subsystems.add(GasSubsystem())
         subsystems.add(PowerSubsystem())
         subsystems.add(StressSubsystem())
         subsystems.add(ResearchConstructionSubsystem())

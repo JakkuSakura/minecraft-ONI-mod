@@ -4,7 +4,7 @@ enum class SystemLens {
     ATMOSPHERE,
     LIQUID,
     THERMAL,
-    OXYGEN,
+    GAS,
     POWER,
     STRESS,
     RESEARCH,
@@ -16,6 +16,9 @@ enum class SystemLens {
             val normalized = input.trim().uppercase()
             if (normalized == "FLUID") {
                 return LIQUID
+            }
+            if (normalized == "OXYGEN") {
+                return GAS
             }
             return try {
                 valueOf(normalized)

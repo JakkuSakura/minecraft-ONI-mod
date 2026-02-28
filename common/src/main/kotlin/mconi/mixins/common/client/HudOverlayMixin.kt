@@ -1,5 +1,6 @@
 package mconi.mixins.common.client
 
+import mconi.common.element.OniElements
 import mconi.common.sim.OniServices
 import mconi.common.world.OniChunkDataAccess
 import net.minecraft.client.Minecraft
@@ -45,8 +46,8 @@ class HudOverlayMixin {
             return
         }
 
-        val o2Pct = cell.o2Fraction() * 100.0
-        val co2Pct = cell.co2Fraction() * 100.0
+        val o2Pct = cell.gasFraction(OniElements.GAS_OXYGEN) * 100.0
+        val co2Pct = cell.gasFraction(OniElements.GAS_CARBON_DIOXIDE) * 100.0
         val pressure = cell.pressureKpa()
         val tempC = cell.temperatureK() - 273.15
         val band = cell.breathingBand().name

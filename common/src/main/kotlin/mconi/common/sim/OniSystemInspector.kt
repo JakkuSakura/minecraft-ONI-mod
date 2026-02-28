@@ -19,7 +19,7 @@ object OniSystemInspector {
             SystemLens.ATMOSPHERE -> atmosphereLayers(cell)
             SystemLens.LIQUID -> liquidLayers(cell)
             SystemLens.THERMAL -> thermalLayers(cell)
-            SystemLens.OXYGEN -> oxygenLayers(cell)
+            SystemLens.GAS -> gasLayers(cell)
             SystemLens.POWER -> powerLayers(runtime)
             SystemLens.STRESS -> stressLayers(runtime, player)
             SystemLens.RESEARCH -> researchLayers(runtime)
@@ -61,12 +61,19 @@ object OniSystemInspector {
         )
     }
 
-    private fun oxygenLayers(cell: OniBlockData): List<LayerProperty> {
-        return listOf(
-            LayerProperty("oxygen", "o2_fraction", "%.4f".format(cell.o2Fraction())),
-            LayerProperty("oxygen", "co2_fraction", "%.4f".format(cell.co2Fraction())),
-            LayerProperty("oxygen", "breathing_band", cell.breathingBand().name),
-        )
+    private fun gasLayers(cell: OniBlockData): List<LayerProperty> {
+        val layers: MutableList<LayerProperty> = ArrayList()
+        for (species in OniElements.GASES) {
+            layers.add(
+                LayerProperty(
+                    "gas",
+                    "${species.symbol.lowercase()}_fraction",
+                    "%.4f".format(cell.gasFraction(species))
+                )
+            )
+        }
+        layers.add(LayerProperty("gas", "breathing_band", cell.breathingBand().name))
+        return layers
     }
 
     private fun powerLayers(runtime: OniSimulationRuntime): List<LayerProperty> {

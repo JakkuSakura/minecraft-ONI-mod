@@ -39,8 +39,17 @@ dependencies {
         compileOnly "maven.modrinth:jade:${rootProject.jade_neoforge_version}"
     }
     shadowMe "org.jetbrains.kotlin:kotlin-stdlib:2.0.21"
+    testImplementation files(sourceSets.main.output.classesDirs, sourceSets.main.output.resourcesDir)
+    testImplementation files("${buildDir}/classes/kotlin/main", "${buildDir}/classes/java/main")
     testImplementation "org.jetbrains.kotlin:kotlin-test:2.0.21"
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+}
+
+sourceSets {
+    test {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
 }
 
 def generatedResourcesDir = "${buildDir}/generated/resources"
@@ -49,7 +58,9 @@ tasks.register("generateElementItemModels") {
     outputs.dir(generatedResourcesDir)
     doLast {
         def modelDir = file("${generatedResourcesDir}/assets/mconi/models/item")
+        def itemDir = file("${generatedResourcesDir}/assets/mconi/items")
         modelDir.mkdirs()
+        itemDir.mkdirs()
         def models = [
             "element_regolith": "mconi:item/regolith",
             "element_sedimentary_rock": "mconi:item/sedimentary_rock",
@@ -58,12 +69,14 @@ tasks.register("generateElementItemModels") {
             "element_abyssalite": "mconi:item/abyssalite",
             "element_algae": "mconi:item/algae",
             "element_polluted_dirt": "mconi:item/polluted_dirt",
-            "element_metal_ore": "minecraft:item/raw_iron",
-            "element_refined_metal": "minecraft:item/iron_ingot"
+            "element_metal_ore": "mconi:item/metal_ore",
+            "element_refined_metal": "mconi:item/refined_metal"
         ]
         models.each { name, texture ->
             def file = new File(modelDir, "${name}.json")
             file.text = """{\n  \"parent\": \"minecraft:item/generated\",\n  \"textures\": {\n    \"layer0\": \"${texture}\"\n  }\n}\n"""
+            def itemFile = new File(itemDir, "${name}.json")
+            itemFile.text = """{\n  \"model\": {\n    \"type\": \"minecraft:model\",\n    \"model\": \"mconi:item/${name}\"\n  }\n}\n"""
         }
     }
 }
@@ -79,6 +92,13 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
         jvmTarget = "${rootProject.java_version}"
     }
 }
+
+tasks.named("compileTestKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configure {
+    libraries.from(sourceSets.main.output)
+    destinationDirectory.set(file("$buildDir/classes/java/test"))
+}
+
+sourceSets.test.output.classesDirs.setFrom(files("$buildDir/classes/java/test"))
 
 tasks.named("compileJava") {
     outputs.cacheIf { false }

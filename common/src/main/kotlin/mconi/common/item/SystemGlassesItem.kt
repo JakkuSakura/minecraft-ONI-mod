@@ -4,7 +4,6 @@ import mconi.common.sim.OniServices
 import mconi.common.sim.OniSystemInspector
 import mconi.common.sim.model.SystemLens
 import mconi.common.world.OniChunkDataAccess
-import mconi.common.world.OniWorldSampler
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
@@ -22,7 +21,6 @@ class SystemGlassesItem(
         if (!level.isClientSide) {
             val serverLevel = level as? ServerLevel ?: return InteractionResult.SUCCESS
             val pos: BlockPos = player.blockPosition()
-            OniWorldSampler.sampleBox(serverLevel, pos.x, pos.y, pos.z, 0)
             val cell = OniChunkDataAccess.getOrCreate(serverLevel, pos)
             player.displayClientMessage(
                 Component.literal(

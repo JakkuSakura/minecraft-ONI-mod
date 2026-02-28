@@ -7,7 +7,6 @@ import mconi.common.AbstractModBootstrap
 import mconi.common.element.OniElements
 import mconi.common.item.OniBlueprintRegistry
 import mconi.common.sim.OniServices
-import mconi.common.world.OniWorldSampler
 import mconi.common.world.OniChunkDataAccess
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerLevel
@@ -234,8 +233,7 @@ object OniDebugHttpServer {
             val y = query["y"]?.toInt() ?: level.minY
             val z = query["z"]?.toInt() ?: 0
             val radius = query["radius"]?.toInt() ?: 16
-            val samples = OniWorldSampler.sampleBox(level, x, y, z, radius)
-            writeJson(exchange, 200, "{\"samples\":$samples}")
+            writeJson(exchange, 501, "{\"error\":\"world_sampler_removed\"}")
         }
     }
 }

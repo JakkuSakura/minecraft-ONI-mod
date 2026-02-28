@@ -3,8 +3,6 @@ package mconi.mixins.common.server
 import mconi.common.debug.OniDebugHttpServer
 import mconi.common.sim.OniServices
 import mconi.common.world.OniPlayerBreathing
-import mconi.common.world.OniPowerSampler
-import mconi.common.world.OniWorldSampler
 import mconi.common.world.OniWorldWriter
 import net.minecraft.server.MinecraftServer
 import org.spongepowered.asm.mixin.Mixin
@@ -20,8 +18,6 @@ class MinecraftServerSimulationMixin {
     private fun `mconi$onServerTick`(hasTimeLeft: BooleanSupplier, ci: CallbackInfo) {
         @Suppress("CAST_NEVER_SUCCEEDS")
         val server = this as MinecraftServer
-        OniPowerSampler.sampleAroundPlayers(server)
-        OniWorldSampler.sampleAroundPlayers(server)
         OniDebugHttpServer.ensureStarted(server)
         OniServices.simulationRuntime().onServerTick(server)
         OniWorldWriter.applyAroundPlayers(server)
