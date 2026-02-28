@@ -114,14 +114,14 @@ class BlueprintBookScreen(
         return super.mouseScrolled(mouseX, mouseY, deltaX, deltaY)
     }
 
-    override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
-        if (button != 0) {
-            return super.mouseClicked(mouseX, mouseY, button)
+    override fun mouseClicked(event: net.minecraft.client.input.MouseButtonEvent, focused: Boolean): Boolean {
+        if (event.button() != 0) {
+            return super.mouseClicked(event, focused)
         }
 
         val gridX = leftPos + 8
         val gridY = topPos + 24
-        val clickedBlueprint = findBlueprintAt(mouseX.toInt(), mouseY.toInt(), gridX, gridY)
+        val clickedBlueprint = findBlueprintAt(event.x().toInt(), event.y().toInt(), gridX, gridY)
         if (clickedBlueprint != null) {
             selectBlueprint(clickedBlueprint)
             return true
@@ -133,7 +133,7 @@ class BlueprintBookScreen(
             if (blueprint != null) {
                 val detailsX = gridX + blueprintColumns * cellSize + 12
                 val detailsY = topPos + 22 + 24
-                val materialHit = findMaterialAt(mouseX.toInt(), mouseY.toInt(), detailsX, detailsY, blueprint)
+                val materialHit = findMaterialAt(event.x().toInt(), event.y().toInt(), detailsX, detailsY, blueprint)
                 if (materialHit != null) {
                     selectMaterial(materialHit.slotIndex, materialHit.itemIndex, blueprint)
                     return true
@@ -141,7 +141,7 @@ class BlueprintBookScreen(
             }
         }
 
-        return super.mouseClicked(mouseX, mouseY, button)
+        return super.mouseClicked(event, focused)
     }
 
     private fun drawBlueprintGrid(
