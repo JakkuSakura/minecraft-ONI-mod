@@ -69,8 +69,8 @@ class LiquidSystem : OniSystem {
         val updated = FluidFlowKernel.applyLiquidFlow(
             cells,
             FluidFlowKernel.FlowConfig(
-                maxTransferKgPerStep = maxTransfer,
-                referenceMassKg = LIQUID_REFERENCE_MASS_KG,
+                maxTransferPerStep = maxTransfer,
+                referenceMass = LIQUID_REFERENCE_MASS,
                 downwardBias = DOWNWARD_BIAS
             )
         )
@@ -123,7 +123,7 @@ class LiquidSystem : OniSystem {
     }
 
     companion object {
-        private const val LIQUID_REFERENCE_MASS_KG = 1000.0
+        private const val LIQUID_REFERENCE_MASS = 1000.0
         private const val DOWNWARD_BIAS = 0.25
     }
 }

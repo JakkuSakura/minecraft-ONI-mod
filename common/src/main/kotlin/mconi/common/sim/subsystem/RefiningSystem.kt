@@ -75,8 +75,8 @@ class RefiningSystem : OniSystem {
         recipe: RefiningRecipe,
         dt: Double
     ) {
-        val desiredInputs = recipe.inputs.map { it to it.amountKg * dt }
-        val desiredOutputs = recipe.outputs.map { it to it.amountKg * dt }
+        val desiredInputs = recipe.inputs.map { it to it.amount * dt }
+        val desiredOutputs = recipe.outputs.map { it to it.amount * dt }
 
         val availableScale = computeInputScale(level, pos, entity, desiredInputs)
         if (availableScale <= 1e-9) {
@@ -127,8 +127,8 @@ class RefiningSystem : OniSystem {
             return
         }
 
-        val inputs = recipe.inputs.map { it to it.amountKg }
-        val outputs = recipe.outputs.map { it to it.amountKg }
+        val inputs = recipe.inputs.map { it to it.amount }
+        val outputs = recipe.outputs.map { it to it.amount }
         val inputTemp = consumeInputs(level, pos, entity, inputs)
         val avgInputTemp = if (inputTemp.totalMass > 0.0) inputTemp.temperatureK else 293.15
         produceOutputs(level, pos, entity, spec, outputs, avgInputTemp)
@@ -143,8 +143,8 @@ class RefiningSystem : OniSystem {
         spec: RefiningBuildingSpec,
         recipe: RefiningRecipe
     ): Boolean {
-        val desiredInputs = recipe.inputs.map { it to it.amountKg }
-        val desiredOutputs = recipe.outputs.map { it to it.amountKg }
+        val desiredInputs = recipe.inputs.map { it to it.amount }
+        val desiredOutputs = recipe.outputs.map { it to it.amount }
         val inputScale = computeInputScale(level, pos, entity, desiredInputs)
         if (inputScale < 1.0 - 1e-9) {
             return false

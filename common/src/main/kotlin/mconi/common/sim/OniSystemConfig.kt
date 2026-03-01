@@ -75,4 +75,12 @@ class OniSystemConfig {
         require(worldSampleIntervalTicks >= 1) { "worldSampleIntervalTicks must be >= 1" }
         this.worldSampleIntervalTicks = worldSampleIntervalTicks
     }
+
+    fun setWorldMinZ(worldMinZ: Int) {
+        this.worldMinZ = worldMinZ
+    }
+
+    fun setWorldMaxZ(worldMaxZ: Int) {
+        this.worldMaxZ = worldMaxZ
+    }
 }

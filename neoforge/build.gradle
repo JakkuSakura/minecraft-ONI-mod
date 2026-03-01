@@ -130,6 +130,9 @@ dependencies {
     // Neoforge
     neoForge "net.neoforged:neoforge:${rootProject.neoforge_version}"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:2.0.21"
+    if (rootProject.hasProperty("cloth_config_neoforge_version") && rootProject.cloth_config_neoforge_version != "") {
+        modImplementation("me.shedaniel.cloth:cloth-config-neoforge:${rootProject.cloth_config_neoforge_version}")
+    }
 
     //use addModJar() to include a library, some_api_version should be in version.property
     //addModJar(someApi.module("moduleName", rootProject.some_api_version))

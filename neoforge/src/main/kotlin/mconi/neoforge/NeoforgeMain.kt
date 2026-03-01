@@ -2,6 +2,7 @@ package mconi.neoforge
 
 import mconi.common.AbstractModBootstrap
 import mconi.common.LoaderType
+import mconi.common.config.OniConfigPaths
 import mconi.common.element.OniElements
 import mconi.neoforge.wrappers.NeoForgeModChecker
 import net.neoforged.api.distmarker.Dist
@@ -11,6 +12,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent
 import net.neoforged.fml.event.lifecycle.FMLDedicatedServerSetupEvent
 import net.neoforged.fml.loading.FMLEnvironment
+import net.neoforged.fml.loading.FMLPaths
 
 /**
  * main entry point on NeoForge
@@ -19,6 +21,7 @@ import net.neoforged.fml.loading.FMLEnvironment
 class NeoforgeMain(eventBus: IEventBus) : AbstractModBootstrap() {
     init {
         loaderType = LoaderType.NeoForge
+        OniConfigPaths.init(FMLPaths.CONFIGDIR.get())
         NeoforgeBlocks.register(eventBus)
         NeoforgeBlockEntities.register(eventBus)
         NeoforgeItems.register(eventBus)

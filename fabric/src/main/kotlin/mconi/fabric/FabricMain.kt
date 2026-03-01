@@ -2,9 +2,11 @@ package mconi.fabric
 
 import mconi.common.AbstractModBootstrap
 import mconi.common.LoaderType
+import mconi.common.config.OniConfigPaths
 import mconi.fabric.wrappers.FabricModChecker
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.DedicatedServerModInitializer
+import net.fabricmc.loader.api.FabricLoader
 
 /**
  * main entry point on Fabric
@@ -12,6 +14,7 @@ import net.fabricmc.api.DedicatedServerModInitializer
 class FabricMain : AbstractModBootstrap(), ClientModInitializer, DedicatedServerModInitializer {
     init {
         loaderType = LoaderType.Fabric
+        OniConfigPaths.init(FabricLoader.getInstance().configDir)
     }
 
     override fun onInitializeClient() {

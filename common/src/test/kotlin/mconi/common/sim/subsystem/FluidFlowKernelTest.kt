@@ -30,8 +30,8 @@ class FluidFlowKernelTest {
         val updated = FluidFlowKernel.applyGasFlow(
             cells,
             FluidFlowKernel.FlowConfig(
-                maxTransferKgPerStep = 1000.0,
-                referenceMassKg = 100.0,
+                maxTransferPerStep = 1000.0,
+                referenceMass = 100.0,
                 downwardBias = 0.0
             )
         )
@@ -70,8 +70,8 @@ class FluidFlowKernelTest {
         val updated = FluidFlowKernel.applyGasFlow(
             cells,
             FluidFlowKernel.FlowConfig(
-                maxTransferKgPerStep = 1000.0,
-                referenceMassKg = 100.0,
+                maxTransferPerStep = 1000.0,
+                referenceMass = 100.0,
                 downwardBias = 0.0
             )
         )
@@ -110,8 +110,8 @@ class FluidFlowKernelTest {
         val updated = FluidFlowKernel.applyLiquidFlow(
             cells,
             FluidFlowKernel.FlowConfig(
-                maxTransferKgPerStep = 1000.0,
-                referenceMassKg = 1000.0,
+                maxTransferPerStep = 1000.0,
+                referenceMass = 1000.0,
                 downwardBias = 0.25
             )
         )
@@ -150,8 +150,8 @@ class FluidFlowKernelTest {
         val updated = FluidFlowKernel.applyLiquidFlow(
             cells,
             FluidFlowKernel.FlowConfig(
-                maxTransferKgPerStep = 500.0,
-                referenceMassKg = 1000.0,
+                maxTransferPerStep = 500.0,
+                referenceMass = 1000.0,
                 downwardBias = 0.25
             )
         )

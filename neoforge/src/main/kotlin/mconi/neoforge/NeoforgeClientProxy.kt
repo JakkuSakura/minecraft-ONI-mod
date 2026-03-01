@@ -2,6 +2,7 @@ package mconi.neoforge
 
 import com.mojang.brigadier.CommandDispatcher
 import mconi.common.AbstractModBootstrap
+import mconi.common.client.OniClientScreens
 import net.minecraft.commands.CommandSourceStack
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent
@@ -15,6 +16,9 @@ class NeoforgeClientProxy : AbstractModBootstrap.IEventProxy {
     override fun registerEvents() {
         LOGGER.info("Registering NeoForge Client Events")
         NeoForge.EVENT_BUS.register(this)
+        OniClientScreens.registerWorldgenConfigScreen { parent ->
+            NeoforgeWorldgenConfigScreen.create(parent)
+        }
         // NeoForge Client Events here
     }
 

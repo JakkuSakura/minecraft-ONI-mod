@@ -100,6 +100,9 @@ dependencies {
     // Forge
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:2.0.21"
+    if (rootProject.hasProperty("cloth_config_forge_version") && rootProject.cloth_config_forge_version != "") {
+        modImplementation("me.shedaniel.cloth:cloth-config-forge:${rootProject.cloth_config_forge_version}")
+    }
 
     //use addModJar() to include a library, some_api_version should be in version.property
     //addModJar(someApi.module("moduleName", rootProject.some_api_version))

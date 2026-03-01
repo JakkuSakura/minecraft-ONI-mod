@@ -2,8 +2,10 @@ package mconi.forge
 
 import mconi.common.AbstractModBootstrap
 import mconi.common.LoaderType
+import mconi.common.config.OniConfigPaths
 import mconi.common.element.OniElements
 import mconi.forge.wrappers.ForgeModChecker
+import net.minecraftforge.fml.loading.FMLPaths
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
@@ -19,6 +21,7 @@ import java.lang.invoke.MethodHandles
 class ForgeMain : AbstractModBootstrap() {
     init {
         loaderType = LoaderType.Forge
+        OniConfigPaths.init(FMLPaths.CONFIGDIR.get())
         val modBusGroup = FMLJavaModLoadingContext.get().modBusGroup
         ForgeBlocks.register(modBusGroup)
         ForgeBlockEntities.register(modBusGroup)

@@ -26,6 +26,9 @@
         "server": [
             "${group}.fabric.FabricMain"
         ],
+        "modmenu": [
+            "${group}.fabric.FabricModMenuIntegration"
+        ],
         "jade": [
             "mconi.common.compat.jade.OniJadePlugin"
         ]

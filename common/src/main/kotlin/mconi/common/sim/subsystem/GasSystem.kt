@@ -71,8 +71,8 @@ class GasSystem : OniSystem {
         val updated = FluidFlowKernel.applyGasFlow(
             cells,
             FluidFlowKernel.FlowConfig(
-                maxTransferKgPerStep = maxTransfer,
-                referenceMassKg = GAS_REFERENCE_MASS_KG,
+                maxTransferPerStep = maxTransfer,
+                referenceMass = GAS_REFERENCE_MASS,
                 downwardBias = 0.0
             )
         )
@@ -118,6 +118,6 @@ class GasSystem : OniSystem {
     }
 
     companion object {
-        private const val GAS_REFERENCE_MASS_KG = 100.0
+        private const val GAS_REFERENCE_MASS = 100.0
     }
 }

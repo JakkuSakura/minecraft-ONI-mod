@@ -121,6 +121,13 @@ abstract class AbstractModBootstrap {
 
         @JvmStatic
         fun registerClientCommands(dispatcher: CommandDispatcher<CommandSourceStack>) {
+            val oniConfig = literal("oni_config")
+                .executes {
+                    mconi.common.client.OniClientScreens.openWorldgenConfigScreen()
+                    1
+                }
+            dispatcher.register(oniConfig)
+
             val exampleCommand = literal("client_example_command")
                 .then(argument("example_string", StringArgumentType.word())
                     .then(argument("example_int", IntegerArgumentType.integer(0))

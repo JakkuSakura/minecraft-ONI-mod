@@ -15,10 +15,7 @@ object ForgeMenus {
 
     private val BLUEPRINT_BOOK = MENUS.register("blueprint_book") {
         MenuType(
-            { containerId, inventory ->
-                @Suppress("UNCHECKED_CAST")
-                BlueprintBookMenu(containerId, inventory, BLUEPRINT_BOOK.get() as MenuType<BlueprintBookMenu>)
-            },
+            { containerId, inventory -> BlueprintBookMenu(containerId, inventory) },
             FeatureFlagSet.of()
         )
     }

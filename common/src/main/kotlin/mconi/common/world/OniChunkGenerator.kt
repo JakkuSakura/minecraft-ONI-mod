@@ -33,12 +33,21 @@ import kotlin.math.abs
 import mconi.common.block.OniBlockLookup
 import mconi.common.block.OniBlockFactory
 import mconi.common.block.entity.OniElementBlockEntity
+import java.util.Optional
 
-class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) {
+class OniChunkGenerator(
+    biomeSource: BiomeSource,
+    private val minZ: Int,
+    private val maxZ: Int
+) : ChunkGenerator(biomeSource) {
     override fun codec(): MapCodec<out ChunkGenerator> = CODEC
 
     override fun validate() {
     }
+
+    fun minZ(): Int = minZ
+    fun maxZ(): Int = maxZ
+    fun zThickness(): Int = maxZ - minZ + 1
 
     override fun createState(
         structureSets: HolderLookup<StructureSet>,
@@ -106,20 +115,21 @@ class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) 
                 val worldX = chunkPos.minBlockX + dx
                 val worldZ = chunkPos.minBlockZ + dz
                 val inBounds = worldX in OniWorldLayout.WORLD_MIN_X..OniWorldLayout.WORLD_MAX_X &&
-                    worldZ in OniWorldLayout.WORLD_MIN_Z..OniWorldLayout.WORLD_MAX_Z
+                    worldZ in minZ..maxZ
+                val zBorderEnabled = (maxZ - minZ) >= 2
                 val onBorder = worldX == OniWorldLayout.WORLD_MIN_X || worldX == OniWorldLayout.WORLD_MAX_X ||
-                    worldZ == OniWorldLayout.WORLD_MIN_Z || worldZ == OniWorldLayout.WORLD_MAX_Z
+                    (zBorderEnabled && (worldZ == minZ || worldZ == maxZ))
 
                 for (y in minY..maxY) {
                     val state = when {
-                        !inBounds -> Blocks.BEDROCK.stateDefinition.any()
-                        onBorder -> Blocks.BEDROCK.stateDefinition.any()
-                        y < activeMinY -> Blocks.BEDROCK.stateDefinition.any()
-                        y == activeMinY -> Blocks.BEDROCK.stateDefinition.any()
+                        !inBounds -> Blocks.BARRIER.stateDefinition.any()
+                        onBorder -> Blocks.BARRIER.stateDefinition.any()
+                        y < activeMinY -> Blocks.BARRIER.stateDefinition.any()
+                        y == activeMinY -> Blocks.BARRIER.stateDefinition.any()
                         y <= lavaTop -> OniBlockLookup.state(OniBlockFactory.LAVA)
                         y > activeMaxY -> Blocks.AIR.stateDefinition.any()
                         y >= spaceStart -> Blocks.AIR.stateDefinition.any()
-                        y <= surfaceY -> solidStateFor(worldX, y, worldZ, surfaceY, lavaTop)
+                        y <= surfaceY -> solidStateFor(worldX, y, worldZ, surfaceY, lavaTop, minZ, maxZ)
                         else -> Blocks.AIR.stateDefinition.any()
                     }
                     setBlock(chunk, BlockPos(worldX, y, worldZ), state)
@@ -139,7 +149,7 @@ class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) 
         randomState: RandomState
     ): Int {
         val inBounds = x in OniWorldLayout.WORLD_MIN_X..OniWorldLayout.WORLD_MAX_X &&
-            z in OniWorldLayout.WORLD_MIN_Z..OniWorldLayout.WORLD_MAX_Z
+            z in minZ..maxZ
         return if (inBounds) min(OniWorldLayout.SURFACE_Y, OniWorldLayout.WORLD_TARGET_MAX_Y) else level.minY
     }
 
@@ -153,19 +163,20 @@ class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) 
         val lavaTop = activeMinY + OniWorldLayout.LAVA_BAND_HEIGHT - 1
         val spaceStart = activeMaxY - OniWorldLayout.SPACE_BAND_HEIGHT + 1
         val inBounds = x in OniWorldLayout.WORLD_MIN_X..OniWorldLayout.WORLD_MAX_X &&
-            z in OniWorldLayout.WORLD_MIN_Z..OniWorldLayout.WORLD_MAX_Z
+            z in minZ..maxZ
+        val zBorderEnabled = (maxZ - minZ) >= 2
         val onBorder = x == OniWorldLayout.WORLD_MIN_X || x == OniWorldLayout.WORLD_MAX_X ||
-            z == OniWorldLayout.WORLD_MIN_Z || z == OniWorldLayout.WORLD_MAX_Z
+            (zBorderEnabled && (z == minZ || z == maxZ))
         for (y in minY..maxY) {
             val state = when {
-                !inBounds -> Blocks.BEDROCK.stateDefinition.any()
-                onBorder -> Blocks.BEDROCK.stateDefinition.any()
-                y < activeMinY -> Blocks.BEDROCK.stateDefinition.any()
-                y == activeMinY -> Blocks.BEDROCK.stateDefinition.any()
+                !inBounds -> Blocks.BARRIER.stateDefinition.any()
+                onBorder -> Blocks.BARRIER.stateDefinition.any()
+                y < activeMinY -> Blocks.BARRIER.stateDefinition.any()
+                y == activeMinY -> Blocks.BARRIER.stateDefinition.any()
                 y <= lavaTop -> OniBlockLookup.state(OniBlockFactory.LAVA)
                 y > activeMaxY -> Blocks.AIR.stateDefinition.any()
                 y >= spaceStart -> Blocks.AIR.stateDefinition.any()
-                y <= surfaceY -> solidStateFor(x, y, z, surfaceY, lavaTop)
+                y <= surfaceY -> solidStateFor(x, y, z, surfaceY, lavaTop, minZ, maxZ)
                 else -> Blocks.AIR.stateDefinition.any()
             }
             states[y - minY] = state
@@ -198,8 +209,17 @@ class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) 
         @JvmField
         val CODEC: MapCodec<OniChunkGenerator> = RecordCodecBuilder.mapCodec { instance ->
             instance.group(
-                BiomeSource.CODEC.fieldOf("biome_source").forGetter(OniChunkGenerator::biomeSource)
-            ).apply(instance, ::OniChunkGenerator)
+                BiomeSource.CODEC.fieldOf("biome_source").forGetter(OniChunkGenerator::biomeSource),
+                com.mojang.serialization.Codec.INT.optionalFieldOf("min_z")
+                    .forGetter { generator -> Optional.of(generator.minZ) },
+                com.mojang.serialization.Codec.INT.optionalFieldOf("max_z")
+                    .forGetter { generator -> Optional.of(generator.maxZ) }
+            ).apply(instance) { biomeSource, minZOpt, maxZOpt ->
+                val minZ = if (minZOpt.isPresent) minZOpt.get() else null
+                val maxZ = if (maxZOpt.isPresent) maxZOpt.get() else null
+                val bounds = OniWorldgenConfig.resolveBounds(minZ, maxZ)
+                OniChunkGenerator(biomeSource, bounds.minZ, bounds.maxZ)
+            }
         }
 
         private fun setBlock(chunk: ChunkAccess, pos: BlockPos, state: BlockState) {
@@ -264,12 +284,20 @@ class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) 
             }
         }
 
-        private fun solidStateFor(x: Int, y: Int, z: Int, surfaceY: Int, lavaTop: Int): BlockState {
+        private fun solidStateFor(
+            x: Int,
+            y: Int,
+            z: Int,
+            surfaceY: Int,
+            lavaTop: Int,
+            minZ: Int,
+            maxZ: Int
+        ): BlockState {
             val depthFromSurface = surfaceY - y
             val hash = hash(x, y, z)
             val borderDistance = min(
                 min(abs(x - OniWorldLayout.WORLD_MIN_X), abs(OniWorldLayout.WORLD_MAX_X - x)),
-                min(abs(z - OniWorldLayout.WORLD_MIN_Z), abs(OniWorldLayout.WORLD_MAX_Z - z))
+                min(abs(z - minZ), abs(maxZ - z))
             )
             if (borderDistance <= 1) {
                 return OniBlockLookup.state(OniBlockFactory.ABYSSALITE)

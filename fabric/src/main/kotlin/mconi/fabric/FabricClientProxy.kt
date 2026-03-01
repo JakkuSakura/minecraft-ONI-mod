@@ -2,6 +2,7 @@ package mconi.fabric
 
 import com.mojang.brigadier.CommandDispatcher
 import mconi.common.AbstractModBootstrap
+import mconi.common.client.OniClientScreens
 import mconi.common.client.screen.BlueprintBookScreen
 import mconi.common.menu.OniMenuTypes
 import net.fabricmc.api.EnvType
@@ -28,6 +29,10 @@ class FabricClientProxy : AbstractModBootstrap.IEventProxy {
 
         MenuScreens.register(OniMenuTypes.BLUEPRINT_BOOK) { menu, inventory, title ->
             BlueprintBookScreen(menu, inventory, title)
+        }
+
+        OniClientScreens.registerWorldgenConfigScreen { parent ->
+            FabricWorldgenConfigScreen.create(parent)
         }
 
         // register Fabric Client Events here

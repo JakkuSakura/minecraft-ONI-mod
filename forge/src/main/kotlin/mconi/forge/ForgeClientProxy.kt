@@ -2,6 +2,7 @@ package mconi.forge
 
 import com.mojang.brigadier.CommandDispatcher
 import mconi.common.AbstractModBootstrap
+import mconi.common.client.OniClientScreens
 import mconi.common.client.screen.BlueprintBookScreen
 import mconi.common.menu.OniMenuTypes
 import net.minecraft.commands.CommandSourceStack
@@ -20,6 +21,9 @@ class ForgeClientProxy : AbstractModBootstrap.IEventProxy {
         MinecraftForge.EVENT_BUS.register(this)
         MenuScreens.register(OniMenuTypes.BLUEPRINT_BOOK) { menu, inventory, title ->
             BlueprintBookScreen(menu, inventory, title)
+        }
+        OniClientScreens.registerWorldgenConfigScreen { parent ->
+            ForgeWorldgenConfigScreen.create(parent)
         }
         // Forge Client Events here
     }

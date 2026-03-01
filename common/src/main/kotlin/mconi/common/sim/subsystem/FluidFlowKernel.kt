@@ -20,8 +20,8 @@ object FluidFlowKernel {
     )
 
     data class FlowConfig(
-        val maxTransferKgPerStep: Double,
-        val referenceMassKg: Double,
+        val maxTransferPerStep: Double,
+        val referenceMass: Double,
         val downwardBias: Double
     )
 
@@ -53,7 +53,7 @@ object FluidFlowKernel {
             return cells
         }
 
-        val maxTransfer = config.maxTransferKgPerStep.coerceAtLeast(0.0)
+        val maxTransfer = config.maxTransferPerStep.coerceAtLeast(0.0)
         if (maxTransfer <= 0.0) {
             return cells
         }
@@ -221,7 +221,7 @@ object FluidFlowKernel {
                 swaps[targetPos] = sourcePos
                 return
             }
-            val desired = diff * sourceSpec.flow * config.referenceMassKg
+            val desired = diff * sourceSpec.flow * config.referenceMass
             val transfer = minOf(desired, maxTransfer, source.mass)
             if (transfer <= 0.0) {
                 return
@@ -249,7 +249,7 @@ object FluidFlowKernel {
                 swaps[targetPos] = sourcePos
                 return
             }
-            val desired = diff * config.referenceMassKg
+            val desired = diff * config.referenceMass
             val transfer = minOf(desired, maxTransfer, source.mass)
             if (transfer <= 0.0) {
                 return
@@ -308,7 +308,7 @@ object FluidFlowKernel {
         if (mode == FlowMode.LIQUID && cell.phase != Phase.LIQUID) {
             return 0.0
         }
-        val base = cell.mass / config.referenceMassKg
+        val base = cell.mass / config.referenceMass
         if (mode == FlowMode.LIQUID) {
             val bias = if (neighbor.y < cellPos.y) config.downwardBias else 0.0
             return base + bias

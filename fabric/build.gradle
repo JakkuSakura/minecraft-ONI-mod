@@ -89,6 +89,9 @@ dependencies {
     if (rootProject.modmenu_version != "") {
         modImplementation("com.terraformersmc:modmenu:${rootProject.modmenu_version}")
     }
+    if (rootProject.hasProperty("cloth_config_fabric_version") && rootProject.cloth_config_fabric_version != "") {
+        modImplementation("me.shedaniel.cloth:cloth-config-fabric:${rootProject.cloth_config_fabric_version}")
+    }
     if (rootProject.hasProperty("jade_fabric_version") && rootProject.jade_fabric_version != "") {
         compileOnly("maven.modrinth:jade:${rootProject.jade_fabric_version}")
     }

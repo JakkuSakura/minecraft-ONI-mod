@@ -35,7 +35,7 @@ object FabricItems {
             Registry.register(BuiltInRegistries.ITEM, id, item)
             OniItemFactory.registerItem(path) { item }
 
-            if (lens == SystemLens.OXYGEN) {
+            if (lens == SystemLens.GAS) {
                 Registry.register(
                     BuiltInRegistries.CREATIVE_MODE_TAB,
                     OniCreativeTabs.TAB_KEY,

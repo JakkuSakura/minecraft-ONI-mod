@@ -15,13 +15,13 @@ enum class TemperatureMode {
 
 data class RefiningIngredient(
     val elementIds: List<String>,
-    val amountKg: Double,
+    val amount: Double,
     val phase: RefiningPhase
 )
 
 data class RefiningOutput(
     val elementId: String,
-    val amountKg: Double,
+    val amount: Double,
     val phase: RefiningPhase,
     val temperatureMode: TemperatureMode,
     val minTemperatureK: Double = 0.0,

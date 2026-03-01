@@ -25,6 +25,7 @@ object OniWorldEnforcer {
         if (level.dimension() != Level.OVERWORLD) {
             return
         }
+        syncWorldgenBounds(level)
         val config: OniSystemConfig = OniServices.systemRuntime().config()
         val minX = config.worldMinX()
         val maxX = config.worldMaxX()
@@ -46,6 +47,7 @@ object OniWorldEnforcer {
         if (level.dimension() != Level.OVERWORLD) {
             return
         }
+        syncWorldgenBounds(level)
         val config: OniSystemConfig = OniServices.systemRuntime().config()
         val minY = level.minY
         val maxY = level.maxY - 1
@@ -63,18 +65,20 @@ object OniWorldEnforcer {
         val touchesMaxX = chunkMinX <= maxX && maxX <= chunkMaxX
         val touchesMinZ = chunkMinZ <= minZ && minZ <= chunkMaxZ
         val touchesMaxZ = chunkMinZ <= maxZ && maxZ <= chunkMaxZ
+        val zThickness = maxZ - minZ + 1
+        val zBordersEnabled = zThickness >= 3
 
         if (touchesMinX) {
-            buildBedrockWall(level, minX, chunkMinZ, chunkMaxZ, minY, maxY)
+            buildBarrierWall(level, minX, chunkMinZ, chunkMaxZ, minY, maxY)
         }
         if (touchesMaxX) {
-            buildBedrockWall(level, maxX, chunkMinZ, chunkMaxZ, minY, maxY)
+            buildBarrierWall(level, maxX, chunkMinZ, chunkMaxZ, minY, maxY)
         }
-        if (touchesMinZ) {
-            buildBedrockWallZ(level, minZ, chunkMinX, chunkMaxX, minY, maxY)
+        if (zBordersEnabled && touchesMinZ) {
+            buildBarrierWallZ(level, minZ, chunkMinX, chunkMaxX, minY, maxY)
         }
-        if (touchesMaxZ) {
-            buildBedrockWallZ(level, maxZ, chunkMinX, chunkMaxX, minY, maxY)
+        if (zBordersEnabled && touchesMaxZ) {
+            buildBarrierWallZ(level, maxZ, chunkMinX, chunkMaxX, minY, maxY)
         }
 
         ensureSinglePrintingPod(level, chunk, minY, maxY)
@@ -126,18 +130,18 @@ object OniWorldEnforcer {
         }
     }
 
-    private fun buildBedrockWall(level: ServerLevel, x: Int, minZ: Int, maxZ: Int, minY: Int, maxY: Int) {
+    private fun buildBarrierWall(level: ServerLevel, x: Int, minZ: Int, maxZ: Int, minY: Int, maxY: Int) {
         for (z in minZ..maxZ) {
             for (y in minY..maxY) {
-                level.setBlock(BlockPos(x, y, z), Blocks.BEDROCK.stateDefinition.any(), 3)
+                level.setBlock(BlockPos(x, y, z), Blocks.BARRIER.stateDefinition.any(), 3)
             }
         }
     }
 
-    private fun buildBedrockWallZ(level: ServerLevel, z: Int, minX: Int, maxX: Int, minY: Int, maxY: Int) {
+    private fun buildBarrierWallZ(level: ServerLevel, z: Int, minX: Int, maxX: Int, minY: Int, maxY: Int) {
         for (x in minX..maxX) {
             for (y in minY..maxY) {
-                level.setBlock(BlockPos(x, y, z), Blocks.BEDROCK.stateDefinition.any(), 3)
+                level.setBlock(BlockPos(x, y, z), Blocks.BARRIER.stateDefinition.any(), 3)
             }
         }
     }
@@ -159,6 +163,18 @@ object OniWorldEnforcer {
             state.`is`(OniBlockLookup.block(OniBlockFactory.LAVA))
         ) {
             level.setBlock(pos, block.stateDefinition.any(), 2)
+        }
+    }
+
+    fun syncWorldgenBounds(level: ServerLevel) {
+        if (level.dimension() != Level.OVERWORLD) {
+            return
+        }
+        val generator = level.chunkSource.generator
+        val config = OniServices.systemRuntime().config()
+        if (generator is OniChunkGenerator) {
+            config.setWorldMinZ(generator.minZ())
+            config.setWorldMaxZ(generator.maxZ())
         }
     }
 }
