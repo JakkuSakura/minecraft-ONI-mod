@@ -3,11 +3,14 @@ package mconi.fabric
 import com.mojang.brigadier.CommandDispatcher
 import mconi.common.AbstractModBootstrap
 import mconi.common.client.OniClientScreens
+import mconi.common.client.overlay.OniLensOverlayRenderer
 import mconi.common.client.screen.BlueprintBookScreen
 import mconi.common.menu.OniMenuTypes
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents
+import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.MenuScreens
 import net.minecraft.commands.CommandSourceStack
 import org.apache.logging.log4j.Logger
@@ -35,7 +38,17 @@ class FabricClientProxy : AbstractModBootstrap.IEventProxy {
             FabricWorldgenConfigScreen.create(parent)
         }
 
-        // register Fabric Client Events here
+        WorldRenderEvents.END_MAIN.register { context ->
+            val client = Minecraft.getInstance()
+            val level = client.level ?: return@register
+            val player = client.player ?: return@register
+            OniLensOverlayRenderer.render(
+                context.matrices(),
+                context.consumers(),
+                level,
+                player
+            )
+        }
     }
 
     companion object {

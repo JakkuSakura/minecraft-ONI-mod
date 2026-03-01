@@ -5,7 +5,7 @@ import mconi.common.block.OniBlockLookup
 import mconi.common.block.entity.OniMatterBlockEntity
 import mconi.common.element.OniElements
 import net.minecraft.core.BlockPos
-import net.minecraft.server.level.ServerLevel
+import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 
@@ -39,7 +39,7 @@ object OniMatterAccess {
 
     fun liquidId(state: BlockState): String? = liquidByBlock[state.block]
 
-    fun matterEntity(level: ServerLevel, pos: BlockPos): OniMatterBlockEntity? {
+    fun matterEntity(level: Level, pos: BlockPos): OniMatterBlockEntity? {
         return level.getBlockEntity(pos) as? OniMatterBlockEntity
     }
 }

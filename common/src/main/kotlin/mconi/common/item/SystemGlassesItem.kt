@@ -16,6 +16,8 @@ class SystemGlassesItem(
     properties: Item.Properties,
     private val systemLens: SystemLens,
 ) : OniDescribedItem(properties) {
+    fun lens(): SystemLens = systemLens
+
     override fun use(level: Level, player: Player, hand: InteractionHand): InteractionResult {
         if (!level.isClientSide) {
             val serverLevel = level as? ServerLevel ?: return InteractionResult.SUCCESS

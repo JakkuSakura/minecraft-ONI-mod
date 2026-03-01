@@ -3,9 +3,12 @@ package mconi.neoforge
 import com.mojang.brigadier.CommandDispatcher
 import mconi.common.AbstractModBootstrap
 import mconi.common.client.OniClientScreens
+import mconi.common.client.overlay.OniLensOverlayRenderer
 import net.minecraft.commands.CommandSourceStack
+import net.minecraft.client.Minecraft
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import net.neoforged.neoforge.common.NeoForge
 import org.apache.logging.log4j.Logger
 
@@ -26,6 +29,19 @@ class NeoforgeClientProxy : AbstractModBootstrap.IEventProxy {
     fun registerClientCommands(event: RegisterClientCommandsEvent) {
         @Suppress("UNCHECKED_CAST")
         AbstractModBootstrap.registerClientCommands(event.dispatcher as CommandDispatcher<CommandSourceStack>)
+    }
+
+    @SubscribeEvent
+    fun renderLensOverlay(event: RenderLevelStageEvent.AfterTranslucentBlocks) {
+        val client = Minecraft.getInstance()
+        val level = client.level ?: return
+        val player = client.player ?: return
+        OniLensOverlayRenderer.render(
+            event.poseStack,
+            client.renderBuffers().bufferSource(),
+            level,
+            player
+        )
     }
 
 
