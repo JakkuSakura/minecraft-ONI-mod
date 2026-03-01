@@ -5,9 +5,9 @@ import mconi.common.block.OniBlockLookup
 import mconi.common.block.entity.OniConduitBlockEntity
 import mconi.common.element.OniElements
 import mconi.common.item.BottledMatterItem
-import mconi.common.item.OniInventoryWeight
+import mconi.common.item.OniInventoryMass
 import mconi.common.item.OniItemFactory
-import mconi.common.item.OniItemWeight
+import mconi.common.item.OniItemMass
 import mconi.common.refining.*
 import mconi.common.world.OniMatterAccess
 import mconi.common.world.OniWorldScan
@@ -92,7 +92,7 @@ class RefiningSystem : OniSystem {
         val actualOutputs = desiredOutputs.map { it.first to it.second * scale }
 
         val inputTemp = consumeInputs(level, pos, entity, actualInputs)
-        if (inputTemp.totalWeight <= 0.0) {
+        if (inputTemp.totalMass <= 0.0) {
             return
         }
         val avgInputTemp = inputTemp.temperatureK
@@ -130,7 +130,7 @@ class RefiningSystem : OniSystem {
         val inputs = recipe.inputs.map { it to it.amountKg }
         val outputs = recipe.outputs.map { it to it.amountKg }
         val inputTemp = consumeInputs(level, pos, entity, inputs)
-        val avgInputTemp = if (inputTemp.totalWeight > 0.0) inputTemp.temperatureK else 293.15
+        val avgInputTemp = if (inputTemp.totalMass > 0.0) inputTemp.temperatureK else 293.15
         produceOutputs(level, pos, entity, spec, outputs, avgInputTemp)
         entity.setActiveRecipeId(null)
         entity.setProgressSeconds(0.0)
@@ -154,7 +154,7 @@ class RefiningSystem : OniSystem {
     }
 
     private data class InputTemperature(
-        val totalWeight: Double,
+        val totalMass: Double,
         val temperatureK: Double
     )
 
@@ -228,7 +228,7 @@ class RefiningSystem : OniSystem {
                 if (stack.isEmpty || stack.item != item) {
                     continue
                 }
-                total += OniItemWeight.stackWeight(stack)
+                total += OniItemMass.stackMass(stack)
             }
         }
         return total
@@ -258,7 +258,7 @@ class RefiningSystem : OniSystem {
         entity: RefiningMachineBlockEntity,
         inputs: List<Pair<RefiningIngredient, Double>>
     ): InputTemperature {
-        var totalWeight = 0.0
+        var totalMass = 0.0
         var totalEnergy = 0.0
         for ((ingredient, required) in inputs) {
             if (required <= 0.0) {
@@ -267,24 +267,24 @@ class RefiningSystem : OniSystem {
             val elementId = selectElementForIngredient(level, pos, entity, ingredient) ?: continue
             val taken = takeFromStorage(entity, elementId, required)
             if (taken.mass > 0.0) {
-                totalWeight += taken.mass
+                totalMass += taken.mass
                 totalEnergy += taken.mass * taken.temperatureK
             }
             if (taken.mass + 1e-9 < required) {
                 val remaining = required - taken.mass
                 val fromContainers = takeFromContainers(level, pos, elementId, remaining)
-                totalWeight += fromContainers.mass
+                totalMass += fromContainers.mass
                 totalEnergy += fromContainers.mass * fromContainers.temperatureK
                 val remaining2 = remaining - fromContainers.mass
                 if (remaining2 > 1e-9) {
                     val fromConduit = takeFromConduits(level, pos, ingredient.phase, elementId, remaining2)
-                    totalWeight += fromConduit.mass
+                    totalMass += fromConduit.mass
                     totalEnergy += fromConduit.mass * fromConduit.temperatureK
                 }
             }
         }
-        val avgTemp = if (totalWeight > 0.0) totalEnergy / totalWeight else 293.15
-        return InputTemperature(totalWeight, avgTemp)
+        val avgTemp = if (totalMass > 0.0) totalEnergy / totalMass else 293.15
+        return InputTemperature(totalMass, avgTemp)
     }
 
     private data class TakenMass(val mass: Double, val temperatureK: Double)
@@ -301,7 +301,7 @@ class RefiningSystem : OniSystem {
         val itemId = OniElements.REGISTRY.byId(elementId)?.itemId ?: return TakenMass(0.0, 293.15)
         val item = OniItemFactory.itemById(itemId.toString()) ?: return TakenMass(0.0, 293.15)
         var remaining = amount
-        var totalWeight = 0.0
+        var totalMass = 0.0
         var totalEnergy = 0.0
         for (container in adjacentContainers(level, pos)) {
             for (i in 0 until container.containerSize) {
@@ -310,9 +310,9 @@ class RefiningSystem : OniSystem {
                     continue
                 }
                 val temp = stackTemperature(stack)
-                val taken = OniItemWeight.takeWeight(stack, remaining)
+                val taken = OniItemMass.takeMass(stack, remaining)
                 if (taken > 0.0) {
-                    totalWeight += taken
+                    totalMass += taken
                     totalEnergy += taken * temp
                     remaining -= taken
                 }
@@ -324,8 +324,8 @@ class RefiningSystem : OniSystem {
                 break
             }
         }
-        val avgTemp = if (totalWeight > 0.0) totalEnergy / totalWeight else 293.15
-        return TakenMass(totalWeight, avgTemp)
+        val avgTemp = if (totalMass > 0.0) totalEnergy / totalMass else 293.15
+        return TakenMass(totalMass, avgTemp)
     }
 
     private fun takeFromConduits(
@@ -339,7 +339,7 @@ class RefiningSystem : OniSystem {
             return TakenMass(0.0, 293.15)
         }
         var remaining = amount
-        var totalWeight = 0.0
+        var totalMass = 0.0
         var totalEnergy = 0.0
         for (conduit in adjacentConduits(level, pos, phase)) {
             if (conduit.elementId() != elementId || conduit.mass() <= 0.0) {
@@ -350,7 +350,7 @@ class RefiningSystem : OniSystem {
             if (taken <= 0.0) {
                 continue
             }
-            totalWeight += taken
+            totalMass += taken
             totalEnergy += taken * conduit.temperatureK()
             remaining -= taken
             conduit.setMass(available - taken)
@@ -358,8 +358,8 @@ class RefiningSystem : OniSystem {
                 break
             }
         }
-        val avgTemp = if (totalWeight > 0.0) totalEnergy / totalWeight else 293.15
-        return TakenMass(totalWeight, avgTemp)
+        val avgTemp = if (totalMass > 0.0) totalEnergy / totalMass else 293.15
+        return TakenMass(totalMass, avgTemp)
     }
 
     private fun selectElementForIngredient(
@@ -595,10 +595,10 @@ class RefiningSystem : OniSystem {
             val itemId = OniElements.REGISTRY.byId(entry.elementId)?.itemId ?: continue
             val item = OniItemFactory.itemById(itemId.toString()) ?: continue
             val stack = ItemStack(item, 1)
-            OniItemWeight.setStackWeight(stack, entry.mass)
+            OniItemMass.setStackMass(stack, entry.mass)
             setStackTemperature(stack, entry.temperatureK)
             val remaining = mergeIntoAdjacentContainers(level, pos, stack)
-            val remainingMass = OniItemWeight.stackWeight(remaining)
+            val remainingMass = OniItemMass.stackMass(remaining)
             entity.takeStored(entry.elementId, entry.mass)
             if (remainingMass > 0.0) {
                 entity.addStored(entry.elementId, remainingMass, entry.temperatureK, RefiningPhase.SOLID)
@@ -610,7 +610,7 @@ class RefiningSystem : OniSystem {
         val itemId = OniElements.REGISTRY.byId(elementId)?.itemId ?: return
         val item = OniItemFactory.itemById(itemId.toString()) ?: return
         val stack = ItemStack(item, 1)
-        OniItemWeight.setStackWeight(stack, amount)
+        OniItemMass.setStackMass(stack, amount)
         setStackTemperature(stack, temperatureK)
         val remainder = mergeIntoAdjacentContainers(level, pos, stack)
         if (!remainder.isEmpty) {
@@ -626,7 +626,7 @@ class RefiningSystem : OniSystem {
             if (remaining.isEmpty) {
                 break
             }
-            remaining = OniItemWeight.mergeIntoContainer(container, remaining)
+            remaining = OniItemMass.mergeIntoContainer(container, remaining)
         }
         return remaining
     }

@@ -2,7 +2,7 @@ package mconi.common.block
 
 import mconi.common.element.ElementStack
 import mconi.common.item.OniItemFactory
-import mconi.common.item.OniItemWeight
+import mconi.common.item.OniItemMass
 import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.item.ItemStack
@@ -33,7 +33,7 @@ open class OniSolidBlock(
                 continue
             }
             val stack = ItemStack(item, 1)
-            OniItemWeight.setStackWeight(stack, element.amount.toDouble())
+            OniItemMass.setStackMass(stack, element.amount.toDouble())
             drops.add(stack)
         }
         return drops

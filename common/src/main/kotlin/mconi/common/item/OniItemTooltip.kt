@@ -9,18 +9,18 @@ object OniItemTooltip {
     fun appendDetails(
         stack: ItemStack,
         tooltip: Consumer<Component>,
-        includeWeight: Boolean = true,
+        includeMass: Boolean = true,
         includeTemperature: Boolean = true,
     ) {
         val data = stack.get(DataComponents.CUSTOM_DATA)
         val tag = data?.copyTag()
 
-        if (includeWeight) {
-            val hasWeightTag = tag?.contains(OniItemWeight.TAG_WEIGHT) == true
-            if (hasWeightTag) {
-                val weight = OniItemWeight.stackWeight(stack)
-                if (weight > 0.0) {
-                    tooltip.accept(Component.literal(String.format("Weight: %.2f", weight)))
+        if (includeMass) {
+            val hasMassTag = tag?.contains(OniItemMass.TAG_MASS) == true
+            if (hasMassTag) {
+                val mass = OniItemMass.stackMass(stack)
+                if (mass > 0.0) {
+                    tooltip.accept(Component.literal(String.format("Mass: %.2f", mass)))
                 }
             }
         }
