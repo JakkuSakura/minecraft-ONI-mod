@@ -1,13 +1,16 @@
 package mconi.common.refining
 
 import net.minecraft.core.BlockPos
-import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.storage.ValueInput
 import net.minecraft.world.level.storage.ValueOutput
 
 class RefiningMachineBlockEntity(pos: BlockPos, state: BlockState) :
-    BlockEntity(mconi.common.block.entity.OniBlockEntityTypes.REFINING_MACHINE, pos, state) {
+    mconi.common.block.entity.OniElementBlockEntity(
+        mconi.common.block.entity.OniBlockEntityTypes.REFINING_MACHINE,
+        pos,
+        state
+    ) {
 
     data class StoredElement(
         val elementId: String,

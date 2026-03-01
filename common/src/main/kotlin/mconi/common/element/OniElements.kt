@@ -252,6 +252,9 @@ object OniElements {
     private val gasById: Map<String, GasSpec> = GASES.associateBy { it.id }
     private val gasBySymbol: Map<String, GasSpec> = GASES.associateBy { it.symbol.uppercase() }
     private val gasByElementId: Map<String, GasSpec> = GASES.associateBy { it.elementId.lowercase() }
+    private val elementIdByItemId: Map<String, String> by lazy {
+        REGISTRY.all().values.associateBy({ it.itemId.toString() }, { it.id })
+    }
 
     @JvmField
     val LIQUID_SPECS: List<LiquidSpec> = listOf(
@@ -581,5 +584,7 @@ object OniElements {
             elementItems.add(item)
         }
     }
+
+    fun elementIdForItemId(itemId: String): String? = elementIdByItemId[itemId]
 
 }

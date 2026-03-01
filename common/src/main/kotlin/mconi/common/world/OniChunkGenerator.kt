@@ -17,6 +17,7 @@ import net.minecraft.world.level.biome.BiomeManager
 import net.minecraft.world.level.biome.BiomeSource
 import net.minecraft.world.level.biome.MobSpawnSettings
 import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.EntityBlock
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.chunk.ChunkAccess
 import net.minecraft.world.level.chunk.ChunkGenerator
@@ -31,6 +32,7 @@ import kotlin.math.min
 import kotlin.math.abs
 import mconi.common.block.OniBlockLookup
 import mconi.common.block.OniBlockFactory
+import mconi.common.block.entity.OniElementBlockEntity
 
 class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) {
     override fun codec(): MapCodec<out ChunkGenerator> = CODEC
@@ -120,7 +122,7 @@ class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) 
                         y <= surfaceY -> solidStateFor(worldX, y, worldZ, surfaceY, lavaTop)
                         else -> Blocks.AIR.stateDefinition.any()
                     }
-                    chunk.setBlockState(BlockPos(worldX, y, worldZ), state, 0)
+                    setBlock(chunk, BlockPos(worldX, y, worldZ), state)
                 }
             }
         }
@@ -200,6 +202,18 @@ class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) 
             ).apply(instance, ::OniChunkGenerator)
         }
 
+        private fun setBlock(chunk: ChunkAccess, pos: BlockPos, state: BlockState) {
+            chunk.setBlockState(pos, state, 0)
+            val defaults = OniBlockFactory.defaultElements(state.block)
+            if (defaults.isEmpty()) {
+                return
+            }
+            val entityBlock = state.block as? EntityBlock ?: return
+            val entity = entityBlock.newBlockEntity(pos, state) as? OniElementBlockEntity ?: return
+            entity.setElements(defaults)
+            chunk.setBlockEntity(entity)
+        }
+
         private fun placeGuaranteedResources(chunk: ChunkAccess, chunkPos: ChunkPos) {
             if (chunkPos.x != 0 || chunkPos.z != 0) {
                 return
@@ -209,46 +223,42 @@ class OniChunkGenerator(biomeSource: BiomeSource) : ChunkGenerator(biomeSource) 
             val podZ = OniWorldLayout.POD_Z
             val podY = OniWorldLayout.POD_Y
             carveStarterRoom(chunk, podX, podY, podZ)
-            chunk.setBlockState(
-                BlockPos(podX, podY, podZ),
-                OniBlockLookup.state(OniBlockFactory.PRINTING_POD),
-                0
-            )
+            setBlock(chunk, BlockPos(podX, podY, podZ), OniBlockLookup.state(OniBlockFactory.PRINTING_POD))
 
             val algaeState = OniBlockLookup.state(OniBlockFactory.ALGAE)
             for (dx in -2..2) {
                 for (dz in -2..2) {
-                    chunk.setBlockState(BlockPos(podX + dx, podY - 1, podZ + dz), OniBlockLookup.state(OniBlockFactory.SEDIMENTARY_ROCK), 0)
+                    setBlock(chunk, BlockPos(podX + dx, podY - 1, podZ + dz), OniBlockLookup.state(OniBlockFactory.SEDIMENTARY_ROCK))
                 }
             }
 
-            chunk.setBlockState(BlockPos(podX + 4, podY - 2, podZ + 2), algaeState, 0)
-            chunk.setBlockState(BlockPos(podX + 3, podY - 2, podZ + 2), algaeState, 0)
-            chunk.setBlockState(BlockPos(podX + 4, podY - 2, podZ + 3), algaeState, 0)
+            setBlock(chunk, BlockPos(podX + 4, podY - 2, podZ + 2), algaeState)
+            setBlock(chunk, BlockPos(podX + 3, podY - 2, podZ + 2), algaeState)
+            setBlock(chunk, BlockPos(podX + 4, podY - 2, podZ + 3), algaeState)
 
             // Starter lighting in the printing pod room.
             val torchState = Blocks.TORCH.stateDefinition.any()
-            chunk.setBlockState(BlockPos(podX + 3, podY, podZ + 3), torchState, 0)
-            chunk.setBlockState(BlockPos(podX - 3, podY, podZ + 3), torchState, 0)
-            chunk.setBlockState(BlockPos(podX + 3, podY, podZ - 3), torchState, 0)
-            chunk.setBlockState(BlockPos(podX - 3, podY, podZ - 3), torchState, 0)
+            setBlock(chunk, BlockPos(podX + 3, podY, podZ + 3), torchState)
+            setBlock(chunk, BlockPos(podX - 3, podY, podZ + 3), torchState)
+            setBlock(chunk, BlockPos(podX + 3, podY, podZ - 3), torchState)
+            setBlock(chunk, BlockPos(podX - 3, podY, podZ - 3), torchState)
 
             // Starter water pocket.
             for (dx in 6..9) {
                 for (dz in -1..2) {
-                    chunk.setBlockState(BlockPos(podX + dx, podY - 3, podZ + dz), OniBlockLookup.state(OniBlockFactory.WATER), 0)
+                    setBlock(chunk, BlockPos(podX + dx, podY - 3, podZ + dz), OniBlockLookup.state(OniBlockFactory.WATER))
                 }
             }
 
             // Early metal node. Using vanilla ore by design.
-            chunk.setBlockState(BlockPos(podX - 6, podY - 3, podZ), Blocks.IRON_ORE.stateDefinition.any(), 0)
+            setBlock(chunk, BlockPos(podX - 6, podY - 3, podZ), Blocks.IRON_ORE.stateDefinition.any())
         }
 
         private fun carveStarterRoom(chunk: ChunkAccess, centerX: Int, centerY: Int, centerZ: Int) {
             for (dx in -4..4) {
                 for (dz in -4..4) {
                     for (dy in -1..4) {
-                        chunk.setBlockState(BlockPos(centerX + dx, centerY + dy, centerZ + dz), Blocks.AIR.stateDefinition.any(), 0)
+                        setBlock(chunk, BlockPos(centerX + dx, centerY + dy, centerZ + dz), Blocks.AIR.stateDefinition.any())
                     }
                 }
             }

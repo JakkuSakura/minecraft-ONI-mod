@@ -1,7 +1,7 @@
 package mconi.common.compat.jade
 
 import mconi.common.AbstractModBootstrap
-import mconi.common.element.OniElementStore
+import mconi.common.block.entity.OniElementBlockEntity
 import mconi.common.world.OniMatterAccess
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.RegistryFriendlyByteBuf
@@ -44,15 +44,15 @@ object OniJadeDataProvider : StreamServerDataProvider<BlockAccessor, String> {
         val lines = ArrayList<String>()
         val level = accessor.level as? ServerLevel ?: return null
         val pos = accessor.position
-        val elements = OniElementStore.get(level).elementsAt(pos)
-        val totalMass = elements.sumOf { it.amount }
+        val elements = (level.getBlockEntity(pos) as? OniElementBlockEntity)?.elements().orEmpty()
+        val totalMass = elements.sumOf { it.mass }
 
         lines.add("Elements:")
         if (elements.isEmpty()) {
             lines.add("- <none>")
         } else {
             for (element in elements) {
-                lines.add("element|${element.itemId}|${element.amount}")
+                lines.add("element|${element.elementId}|${element.mass}")
             }
         }
 

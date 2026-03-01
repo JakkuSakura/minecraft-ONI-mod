@@ -1,6 +1,7 @@
 package mconi.common.block
 
 import mconi.common.block.entity.ConstructionSiteBlockEntity
+import mconi.common.block.entity.OniElementBlockEntity
 import net.minecraft.core.BlockPos
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
@@ -23,6 +24,28 @@ class ConstructionSiteBlock(properties: BlockBehaviour.Properties) : net.minecra
     }
 
     override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
+
+    override fun onPlace(
+        state: BlockState,
+        level: Level,
+        pos: BlockPos,
+        oldState: BlockState,
+        movedByPiston: Boolean
+    ) {
+        super.onPlace(state, level, pos, oldState, movedByPiston)
+        if (level.isClientSide || oldState.block == state.block) {
+            return
+        }
+        val entity = level.getBlockEntity(pos) as? OniElementBlockEntity ?: return
+        if (entity.elements().isNotEmpty()) {
+            return
+        }
+        val defaults = OniBlockFactory.defaultElements(state.block)
+        if (defaults.isEmpty()) {
+            return
+        }
+        entity.setElements(defaults)
+    }
 
     override fun useWithoutItem(
         state: BlockState,

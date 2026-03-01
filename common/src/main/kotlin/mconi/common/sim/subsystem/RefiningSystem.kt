@@ -509,7 +509,7 @@ class RefiningSystem : OniSystem {
             }
             conduit.setElementId(elementId)
             conduit.setMass(total)
-            conduit.setTemperatureK(newTemp)
+            conduit.setContentsTemperatureK(newTemp)
             remaining -= added
             if (remaining <= 1e-9) {
                 break

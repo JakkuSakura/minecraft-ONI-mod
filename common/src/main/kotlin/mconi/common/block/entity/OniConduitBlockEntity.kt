@@ -1,20 +1,21 @@
 package mconi.common.block.entity
 
 import net.minecraft.core.BlockPos
-import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.storage.ValueInput
 import net.minecraft.world.level.storage.ValueOutput
 
 class OniConduitBlockEntity(pos: BlockPos, state: BlockState) :
-    BlockEntity(OniBlockEntityTypes.CONDUIT, pos, state) {
+    OniElementBlockEntity(OniBlockEntityTypes.CONDUIT, pos, state) {
 
     private var elementId: String? = null
     private var mass: Double = 0.0
     private var temperatureK: Double = 293.15
 
     fun elementId(): String? = elementId
+
     fun mass(): Double = mass
+
     fun temperatureK(): Double = temperatureK
 
     fun setElementId(value: String?) {
@@ -30,7 +31,7 @@ class OniConduitBlockEntity(pos: BlockPos, state: BlockState) :
         setChanged()
     }
 
-    fun setTemperatureK(value: Double) {
+    fun setContentsTemperatureK(value: Double) {
         temperatureK = value
         setChanged()
     }

@@ -4,8 +4,8 @@ import mconi.common.block.OniBlockLookup
 import mconi.common.block.OniBlockFactory
 import mconi.common.item.OniItemMass
 import mconi.common.item.OniItemFactory
-import mconi.common.element.ElementStack
-import mconi.common.element.OniElementStore
+import mconi.common.element.ElementContents
+import mconi.common.element.OniElements
 import mconi.common.item.OniBlueprintRegistry
 import mconi.common.item.OniBlueprintSelection
 import mconi.common.item.OniBlueprintTargets
@@ -16,12 +16,11 @@ import net.minecraft.world.level.storage.ValueInput
 import net.minecraft.world.level.storage.ValueOutput
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import java.util.UUID
 
 class ConstructionSiteBlockEntity(pos: BlockPos, state: BlockState) :
-    BlockEntity(OniBlockEntityTypes.CONSTRUCTION_SITE, pos, state) {
+    OniElementBlockEntity(OniBlockEntityTypes.CONSTRUCTION_SITE, pos, state) {
 
     data class MaterialSlotState(
         val slotId: String,
@@ -185,9 +184,17 @@ class ConstructionSiteBlockEntity(pos: BlockPos, state: BlockState) :
         level.setBlock(blockPos, state, 3)
         val materials = materialSlots
             .filter { it.selectedItemId.isNotBlank() && it.requiredAmount > 0 }
-            .map { slot -> ElementStack(slot.selectedItemId, slot.requiredAmount) }
+            .mapNotNull { slot ->
+                val elementId = OniElements.elementIdForItemId(slot.selectedItemId) ?: return@mapNotNull null
+                ElementContents(
+                    elementId = elementId,
+                    mass = slot.requiredAmount.toDouble(),
+                    temperatureK = 293.15
+                )
+            }
         if (materials.isNotEmpty()) {
-            OniElementStore.get(level).setElements(blockPos, materials)
+            val targetEntity = level.getBlockEntity(blockPos) as? OniElementBlockEntity
+            targetEntity?.setElements(materials)
         }
         activePlayer = null
         activeAction = null

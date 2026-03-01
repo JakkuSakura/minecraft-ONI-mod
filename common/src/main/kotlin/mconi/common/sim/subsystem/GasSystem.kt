@@ -96,8 +96,8 @@ class GasSystem : OniSystem {
                         level.setBlock(pos, target, 2)
                     }
                     val entity = OniMatterAccess.matterEntity(level, pos) ?: continue
-                    entity.setMass(cell.mass)
-                    entity.setTemperatureK(cell.temperatureK)
+                    val elementId = gasSpec.id
+                    entity.ensureContents(elementId, cell.mass, cell.temperatureK)
                 }
                 else -> {
                 }

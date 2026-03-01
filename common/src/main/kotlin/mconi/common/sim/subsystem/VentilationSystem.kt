@@ -45,7 +45,7 @@ class VentilationSystem : OniSystem {
                 val contents = result.contentsByPos[pos] ?: continue
                 entity.setElementId(contents.elementId)
                 entity.setMass(contents.mass)
-                entity.setTemperatureK(contents.temperatureK)
+                entity.setContentsTemperatureK(contents.temperatureK)
             }
         }
 
@@ -101,7 +101,7 @@ class VentilationSystem : OniSystem {
             )
             conduitEntity.setElementId(gasSpec.id)
             conduitEntity.setMass(newConduitMass)
-            conduitEntity.setTemperatureK(newTemp)
+            conduitEntity.setContentsTemperatureK(newTemp)
 
             val remaining = available - transfer
             if (remaining <= 0.0) {
@@ -144,8 +144,8 @@ class VentilationSystem : OniSystem {
                 conduitEntity.temperatureK(),
                 transfer
             )
-            targetEntity.setMass(targetEntity.mass() + transfer)
-            targetEntity.setTemperatureK(newTemp)
+            val total = targetEntity.mass() + transfer
+            targetEntity.ensureContents(elementId, total, newTemp)
 
             val remaining = available - transfer
             conduitEntity.setMass(remaining)
