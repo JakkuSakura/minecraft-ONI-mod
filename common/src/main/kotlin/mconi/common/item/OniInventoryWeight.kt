@@ -5,66 +5,65 @@ import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 
-object OniInventoryMass {
-    const val MASS_PER_SLOT: Double = 64.0
+object OniInventoryWeight {
+    const val WEIGHT_PER_SLOT: Double = 64.0
 
     fun capacity(container: Container): Double {
-        return container.containerSize.toDouble() * MASS_PER_SLOT
+        return container.containerSize.toDouble() * WEIGHT_PER_SLOT
     }
 
-    fun totalMass(container: Container): Double {
+    fun totalWeight(container: Container): Double {
         var total = 0.0
         for (i in 0 until container.containerSize) {
             val stack = container.getItem(i)
             if (stack.isEmpty) {
                 continue
             }
-            total += stackMass(stack)
+            total += stackWeight(stack)
         }
         return total
     }
 
-    fun stackMass(stack: ItemStack): Double {
-        val perItem = perItemMass(stack.item, stack)
-        return OniItemMass.stackMass(stack)
+    fun stackWeight(stack: ItemStack): Double {
+        return OniItemWeight.stackWeight(stack)
     }
 
-    fun perItemMass(item: Item, stack: ItemStack? = null): Double {
+    fun perItemWeight(item: Item, stack: ItemStack? = null): Double {
         val spec = OniItemFactory.specByItem(item)
-        val specMass = spec?.properties?.mass
-        if (specMass != null) {
-            return specMass
+        val specWeight = spec?.properties?.mass
+        if (specWeight != null) {
+            return specWeight
         }
-        val componentMass = stack?.let { stackMassFromComponents(it) }
-        if (componentMass != null) {
-            return componentMass
+        val componentWeight = stack?.let { stackWeightFromComponents(it) }
+        if (componentWeight != null) {
+            return componentWeight
         }
         val maxStack = item.getDefaultMaxStackSize()
         return if (maxStack <= 0) {
-            MASS_PER_SLOT
+            WEIGHT_PER_SLOT
         } else {
-            MASS_PER_SLOT / maxStack.toDouble()
+            WEIGHT_PER_SLOT / maxStack.toDouble()
         }
     }
 
-    private fun stackMassFromComponents(stack: ItemStack): Double? {
+    private fun stackWeightFromComponents(stack: ItemStack): Double? {
         if (stack.item !is BottledMatterItem) {
             return null
         }
         val data = stack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA) ?: return null
         val tag = data.copyTag()
-        val mass = tag.getDouble(BottledMatterItem.TAG_MASS).orElse(0.0)
-        return if (mass > 0.0) mass else null
+        val weight = tag.getDouble(BottledMatterItem.TAG_WEIGHT).orElse(0.0)
+        return if (weight > 0.0) weight else null
     }
 
     fun remainingCapacity(container: Container): Double {
-        return (capacity(container) - totalMass(container)).coerceAtLeast(0.0)
+        return (capacity(container) - totalWeight(container)).coerceAtLeast(0.0)
     }
 
     fun canFitStack(container: Container, stack: ItemStack, allowedSlots: Set<Int>? = null): Boolean {
         val available = remainingCapacityFiltered(container, allowedSlots)
-        val stackMass = stackMass(stack)
-        return stackMass <= available + 1e-9
+        val stackWeight = stackWeight(stack)
+        return stackWeight <= available + 1e-9
     }
 
     fun remainingCapacityFiltered(container: Container, allowedSlots: Set<Int>?): Double {
@@ -80,9 +79,9 @@ object OniInventoryMass {
             if (stack.isEmpty) {
                 continue
             }
-            total += stackMass(stack)
+            total += stackWeight(stack)
         }
-        val capacity = allowedSlots.size.toDouble() * MASS_PER_SLOT
+        val capacity = allowedSlots.size.toDouble() * WEIGHT_PER_SLOT
         return (capacity - total).coerceAtLeast(0.0)
     }
 

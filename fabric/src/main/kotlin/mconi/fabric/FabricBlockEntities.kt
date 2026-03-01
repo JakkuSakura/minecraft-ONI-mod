@@ -7,6 +7,7 @@ import mconi.common.block.entity.ConstructionSiteBlockEntity
 import mconi.common.block.entity.OniBlockEntityTypes
 import mconi.common.block.entity.OniConduitBlockEntity
 import mconi.common.block.entity.OniMatterBlockEntity
+import mconi.common.refining.RefiningMachineBlockEntity
 import net.fabricmc.fabric.api.`object`.builder.v1.block.entity.FabricBlockEntityTypeBuilder
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
@@ -46,5 +47,14 @@ object FabricBlockEntities {
         val conduitType = FabricBlockEntityTypeBuilder.create(::OniConduitBlockEntity, *conduitBlocks).build()
         Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, conduitId, conduitType)
         OniBlockEntityTypes.CONDUIT = conduitType
+
+        val refiningId = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:refining_machine")
+            ?: throw IllegalArgumentException("Invalid block entity id")
+        val refiningBlocks = OniBlockFactory.REFINING_IDS
+            .map { OniBlockLookup.block(it) }
+            .toTypedArray()
+        val refiningType = FabricBlockEntityTypeBuilder.create(::RefiningMachineBlockEntity, *refiningBlocks).build()
+        Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, refiningId, refiningType)
+        OniBlockEntityTypes.REFINING_MACHINE = refiningType
     }
 }

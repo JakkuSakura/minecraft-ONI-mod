@@ -254,7 +254,7 @@ abstract class AbstractModBootstrap {
                                     val mass = DoubleArgumentType.getDouble(context, "mass")
                                     val species = OniElements.parseGas(speciesInput)
                                     if (species == null) {
-                                        Utils.SendError(context, "Invalid gas species: $speciesInput. Use O2/CO2/H2.", true)
+                                        Utils.SendError(context, "Invalid gas species: $speciesInput. Use O2/CO2/H2/CH4/Steam/Cl2.", true)
                                         return@executes 0
                                     }
                                     val level = source.level
@@ -263,6 +263,9 @@ abstract class AbstractModBootstrap {
                                         OniElements.GAS_OXYGEN -> OniBlockLookup.state(OniBlockFactory.OXYGEN_GAS)
                                         OniElements.GAS_CARBON_DIOXIDE -> OniBlockLookup.state(OniBlockFactory.CARBON_DIOXIDE_GAS)
                                         OniElements.GAS_HYDROGEN -> OniBlockLookup.state(OniBlockFactory.HYDROGEN_GAS)
+                                        OniElements.GAS_METHANE -> OniBlockLookup.state(OniBlockFactory.METHANE_GAS)
+                                        OniElements.GAS_STEAM -> OniBlockLookup.state(OniBlockFactory.STEAM_GAS)
+                                        OniElements.GAS_CHLORINE -> OniBlockLookup.state(OniBlockFactory.CHLORINE_GAS)
                                         else -> null
                                     }
                                     if (targetState == null) {
@@ -290,7 +293,7 @@ abstract class AbstractModBootstrap {
                                     val mass = DoubleArgumentType.getDouble(context, "mass")
                                     val liquidId = OniElements.parseLiquidId(speciesInput)
                                     if (liquidId == null) {
-                                        Utils.SendError(context, "Invalid liquid id. Use water/polluted_water/crude_oil/lava.", true)
+                                        Utils.SendError(context, "Invalid liquid id. Use water/polluted_water/crude_oil/lava/salt_water/brine/ethanol/petroleum/milk.", true)
                                         return@executes 0
                                     }
                                     val level = source.level
@@ -300,6 +303,16 @@ abstract class AbstractModBootstrap {
                                         OniElements.LIQUID_POLLUTED_WATER -> OniBlockLookup.state(OniBlockFactory.POLLUTED_WATER)
                                         OniElements.LIQUID_CRUDE_OIL -> OniBlockLookup.state(OniBlockFactory.CRUDE_OIL)
                                         OniElements.LIQUID_LAVA -> OniBlockLookup.state(OniBlockFactory.LAVA)
+                                        OniElements.LIQUID_SALT_WATER -> OniBlockLookup.state(OniBlockFactory.SALT_WATER)
+                                        OniElements.LIQUID_BRINE -> OniBlockLookup.state(OniBlockFactory.BRINE)
+                                        OniElements.LIQUID_ETHANOL -> OniBlockLookup.state(OniBlockFactory.ETHANOL)
+                                        OniElements.LIQUID_PETROLEUM -> OniBlockLookup.state(OniBlockFactory.PETROLEUM)
+                                        OniElements.LIQUID_MILK -> OniBlockLookup.state(OniBlockFactory.MILK)
+                                        OniElements.LIQUID_NATURAL_RESIN -> OniBlockLookup.state(OniBlockFactory.NATURAL_RESIN)
+                                        OniElements.LIQUID_PHYTO_OIL -> OniBlockLookup.state(OniBlockFactory.PHYTO_OIL)
+                                        OniElements.LIQUID_MOLTEN_GLASS -> OniBlockLookup.state(OniBlockFactory.MOLTEN_GLASS)
+                                        OniElements.LIQUID_SUPER_COOLANT -> OniBlockLookup.state(OniBlockFactory.SUPER_COOLANT)
+                                        OniElements.LIQUID_VISCO_GEL -> OniBlockLookup.state(OniBlockFactory.VISCO_GEL)
                                         else -> null
                                     }
                                     if (targetState == null) {

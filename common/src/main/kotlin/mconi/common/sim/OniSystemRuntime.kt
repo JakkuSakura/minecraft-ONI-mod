@@ -5,6 +5,7 @@ import mconi.common.sim.subsystem.LiquidSystem
 import mconi.common.sim.subsystem.OniSystem
 import mconi.common.sim.subsystem.PlumbingSystem
 import mconi.common.sim.subsystem.PowerSystem
+import mconi.common.sim.subsystem.RefiningSystem
 import mconi.common.sim.subsystem.ResearchConstructionSystem
 import mconi.common.sim.subsystem.StressSystem
 import mconi.common.sim.subsystem.SystemContext
@@ -40,6 +41,7 @@ class OniSystemRuntime {
         systems.add(GasSystem())
         systems.add(VentilationSystem())
         systems.add(PowerSystem())
+        systems.add(RefiningSystem())
         systems.add(StressSystem())
         systems.add(ResearchConstructionSystem())
     }

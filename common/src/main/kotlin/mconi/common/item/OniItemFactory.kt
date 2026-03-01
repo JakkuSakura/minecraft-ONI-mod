@@ -17,6 +17,19 @@ object OniItemFactory {
     const val BOTTLED_POLLUTED_WATER = "bottled_polluted_water"
     const val BOTTLED_CRUDE_OIL = "bottled_crude_oil"
     const val BOTTLED_LAVA = "bottled_lava"
+    const val BOTTLED_METHANE = "bottled_methane"
+    const val BOTTLED_STEAM = "bottled_steam"
+    const val BOTTLED_CHLORINE = "bottled_chlorine"
+    const val BOTTLED_SALT_WATER = "bottled_salt_water"
+    const val BOTTLED_BRINE = "bottled_brine"
+    const val BOTTLED_ETHANOL = "bottled_ethanol"
+    const val BOTTLED_PETROLEUM = "bottled_petroleum"
+    const val BOTTLED_MILK = "bottled_milk"
+    const val BOTTLED_NATURAL_RESIN = "bottled_natural_resin"
+    const val BOTTLED_PHYTO_OIL = "bottled_phyto_oil"
+    const val BOTTLED_MOLTEN_GLASS = "bottled_molten_glass"
+    const val BOTTLED_SUPER_COOLANT = "bottled_super_coolant"
+    const val BOTTLED_VISCO_GEL = "bottled_visco_gel"
     const val BLUEPRINT_BOOK = "blueprint_book"
     const val BLUEPRINT = "blueprint"
     const val ELEMENT_REGOLITH = "element_regolith"
@@ -28,6 +41,67 @@ object OniItemFactory {
     const val ELEMENT_POLLUTED_DIRT = "element_polluted_dirt"
     const val ELEMENT_METAL_ORE = "element_metal_ore"
     const val ELEMENT_REFINED_METAL = "element_refined_metal"
+    const val ELEMENT_DIRT = "element_dirt"
+    const val ELEMENT_SAND = "element_sand"
+    const val ELEMENT_TOXIC_SAND = "element_toxic_sand"
+    const val ELEMENT_SALT = "element_salt"
+    const val ELEMENT_TABLE_SALT = "element_table_salt"
+    const val ELEMENT_SLIME_MOLD = "element_slime_mold"
+    const val ELEMENT_PLANT_FIBER = "element_plant_fiber"
+    const val ELEMENT_FABRICATED_WOOD = "element_fabricated_wood"
+    const val ELEMENT_WOOD_LOG = "element_wood_log"
+    const val ELEMENT_BUILDING_WOOD = "element_building_wood"
+    const val ELEMENT_PHOSPHORITE = "element_phosphorite"
+    const val ELEMENT_FERTILIZER = "element_fertilizer"
+    const val ELEMENT_BLEACH_STONE = "element_bleach_stone"
+    const val ELEMENT_CERAMIC = "element_ceramic"
+    const val ELEMENT_CARBON = "element_carbon"
+    const val ELEMENT_PEAT = "element_peat"
+    const val ELEMENT_REFINED_CARBON = "element_refined_carbon"
+    const val ELEMENT_LIME = "element_lime"
+    const val ELEMENT_FOSSIL = "element_fossil"
+    const val ELEMENT_CLAY = "element_clay"
+    const val ELEMENT_GOLD_AMALGAM = "element_gold_amalgam"
+    const val ELEMENT_GOLD = "element_gold"
+    const val ELEMENT_IRON = "element_iron"
+    const val ELEMENT_IRON_ORE = "element_iron_ore"
+    const val ELEMENT_COPPER = "element_copper"
+    const val ELEMENT_COPPER_ORE = "element_copper_ore"
+    const val ELEMENT_ALUMINUM = "element_aluminum"
+    const val ELEMENT_ALUMINUM_ORE = "element_aluminum_ore"
+    const val ELEMENT_COBALTITE = "element_cobaltite"
+    const val ELEMENT_COBALT = "element_cobalt"
+    const val ELEMENT_TUNGSTEN = "element_tungsten"
+    const val ELEMENT_TUNGSTEN_ORE = "element_tungsten_ore"
+    const val ELEMENT_STEEL = "element_steel"
+    const val ELEMENT_DIAMOND = "element_diamond"
+    const val ELEMENT_REFINED_LIPID = "element_refined_lipid"
+    const val ELEMENT_SULFUR = "element_sulfur"
+    const val ELEMENT_FULLERENE = "element_fullerene"
+    const val ELEMENT_POLYPROPYLENE = "element_polypropylene"
+    const val ELEMENT_HARD_POLYPROPYLENE = "element_hard_polypropylene"
+    const val ELEMENT_TEMP_CONDUCTOR_SOLID = "element_temp_conductor_solid"
+    const val ELEMENT_MILK_FAT = "element_milk_fat"
+    const val ELEMENT_ISORESIN = "element_isoresin"
+    const val ELEMENT_SUPER_INSULATOR = "element_super_insulator"
+    const val ELEMENT_NIOBIUM = "element_niobium"
+    const val ELEMENT_ENRICHED_URANIUM = "element_enriched_uranium"
+    const val ELEMENT_AMBER = "element_amber"
+    const val ELEMENT_OXYROCK = "element_oxyrock"
+    const val ELEMENT_GRAPHITE = "element_graphite"
+    const val ELEMENT_KATAIRITE = "element_katairite"
+    const val ELEMENT_ICE_BELLY_POOP = "element_ice_belly_poop"
+    const val ELEMENT_EGG_SHELL = "element_egg_shell"
+    const val ELEMENT_CRAB_SHELL = "element_crab_shell"
+    const val ELEMENT_CRAB_WOOD_SHELL = "element_crab_wood_shell"
+    const val ELEMENT_GOLD_BELLY_CROWN = "element_gold_belly_crown"
+    const val ELEMENT_GARBAGE_ELECTROBANK = "element_garbage_electrobank"
+    const val ELEMENT_SELF_CHARGING_ELECTROBANK = "element_self_charging_electrobank"
+    const val ELEMENT_COLD_WHEAT_SEED = "element_cold_wheat_seed"
+    const val ELEMENT_SPICE_NUT = "element_spice_nut"
+    const val ELEMENT_BEAN_PLANT_SEED = "element_bean_plant_seed"
+    const val ELEMENT_DEW_DRIP = "element_dew_drip"
+    const val ELEMENT_KELP = "element_kelp"
     const val POWER_STATION_TOOLS = "power_station_tools"
 
     @JvmField
@@ -40,7 +114,68 @@ object OniItemFactory {
         ELEMENT_ALGAE,
         ELEMENT_POLLUTED_DIRT,
         ELEMENT_METAL_ORE,
-        ELEMENT_REFINED_METAL
+        ELEMENT_REFINED_METAL,
+        ELEMENT_DIRT,
+        ELEMENT_SAND,
+        ELEMENT_TOXIC_SAND,
+        ELEMENT_SALT,
+        ELEMENT_TABLE_SALT,
+        ELEMENT_SLIME_MOLD,
+        ELEMENT_PLANT_FIBER,
+        ELEMENT_FABRICATED_WOOD,
+        ELEMENT_WOOD_LOG,
+        ELEMENT_BUILDING_WOOD,
+        ELEMENT_PHOSPHORITE,
+        ELEMENT_FERTILIZER,
+        ELEMENT_BLEACH_STONE,
+        ELEMENT_CERAMIC,
+        ELEMENT_CARBON,
+        ELEMENT_PEAT,
+        ELEMENT_REFINED_CARBON,
+        ELEMENT_LIME,
+        ELEMENT_FOSSIL,
+        ELEMENT_CLAY,
+        ELEMENT_GOLD_AMALGAM,
+        ELEMENT_GOLD,
+        ELEMENT_IRON,
+        ELEMENT_IRON_ORE,
+        ELEMENT_COPPER,
+        ELEMENT_COPPER_ORE,
+        ELEMENT_ALUMINUM,
+        ELEMENT_ALUMINUM_ORE,
+        ELEMENT_COBALTITE,
+        ELEMENT_COBALT,
+        ELEMENT_TUNGSTEN,
+        ELEMENT_TUNGSTEN_ORE,
+        ELEMENT_STEEL,
+        ELEMENT_DIAMOND,
+        ELEMENT_REFINED_LIPID,
+        ELEMENT_SULFUR,
+        ELEMENT_FULLERENE,
+        ELEMENT_POLYPROPYLENE,
+        ELEMENT_HARD_POLYPROPYLENE,
+        ELEMENT_TEMP_CONDUCTOR_SOLID,
+        ELEMENT_MILK_FAT,
+        ELEMENT_ISORESIN,
+        ELEMENT_SUPER_INSULATOR,
+        ELEMENT_NIOBIUM,
+        ELEMENT_ENRICHED_URANIUM,
+        ELEMENT_AMBER,
+        ELEMENT_OXYROCK,
+        ELEMENT_GRAPHITE,
+        ELEMENT_KATAIRITE,
+        ELEMENT_ICE_BELLY_POOP,
+        ELEMENT_EGG_SHELL,
+        ELEMENT_CRAB_SHELL,
+        ELEMENT_CRAB_WOOD_SHELL,
+        ELEMENT_GOLD_BELLY_CROWN,
+        ELEMENT_GARBAGE_ELECTROBANK,
+        ELEMENT_SELF_CHARGING_ELECTROBANK,
+        ELEMENT_COLD_WHEAT_SEED,
+        ELEMENT_SPICE_NUT,
+        ELEMENT_BEAN_PLANT_SEED,
+        ELEMENT_DEW_DRIP,
+        ELEMENT_KELP
     )
 
     @JvmField
@@ -52,6 +187,19 @@ object OniItemFactory {
         BOTTLED_POLLUTED_WATER,
         BOTTLED_CRUDE_OIL,
         BOTTLED_LAVA,
+        BOTTLED_METHANE,
+        BOTTLED_STEAM,
+        BOTTLED_CHLORINE,
+        BOTTLED_SALT_WATER,
+        BOTTLED_BRINE,
+        BOTTLED_ETHANOL,
+        BOTTLED_PETROLEUM,
+        BOTTLED_MILK,
+        BOTTLED_NATURAL_RESIN,
+        BOTTLED_PHYTO_OIL,
+        BOTTLED_MOLTEN_GLASS,
+        BOTTLED_SUPER_COOLANT,
+        BOTTLED_VISCO_GEL,
         BLUEPRINT_BOOK,
         BLUEPRINT,
         ELEMENT_REGOLITH,
@@ -63,6 +211,67 @@ object OniItemFactory {
         ELEMENT_POLLUTED_DIRT,
         ELEMENT_METAL_ORE,
         ELEMENT_REFINED_METAL,
+        ELEMENT_DIRT,
+        ELEMENT_SAND,
+        ELEMENT_TOXIC_SAND,
+        ELEMENT_SALT,
+        ELEMENT_TABLE_SALT,
+        ELEMENT_SLIME_MOLD,
+        ELEMENT_PLANT_FIBER,
+        ELEMENT_FABRICATED_WOOD,
+        ELEMENT_WOOD_LOG,
+        ELEMENT_BUILDING_WOOD,
+        ELEMENT_PHOSPHORITE,
+        ELEMENT_FERTILIZER,
+        ELEMENT_BLEACH_STONE,
+        ELEMENT_CERAMIC,
+        ELEMENT_CARBON,
+        ELEMENT_PEAT,
+        ELEMENT_REFINED_CARBON,
+        ELEMENT_LIME,
+        ELEMENT_FOSSIL,
+        ELEMENT_CLAY,
+        ELEMENT_GOLD_AMALGAM,
+        ELEMENT_GOLD,
+        ELEMENT_IRON,
+        ELEMENT_IRON_ORE,
+        ELEMENT_COPPER,
+        ELEMENT_COPPER_ORE,
+        ELEMENT_ALUMINUM,
+        ELEMENT_ALUMINUM_ORE,
+        ELEMENT_COBALTITE,
+        ELEMENT_COBALT,
+        ELEMENT_TUNGSTEN,
+        ELEMENT_TUNGSTEN_ORE,
+        ELEMENT_STEEL,
+        ELEMENT_DIAMOND,
+        ELEMENT_REFINED_LIPID,
+        ELEMENT_SULFUR,
+        ELEMENT_FULLERENE,
+        ELEMENT_POLYPROPYLENE,
+        ELEMENT_HARD_POLYPROPYLENE,
+        ELEMENT_TEMP_CONDUCTOR_SOLID,
+        ELEMENT_MILK_FAT,
+        ELEMENT_ISORESIN,
+        ELEMENT_SUPER_INSULATOR,
+        ELEMENT_NIOBIUM,
+        ELEMENT_ENRICHED_URANIUM,
+        ELEMENT_AMBER,
+        ELEMENT_OXYROCK,
+        ELEMENT_GRAPHITE,
+        ELEMENT_KATAIRITE,
+        ELEMENT_ICE_BELLY_POOP,
+        ELEMENT_EGG_SHELL,
+        ELEMENT_CRAB_SHELL,
+        ELEMENT_CRAB_WOOD_SHELL,
+        ELEMENT_GOLD_BELLY_CROWN,
+        ELEMENT_GARBAGE_ELECTROBANK,
+        ELEMENT_SELF_CHARGING_ELECTROBANK,
+        ELEMENT_COLD_WHEAT_SEED,
+        ELEMENT_SPICE_NUT,
+        ELEMENT_BEAN_PLANT_SEED,
+        ELEMENT_DEW_DRIP,
+        ELEMENT_KELP,
         POWER_STATION_TOOLS
     )
 
@@ -397,6 +606,21 @@ object OniItemFactory {
                 mass(1.0)
                 temperatureK(295.0)
             }
+            item(BOTTLED_METHANE) {
+                registryId(modId(BOTTLED_METHANE))
+                mass(1.0)
+                temperatureK(295.0)
+            }
+            item(BOTTLED_STEAM) {
+                registryId(modId(BOTTLED_STEAM))
+                mass(1.0)
+                temperatureK(373.15)
+            }
+            item(BOTTLED_CHLORINE) {
+                registryId(modId(BOTTLED_CHLORINE))
+                mass(1.0)
+                temperatureK(295.0)
+            }
             for (spec in OniElements.LIQUID_SPECS) {
                 item(spec.bottledItemId) {
                     registryId(modId(spec.bottledItemId))
@@ -445,6 +669,75 @@ object OniItemFactory {
             item(ELEMENT_REFINED_METAL) {
                 registryId(modId(ELEMENT_REFINED_METAL))
                 mass(1.0)
+            }
+            val extraElementItems = listOf(
+                ELEMENT_DIRT,
+                ELEMENT_SAND,
+                ELEMENT_TOXIC_SAND,
+                ELEMENT_SALT,
+                ELEMENT_TABLE_SALT,
+                ELEMENT_SLIME_MOLD,
+                ELEMENT_PLANT_FIBER,
+                ELEMENT_FABRICATED_WOOD,
+                ELEMENT_WOOD_LOG,
+                ELEMENT_BUILDING_WOOD,
+                ELEMENT_PHOSPHORITE,
+                ELEMENT_FERTILIZER,
+                ELEMENT_BLEACH_STONE,
+                ELEMENT_CERAMIC,
+                ELEMENT_CARBON,
+                ELEMENT_PEAT,
+                ELEMENT_REFINED_CARBON,
+                ELEMENT_LIME,
+                ELEMENT_FOSSIL,
+                ELEMENT_CLAY,
+                ELEMENT_GOLD_AMALGAM,
+                ELEMENT_GOLD,
+                ELEMENT_IRON,
+                ELEMENT_IRON_ORE,
+                ELEMENT_COPPER,
+                ELEMENT_COPPER_ORE,
+                ELEMENT_ALUMINUM,
+                ELEMENT_ALUMINUM_ORE,
+                ELEMENT_COBALTITE,
+                ELEMENT_COBALT,
+                ELEMENT_TUNGSTEN,
+                ELEMENT_TUNGSTEN_ORE,
+                ELEMENT_STEEL,
+                ELEMENT_DIAMOND,
+                ELEMENT_REFINED_LIPID,
+                ELEMENT_SULFUR,
+                ELEMENT_FULLERENE,
+                ELEMENT_POLYPROPYLENE,
+                ELEMENT_HARD_POLYPROPYLENE,
+                ELEMENT_TEMP_CONDUCTOR_SOLID,
+                ELEMENT_MILK_FAT,
+                ELEMENT_ISORESIN,
+                ELEMENT_SUPER_INSULATOR,
+                ELEMENT_NIOBIUM,
+                ELEMENT_ENRICHED_URANIUM,
+                ELEMENT_AMBER,
+                ELEMENT_OXYROCK,
+                ELEMENT_GRAPHITE,
+                ELEMENT_KATAIRITE,
+                ELEMENT_ICE_BELLY_POOP,
+                ELEMENT_EGG_SHELL,
+                ELEMENT_CRAB_SHELL,
+                ELEMENT_CRAB_WOOD_SHELL,
+                ELEMENT_GOLD_BELLY_CROWN,
+                ELEMENT_GARBAGE_ELECTROBANK,
+                ELEMENT_SELF_CHARGING_ELECTROBANK,
+                ELEMENT_COLD_WHEAT_SEED,
+                ELEMENT_SPICE_NUT,
+                ELEMENT_BEAN_PLANT_SEED,
+                ELEMENT_DEW_DRIP,
+                ELEMENT_KELP
+            )
+            for (elementId in extraElementItems) {
+                item(elementId) {
+                    registryId(modId(elementId))
+                    mass(1.0)
+                }
             }
             item(POWER_STATION_TOOLS) {
                 registryId(modId(POWER_STATION_TOOLS))

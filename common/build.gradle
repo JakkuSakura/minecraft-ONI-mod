@@ -72,9 +72,77 @@ tasks.register("generateElementItemModels") {
             "element_metal_ore": "mconi:item/metal_ore",
             "element_refined_metal": "mconi:item/refined_metal"
         ]
+        def placeholderElements = [
+            "element_dirt",
+            "element_sand",
+            "element_toxic_sand",
+            "element_salt",
+            "element_table_salt",
+            "element_slime_mold",
+            "element_plant_fiber",
+            "element_fabricated_wood",
+            "element_wood_log",
+            "element_building_wood",
+            "element_phosphorite",
+            "element_fertilizer",
+            "element_bleach_stone",
+            "element_ceramic",
+            "element_carbon",
+            "element_peat",
+            "element_refined_carbon",
+            "element_lime",
+            "element_fossil",
+            "element_clay",
+            "element_gold_amalgam",
+            "element_gold",
+            "element_iron",
+            "element_iron_ore",
+            "element_copper",
+            "element_copper_ore",
+            "element_aluminum",
+            "element_aluminum_ore",
+            "element_cobaltite",
+            "element_cobalt",
+            "element_tungsten",
+            "element_tungsten_ore",
+            "element_steel",
+            "element_diamond",
+            "element_refined_lipid",
+            "element_sulfur",
+            "element_fullerene",
+            "element_polypropylene",
+            "element_hard_polypropylene",
+            "element_temp_conductor_solid",
+            "element_milk_fat",
+            "element_isoresin",
+            "element_super_insulator",
+            "element_niobium",
+            "element_enriched_uranium",
+            "element_amber",
+            "element_oxyrock",
+            "element_graphite",
+            "element_katairite",
+            "element_ice_belly_poop",
+            "element_egg_shell",
+            "element_crab_shell",
+            "element_crab_wood_shell",
+            "element_gold_belly_crown",
+            "element_garbage_electrobank",
+            "element_self_charging_electrobank",
+            "element_cold_wheat_seed",
+            "element_spice_nut",
+            "element_bean_plant_seed",
+            "element_dew_drip",
+            "element_kelp"
+        ]
+        placeholderElements.each { name ->
+            models[name] = "mconi:item/regolith"
+        }
         models.each { name, texture ->
             def file = new File(modelDir, "${name}.json")
-            file.text = """{\n  \"parent\": \"minecraft:item/generated\",\n  \"textures\": {\n    \"layer0\": \"${texture}\"\n  }\n}\n"""
+            def commentLine = texture == "mconi:item/regolith" ?
+                "  \\\"_comment\\\": \\\"Placeholder texture reused from regolith.\\\",\\n" : ""
+            file.text = """{\n  \"parent\": \"minecraft:item/generated\",\n${commentLine}  \"textures\": {\n    \"layer0\": \"${texture}\"\n  }\n}\n"""
             def itemFile = new File(itemDir, "${name}.json")
             itemFile.text = """{\n  \"model\": {\n    \"type\": \"minecraft:model\",\n    \"model\": \"mconi:item/${name}\"\n  }\n}\n"""
         }

@@ -45,7 +45,7 @@ object OniJadeDataProvider : StreamServerDataProvider<BlockAccessor, String> {
         val level = accessor.level as? ServerLevel ?: return null
         val pos = accessor.position
         val elements = OniElementStore.get(level).elementsAt(pos)
-        val totalMass = elements.sumOf { it.amount }
+        val totalWeight = elements.sumOf { it.amount }
 
         lines.add("Elements:")
         if (elements.isEmpty()) {
@@ -56,7 +56,7 @@ object OniJadeDataProvider : StreamServerDataProvider<BlockAccessor, String> {
             }
         }
 
-        lines.add("Element mass: $totalMass")
+        lines.add("Element mass: $totalWeight")
 
         val entity = OniMatterAccess.matterEntity(level, pos)
         if (entity != null) {

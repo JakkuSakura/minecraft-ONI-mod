@@ -109,6 +109,16 @@ class LiquidSystem : OniSystem {
             OniElements.LIQUID_POLLUTED_WATER -> mconi.common.block.OniBlockLookup.state(mconi.common.block.OniBlockFactory.POLLUTED_WATER)
             OniElements.LIQUID_CRUDE_OIL -> mconi.common.block.OniBlockLookup.state(mconi.common.block.OniBlockFactory.CRUDE_OIL)
             OniElements.LIQUID_LAVA -> mconi.common.block.OniBlockLookup.state(mconi.common.block.OniBlockFactory.LAVA)
+            OniElements.LIQUID_SALT_WATER -> mconi.common.block.OniBlockLookup.state(mconi.common.block.OniBlockFactory.SALT_WATER)
+            OniElements.LIQUID_BRINE -> mconi.common.block.OniBlockLookup.state(mconi.common.block.OniBlockFactory.BRINE)
+            OniElements.LIQUID_ETHANOL -> mconi.common.block.OniBlockLookup.state(mconi.common.block.OniBlockFactory.ETHANOL)
+            OniElements.LIQUID_PETROLEUM -> mconi.common.block.OniBlockLookup.state(mconi.common.block.OniBlockFactory.PETROLEUM)
+            OniElements.LIQUID_MILK -> mconi.common.block.OniBlockLookup.state(mconi.common.block.OniBlockFactory.MILK)
+            OniElements.LIQUID_NATURAL_RESIN -> mconi.common.block.OniBlockLookup.state(mconi.common.block.OniBlockFactory.NATURAL_RESIN)
+            OniElements.LIQUID_PHYTO_OIL -> mconi.common.block.OniBlockLookup.state(mconi.common.block.OniBlockFactory.PHYTO_OIL)
+            OniElements.LIQUID_MOLTEN_GLASS -> mconi.common.block.OniBlockLookup.state(mconi.common.block.OniBlockFactory.MOLTEN_GLASS)
+            OniElements.LIQUID_SUPER_COOLANT -> mconi.common.block.OniBlockLookup.state(mconi.common.block.OniBlockFactory.SUPER_COOLANT)
+            OniElements.LIQUID_VISCO_GEL -> mconi.common.block.OniBlockLookup.state(mconi.common.block.OniBlockFactory.VISCO_GEL)
             else -> Blocks.AIR.defaultBlockState()
         }
     }

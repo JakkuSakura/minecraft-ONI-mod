@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "_comment": "Custom texture.",
+  "textures": {
+    "all": "mconi:block/ethanol"
+  }
+}

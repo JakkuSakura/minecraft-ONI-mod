@@ -6,4 +6,5 @@ object OniBlockEntityTypes {
     lateinit var CONSTRUCTION_SITE: BlockEntityType<ConstructionSiteBlockEntity>
     lateinit var MATTER: BlockEntityType<OniMatterBlockEntity>
     lateinit var CONDUIT: BlockEntityType<OniConduitBlockEntity>
+    lateinit var REFINING_MACHINE: BlockEntityType<mconi.common.refining.RefiningMachineBlockEntity>
 }

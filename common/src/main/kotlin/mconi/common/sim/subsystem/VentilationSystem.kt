@@ -182,6 +182,9 @@ class VentilationSystem : OniSystem {
             OniElements.GAS_OXYGEN.id -> OniBlockLookup.state(OniBlockFactory.OXYGEN_GAS)
             OniElements.GAS_CARBON_DIOXIDE.id -> OniBlockLookup.state(OniBlockFactory.CARBON_DIOXIDE_GAS)
             OniElements.GAS_HYDROGEN.id -> OniBlockLookup.state(OniBlockFactory.HYDROGEN_GAS)
+            OniElements.GAS_METHANE.id -> OniBlockLookup.state(OniBlockFactory.METHANE_GAS)
+            OniElements.GAS_STEAM.id -> OniBlockLookup.state(OniBlockFactory.STEAM_GAS)
+            OniElements.GAS_CHLORINE.id -> OniBlockLookup.state(OniBlockFactory.CHLORINE_GAS)
             else -> Blocks.AIR.defaultBlockState()
         }
     }

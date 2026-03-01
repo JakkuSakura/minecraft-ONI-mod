@@ -6,6 +6,7 @@ import mconi.common.block.OniBlockFactory
 import mconi.common.block.entity.OniBlockEntityTypes
 import mconi.common.block.entity.OniConduitBlockEntity
 import mconi.common.block.entity.OniMatterBlockEntity
+import mconi.common.refining.RefiningMachineBlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraftforge.eventbus.api.bus.BusGroup
 import net.minecraftforge.registries.DeferredRegister
@@ -31,6 +32,12 @@ object ForgeBlockEntities {
             .toSet()
         BlockEntityType(::OniConduitBlockEntity, blocks)
     }
+    private val REFINING_MACHINE = BLOCK_ENTITIES.register("refining_machine") {
+        val blocks = OniBlockFactory.REFINING_IDS
+            .map { ForgeBlocks.blockHolder(it).get() }
+            .toSet()
+        BlockEntityType(::RefiningMachineBlockEntity, blocks)
+    }
 
     fun register(busGroup: BusGroup) {
         BLOCK_ENTITIES.register(busGroup)
@@ -43,5 +50,7 @@ object ForgeBlockEntities {
         OniBlockEntityTypes.MATTER = MATTER.get() as BlockEntityType<OniMatterBlockEntity>
         @Suppress("UNCHECKED_CAST")
         OniBlockEntityTypes.CONDUIT = CONDUIT.get() as BlockEntityType<OniConduitBlockEntity>
+        @Suppress("UNCHECKED_CAST")
+        OniBlockEntityTypes.REFINING_MACHINE = REFINING_MACHINE.get() as BlockEntityType<RefiningMachineBlockEntity>
     }
 }

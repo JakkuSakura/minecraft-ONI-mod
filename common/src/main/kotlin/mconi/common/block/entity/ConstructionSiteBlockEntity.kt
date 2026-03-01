@@ -2,7 +2,7 @@ package mconi.common.block.entity
 
 import mconi.common.block.OniBlockLookup
 import mconi.common.block.OniBlockFactory
-import mconi.common.item.OniItemMass
+import mconi.common.item.OniItemWeight
 import mconi.common.item.OniItemFactory
 import mconi.common.element.ElementStack
 import mconi.common.element.OniElementStore
@@ -95,10 +95,10 @@ class ConstructionSiteBlockEntity(pos: BlockPos, state: BlockState) :
                 continue
             }
             val stack = net.minecraft.world.item.ItemStack(item, 1)
-            OniItemMass.setStackMass(stack, slot.depositedAmount.toDouble())
+            OniItemWeight.setStackWeight(stack, slot.depositedAmount.toDouble())
             refunds.add(stack)
         }
-        return OniItemMass.mergeStacksByMass(refunds).toMutableList()
+        return OniItemWeight.mergeStacksByWeight(refunds).toMutableList()
     }
 
     fun appendJadeLines(lines: MutableList<String>) {
@@ -219,11 +219,11 @@ class ConstructionSiteBlockEntity(pos: BlockPos, state: BlockState) :
             if (stack.item != item) {
                 continue
             }
-            val take = minOf(remaining, OniItemMass.stackMass(stack))
+            val take = minOf(remaining, OniItemWeight.stackWeight(stack))
             if (take <= 0.0) {
                 continue
             }
-            val actual = OniItemMass.takeMass(stack, take)
+            val actual = OniItemWeight.takeWeight(stack, take)
             deposited += actual
             remaining -= actual
             if (remaining <= 0.0) {

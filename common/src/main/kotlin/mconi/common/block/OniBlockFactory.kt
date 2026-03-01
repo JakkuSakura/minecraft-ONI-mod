@@ -1,6 +1,7 @@
 package mconi.common.block
 
 import mconi.common.AbstractModBootstrap
+import mconi.common.refining.RefiningMachineBlock
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.Identifier
@@ -60,6 +61,40 @@ object OniBlockFactory {
     const val GAS_CONDUIT = "gas_conduit"
     const val LIQUID_VENT = "liquid_vent"
     const val GAS_VENT = "gas_vent"
+    const val FABRICATED_WOOD_MAKER = "fabricated_wood_maker"
+    const val COMPOST = "compost"
+    const val WATER_PURIFIER = "water_purifier"
+    const val DESALINATOR = "desalinator"
+    const val FERTILIZER_MAKER = "fertilizer_maker"
+    const val ALGAE_DISTILLERY = "algae_distillery"
+    const val ETHANOL_DISTILLERY = "ethanol_distillery"
+    const val ROCK_CRUSHER = "rock_crusher"
+    const val KILN = "kiln"
+    const val SLUDGE_PRESS = "sludge_press"
+    const val METAL_REFINERY = "metal_refinery"
+    const val GLASS_FORGE = "glass_forge"
+    const val OIL_REFINERY = "oil_refinery"
+    const val POLYMERIZER = "polymerizer"
+    const val OXYLITE_REFINERY = "oxylite_refinery"
+    const val CHLORINATOR = "chlorinator"
+    const val CHEMICAL_REFINERY = "chemical_refinery"
+    const val SUPERMATERIAL_REFINERY = "supermaterial_refinery"
+    const val DIAMOND_PRESS = "diamond_press"
+    const val MILK_FAT_SEPARATOR = "milk_fat_separator"
+    const val MILK_PRESS = "milk_press"
+    const val SALT_WATER = "salt_water"
+    const val BRINE = "brine"
+    const val ETHANOL = "ethanol"
+    const val PETROLEUM = "petroleum"
+    const val MILK = "milk"
+    const val NATURAL_RESIN = "natural_resin"
+    const val PHYTO_OIL = "phyto_oil"
+    const val MOLTEN_GLASS = "molten_glass"
+    const val SUPER_COOLANT = "super_coolant"
+    const val VISCO_GEL = "visco_gel"
+    const val METHANE_GAS = "methane_gas"
+    const val STEAM_GAS = "steam_gas"
+    const val CHLORINE_GAS = "chlorine_gas"
 
     enum class BlockKind {
         SOLID,
@@ -382,6 +417,112 @@ object OniBlockFactory {
                 GAS_VENT,
                 properties = propsFor(GAS_VENT).mapColor(MapColor.COLOR_LIGHT_BLUE).noOcclusion().strength(0.6f).sound(SoundType.METAL)
             )
+        }),
+        // Placeholder textures reused from power_wire assets until custom art lands.
+        solidEntry(FABRICATED_WOOD_MAKER, SolidBlockSpec(), { _ ->
+            RefiningMachineBlock(
+                propsFor(FABRICATED_WOOD_MAKER).mapColor(MapColor.COLOR_BROWN).strength(2.0f, 5.0f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(COMPOST, SolidBlockSpec(), { _ ->
+            RefiningMachineBlock(
+                propsFor(COMPOST).mapColor(MapColor.COLOR_BROWN).strength(1.5f, 4.0f).sound(SoundType.GRAVEL)
+            )
+        }),
+        solidEntry(WATER_PURIFIER, SolidBlockSpec(), { _ ->
+            RefiningMachineBlock(
+                propsFor(WATER_PURIFIER).mapColor(MapColor.COLOR_BLUE).strength(2.0f, 5.0f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(DESALINATOR, SolidBlockSpec(), { _ ->
+            RefiningMachineBlock(
+                propsFor(DESALINATOR).mapColor(MapColor.COLOR_CYAN).strength(2.0f, 5.0f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(FERTILIZER_MAKER, SolidBlockSpec(), { _ ->
+            RefiningMachineBlock(
+                propsFor(FERTILIZER_MAKER).mapColor(MapColor.COLOR_GREEN).strength(2.0f, 5.0f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(ALGAE_DISTILLERY, SolidBlockSpec(), { _ ->
+            RefiningMachineBlock(
+                propsFor(ALGAE_DISTILLERY).mapColor(MapColor.COLOR_GREEN).strength(2.0f, 5.0f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(ETHANOL_DISTILLERY, SolidBlockSpec(), { _ ->
+            RefiningMachineBlock(
+                propsFor(ETHANOL_DISTILLERY).mapColor(MapColor.COLOR_ORANGE).strength(2.0f, 5.0f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(ROCK_CRUSHER, SolidBlockSpec(), { _ ->
+            RefiningMachineBlock(
+                propsFor(ROCK_CRUSHER).mapColor(MapColor.COLOR_LIGHT_GRAY).strength(2.0f, 5.0f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(KILN, SolidBlockSpec(), { _ ->
+            RefiningMachineBlock(
+                propsFor(KILN).mapColor(MapColor.COLOR_ORANGE).strength(2.0f, 5.0f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(SLUDGE_PRESS, SolidBlockSpec(), { _ ->
+            RefiningMachineBlock(
+                propsFor(SLUDGE_PRESS).mapColor(MapColor.COLOR_GREEN).strength(2.0f, 5.0f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(METAL_REFINERY, SolidBlockSpec(), { _ ->
+            RefiningMachineBlock(
+                propsFor(METAL_REFINERY).mapColor(MapColor.COLOR_GRAY).strength(2.0f, 5.0f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(GLASS_FORGE, SolidBlockSpec(), { _ ->
+            RefiningMachineBlock(
+                propsFor(GLASS_FORGE).mapColor(MapColor.COLOR_LIGHT_BLUE).strength(2.0f, 5.0f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(OIL_REFINERY, SolidBlockSpec(), { _ ->
+            RefiningMachineBlock(
+                propsFor(OIL_REFINERY).mapColor(MapColor.COLOR_BROWN).strength(2.0f, 5.0f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(POLYMERIZER, SolidBlockSpec(), { _ ->
+            RefiningMachineBlock(
+                propsFor(POLYMERIZER).mapColor(MapColor.COLOR_PINK).strength(2.0f, 5.0f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(OXYLITE_REFINERY, SolidBlockSpec(), { _ ->
+            RefiningMachineBlock(
+                propsFor(OXYLITE_REFINERY).mapColor(MapColor.COLOR_LIGHT_BLUE).strength(2.0f, 5.0f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(CHLORINATOR, SolidBlockSpec(), { _ ->
+            RefiningMachineBlock(
+                propsFor(CHLORINATOR).mapColor(MapColor.COLOR_YELLOW).strength(2.0f, 5.0f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(CHEMICAL_REFINERY, SolidBlockSpec(), { _ ->
+            RefiningMachineBlock(
+                propsFor(CHEMICAL_REFINERY).mapColor(MapColor.COLOR_PURPLE).strength(2.0f, 5.0f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(SUPERMATERIAL_REFINERY, SolidBlockSpec(), { _ ->
+            RefiningMachineBlock(
+                propsFor(SUPERMATERIAL_REFINERY).mapColor(MapColor.COLOR_LIGHT_GRAY).strength(2.0f, 5.0f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(DIAMOND_PRESS, SolidBlockSpec(), { _ ->
+            RefiningMachineBlock(
+                propsFor(DIAMOND_PRESS).mapColor(MapColor.COLOR_BLUE).strength(2.0f, 5.0f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(MILK_FAT_SEPARATOR, SolidBlockSpec(), { _ ->
+            RefiningMachineBlock(
+                propsFor(MILK_FAT_SEPARATOR).mapColor(MapColor.COLOR_LIGHT_GRAY).strength(2.0f, 5.0f).sound(SoundType.METAL)
+            )
+        }),
+        solidEntry(MILK_PRESS, SolidBlockSpec(), { _ ->
+            RefiningMachineBlock(
+                propsFor(MILK_PRESS).mapColor(MapColor.COLOR_LIGHT_GRAY).strength(2.0f, 5.0f).sound(SoundType.METAL)
+            )
         })
     )
 
@@ -413,6 +554,76 @@ object OniBlockFactory {
                 properties = propsFor(LAVA).mapColor(MapColor.COLOR_ORANGE).noCollision().noOcclusion().strength(0.0f)
                     .sound(SoundType.SLIME_BLOCK)
             )
+        }),
+        entry(SALT_WATER, BlockKind.LIQUID, {
+            OniLiquidBlock(
+                mass = 1020,
+                properties = propsFor(SALT_WATER).mapColor(MapColor.COLOR_BLUE).noCollision().noOcclusion().strength(0.0f)
+                    .sound(SoundType.WET_GRASS)
+            )
+        }),
+        entry(BRINE, BlockKind.LIQUID, {
+            OniLiquidBlock(
+                mass = 1200,
+                properties = propsFor(BRINE).mapColor(MapColor.COLOR_LIGHT_BLUE).noCollision().noOcclusion().strength(0.0f)
+                    .sound(SoundType.WET_GRASS)
+            )
+        }),
+        entry(ETHANOL, BlockKind.LIQUID, {
+            OniLiquidBlock(
+                mass = 789,
+                properties = propsFor(ETHANOL).mapColor(MapColor.COLOR_ORANGE).noCollision().noOcclusion().strength(0.0f)
+                    .sound(SoundType.WET_GRASS)
+            )
+        }),
+        entry(PETROLEUM, BlockKind.LIQUID, {
+            OniLiquidBlock(
+                mass = 820,
+                properties = propsFor(PETROLEUM).mapColor(MapColor.COLOR_BROWN).noCollision().noOcclusion().strength(0.0f)
+                    .sound(SoundType.SLIME_BLOCK)
+            )
+        }),
+        entry(MILK, BlockKind.LIQUID, {
+            OniLiquidBlock(
+                mass = 1030,
+                properties = propsFor(MILK).mapColor(MapColor.COLOR_LIGHT_GRAY).noCollision().noOcclusion().strength(0.0f)
+                    .sound(SoundType.WET_GRASS)
+            )
+        }),
+        entry(NATURAL_RESIN, BlockKind.LIQUID, {
+            OniLiquidBlock(
+                mass = 1200,
+                properties = propsFor(NATURAL_RESIN).mapColor(MapColor.COLOR_YELLOW).noCollision().noOcclusion().strength(0.0f)
+                    .sound(SoundType.WET_GRASS)
+            )
+        }),
+        entry(PHYTO_OIL, BlockKind.LIQUID, {
+            OniLiquidBlock(
+                mass = 900,
+                properties = propsFor(PHYTO_OIL).mapColor(MapColor.COLOR_GREEN).noCollision().noOcclusion().strength(0.0f)
+                    .sound(SoundType.WET_GRASS)
+            )
+        }),
+        entry(MOLTEN_GLASS, BlockKind.LIQUID, {
+            OniLiquidBlock(
+                mass = 2500,
+                properties = propsFor(MOLTEN_GLASS).mapColor(MapColor.COLOR_LIGHT_BLUE).noCollision().noOcclusion().strength(0.0f)
+                    .sound(SoundType.SLIME_BLOCK)
+            )
+        }),
+        entry(SUPER_COOLANT, BlockKind.LIQUID, {
+            OniLiquidBlock(
+                mass = 1000,
+                properties = propsFor(SUPER_COOLANT).mapColor(MapColor.COLOR_LIGHT_BLUE).noCollision().noOcclusion().strength(0.0f)
+                    .sound(SoundType.WET_GRASS)
+            )
+        }),
+        entry(VISCO_GEL, BlockKind.LIQUID, {
+            OniLiquidBlock(
+                mass = 1000,
+                properties = propsFor(VISCO_GEL).mapColor(MapColor.COLOR_CYAN).noCollision().noOcclusion().strength(0.0f)
+                    .sound(SoundType.SLIME_BLOCK)
+            )
         })
     )
 
@@ -431,6 +642,21 @@ object OniBlockFactory {
             OniGasBlock(
                 propsFor(HYDROGEN_GAS).noCollision().noOcclusion().strength(0.0f).sound(SoundType.WOOL)
             )
+        }),
+        entry(METHANE_GAS, BlockKind.GAS, {
+            OniGasBlock(
+                propsFor(METHANE_GAS).noCollision().noOcclusion().strength(0.0f).sound(SoundType.WOOL)
+            )
+        }),
+        entry(STEAM_GAS, BlockKind.GAS, {
+            OniGasBlock(
+                propsFor(STEAM_GAS).noCollision().noOcclusion().strength(0.0f).sound(SoundType.WOOL)
+            )
+        }),
+        entry(CHLORINE_GAS, BlockKind.GAS, {
+            OniGasBlock(
+                propsFor(CHLORINE_GAS).noCollision().noOcclusion().strength(0.0f).sound(SoundType.WOOL)
+            )
         })
     )
 
@@ -445,6 +671,31 @@ object OniBlockFactory {
 
     @JvmField
     val LIQUID_IDS: List<String> = LIQUID_ENTRIES.map { it.id }
+
+    @JvmField
+    val REFINING_IDS: List<String> = listOf(
+        FABRICATED_WOOD_MAKER,
+        COMPOST,
+        WATER_PURIFIER,
+        DESALINATOR,
+        FERTILIZER_MAKER,
+        ALGAE_DISTILLERY,
+        ETHANOL_DISTILLERY,
+        ROCK_CRUSHER,
+        KILN,
+        SLUDGE_PRESS,
+        METAL_REFINERY,
+        GLASS_FORGE,
+        OIL_REFINERY,
+        POLYMERIZER,
+        OXYLITE_REFINERY,
+        CHLORINATOR,
+        CHEMICAL_REFINERY,
+        SUPERMATERIAL_REFINERY,
+        DIAMOND_PRESS,
+        MILK_FAT_SEPARATOR,
+        MILK_PRESS
+    )
 
     fun entries(): List<BlockEntry> = ENTRIES
 

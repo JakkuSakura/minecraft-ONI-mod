@@ -182,6 +182,16 @@ class PlumbingSystem : OniSystem {
             OniElements.LIQUID_POLLUTED_WATER -> OniBlockLookup.state(OniBlockFactory.POLLUTED_WATER)
             OniElements.LIQUID_CRUDE_OIL -> OniBlockLookup.state(OniBlockFactory.CRUDE_OIL)
             OniElements.LIQUID_LAVA -> OniBlockLookup.state(OniBlockFactory.LAVA)
+            OniElements.LIQUID_SALT_WATER -> OniBlockLookup.state(OniBlockFactory.SALT_WATER)
+            OniElements.LIQUID_BRINE -> OniBlockLookup.state(OniBlockFactory.BRINE)
+            OniElements.LIQUID_ETHANOL -> OniBlockLookup.state(OniBlockFactory.ETHANOL)
+            OniElements.LIQUID_PETROLEUM -> OniBlockLookup.state(OniBlockFactory.PETROLEUM)
+            OniElements.LIQUID_MILK -> OniBlockLookup.state(OniBlockFactory.MILK)
+            OniElements.LIQUID_NATURAL_RESIN -> OniBlockLookup.state(OniBlockFactory.NATURAL_RESIN)
+            OniElements.LIQUID_PHYTO_OIL -> OniBlockLookup.state(OniBlockFactory.PHYTO_OIL)
+            OniElements.LIQUID_MOLTEN_GLASS -> OniBlockLookup.state(OniBlockFactory.MOLTEN_GLASS)
+            OniElements.LIQUID_SUPER_COOLANT -> OniBlockLookup.state(OniBlockFactory.SUPER_COOLANT)
+            OniElements.LIQUID_VISCO_GEL -> OniBlockLookup.state(OniBlockFactory.VISCO_GEL)
             else -> Blocks.AIR.defaultBlockState()
         }
     }

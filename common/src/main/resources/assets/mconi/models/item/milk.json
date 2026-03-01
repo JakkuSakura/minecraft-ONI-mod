@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "_comment": "Custom texture.",
+  "textures": {
+    "layer0": "mconi:block/milk"
+  }
+}
