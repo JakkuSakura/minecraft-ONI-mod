@@ -22,7 +22,7 @@ object NeoforgeBlockEntities {
         BlockEntityType(::ConstructionSiteBlockEntity, setOf(block))
     })
     private val MATTER = BLOCK_ENTITIES.register("matter", Supplier {
-        val blocks = (OniBlockFactory.GAS_IDS + OniBlockFactory.LIQUID_IDS)
+        val blocks = (OniBlockFactory.SOLID_IDS + OniBlockFactory.GAS_IDS + OniBlockFactory.LIQUID_IDS)
             .map { NeoforgeBlocks.blockHolder(it).get() }
             .toSet()
         BlockEntityType(::OniMatterBlockEntity, blocks)

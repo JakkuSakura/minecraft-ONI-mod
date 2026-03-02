@@ -5,6 +5,7 @@
     "mixins": [],
     "client": [
         "fabric.client.SplashManagerMixin",
+        "fabric.client.PresetEditorAccessor",
         "common.client.TitleScreenMixin",
         "common.client.TitleScreenButtonMixin"
     ],

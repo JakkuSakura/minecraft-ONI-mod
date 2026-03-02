@@ -3,8 +3,10 @@ package mconi.forge
 import mconi.common.AbstractModBootstrap
 import mconi.common.LoaderType
 import mconi.common.config.OniConfigPaths
+import mconi.common.client.worldgen.OniWorldgenPresetEditors
 import mconi.common.element.OniElements
 import mconi.forge.wrappers.ForgeModChecker
+import net.minecraftforge.client.event.RegisterPresetEditorsEvent
 import net.minecraftforge.fml.loading.FMLPaths
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
@@ -43,6 +45,11 @@ class ForgeMain : AbstractModBootstrap() {
                 ForgeBlockEntities.bindTypes()
                 ForgeMenus.bindTypes()
                 OniElements.refreshElementItems()
+            }
+
+            @SubscribeEvent
+            fun onRegisterPresetEditors(event: RegisterPresetEditorsEvent) {
+                OniWorldgenPresetEditors.registerEditors(event::register)
             }
         })
     }

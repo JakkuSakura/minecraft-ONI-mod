@@ -4,8 +4,10 @@ import com.mojang.brigadier.CommandDispatcher
 import mconi.common.AbstractModBootstrap
 import mconi.common.client.OniClientScreens
 import mconi.common.client.overlay.OniLensOverlayRenderer
+import mconi.common.client.worldgen.OniWorldgenPresetEditors
 import mconi.common.client.screen.BlueprintBookScreen
 import mconi.common.menu.OniMenuTypes
+import mconi.mixins.fabric.client.PresetEditorAccessor
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
@@ -36,6 +38,12 @@ class FabricClientProxy : AbstractModBootstrap.IEventProxy {
 
         OniClientScreens.registerWorldgenConfigScreen { parent ->
             FabricWorldgenConfigScreen.create(parent)
+        }
+        OniClientScreens.registerWorldgenPresetEditor { createWorld, _ ->
+            FabricWorldgenConfigScreen.create(createWorld)
+        }
+        OniWorldgenPresetEditors.registerEditors { key, editor ->
+            PresetEditorAccessor.`mconi$getEditors`()[key] = editor
         }
 
         WorldRenderEvents.END_MAIN.register { context ->

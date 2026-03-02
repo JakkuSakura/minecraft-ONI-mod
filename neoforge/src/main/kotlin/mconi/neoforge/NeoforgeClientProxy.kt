@@ -22,6 +22,9 @@ class NeoforgeClientProxy : AbstractModBootstrap.IEventProxy {
         OniClientScreens.registerWorldgenConfigScreen { parent ->
             NeoforgeWorldgenConfigScreen.create(parent)
         }
+        OniClientScreens.registerWorldgenPresetEditor { createWorld, _ ->
+            NeoforgeWorldgenConfigScreen.create(createWorld)
+        }
         // NeoForge Client Events here
     }
 

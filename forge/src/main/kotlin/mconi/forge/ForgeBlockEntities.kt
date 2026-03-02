@@ -21,7 +21,7 @@ object ForgeBlockEntities {
         BlockEntityType(::ConstructionSiteBlockEntity, setOf(block))
     }
     private val MATTER = BLOCK_ENTITIES.register("matter") {
-        val blocks = (OniBlockFactory.GAS_IDS + OniBlockFactory.LIQUID_IDS)
+        val blocks = (OniBlockFactory.SOLID_IDS + OniBlockFactory.GAS_IDS + OniBlockFactory.LIQUID_IDS)
             .map { ForgeBlocks.blockHolder(it).get() }
             .toSet()
         BlockEntityType(::OniMatterBlockEntity, blocks)

@@ -29,6 +29,7 @@ class NeoforgeMain(eventBus: IEventBus) : AbstractModBootstrap() {
         NeoforgeWorldgen.register(eventBus)
         if (FMLEnvironment.getDist() == Dist.CLIENT) {
             eventBus.addListener(NeoforgeClientModEvents::registerMenuScreens)
+            eventBus.addListener(NeoforgeClientModEvents::registerPresetEditors)
         }
         eventBus.addListener { _: FMLClientSetupEvent -> onSetupClient() }
         eventBus.addListener { _: FMLDedicatedServerSetupEvent -> onSetupServer() }

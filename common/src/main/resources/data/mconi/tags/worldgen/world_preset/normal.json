@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "mconi:oni"
+    "mconi:oni_2d",
+    "mconi:oni_3d"
   ]
 }

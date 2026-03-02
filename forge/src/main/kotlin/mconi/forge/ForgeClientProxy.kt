@@ -50,6 +50,9 @@ class ForgeClientProxy : AbstractModBootstrap.IEventProxy {
         OniClientScreens.registerWorldgenConfigScreen { parent ->
             ForgeWorldgenConfigScreen.create(parent)
         }
+        OniClientScreens.registerWorldgenPresetEditor { createWorld, _ ->
+            ForgeWorldgenConfigScreen.create(createWorld)
+        }
         // Forge Client Events here
     }
 

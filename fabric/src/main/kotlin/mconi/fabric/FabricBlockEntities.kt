@@ -31,7 +31,7 @@ object FabricBlockEntities {
 
         val matterId = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:matter")
             ?: throw IllegalArgumentException("Invalid block entity id")
-        val matterBlocks = (OniBlockFactory.GAS_IDS + OniBlockFactory.LIQUID_IDS)
+        val matterBlocks = (OniBlockFactory.SOLID_IDS + OniBlockFactory.GAS_IDS + OniBlockFactory.LIQUID_IDS)
             .map { OniBlockLookup.block(it) }
             .toTypedArray()
         val matterType = FabricBlockEntityTypeBuilder.create(::OniMatterBlockEntity, *matterBlocks).build()
