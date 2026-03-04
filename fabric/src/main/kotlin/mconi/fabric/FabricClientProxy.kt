@@ -43,7 +43,7 @@ class FabricClientProxy : AbstractModBootstrap.IEventProxy {
             FabricWorldgenConfigScreen.create(createWorld)
         }
         OniWorldgenPresetEditors.registerEditors { key, editor ->
-            PresetEditorAccessor.`mconi$getEditors`()[key] = editor
+            PresetEditorAccessor.`mconi$getEditors`()[java.util.Optional.of(key)] = editor
         }
 
         WorldRenderEvents.END_MAIN.register { context ->
