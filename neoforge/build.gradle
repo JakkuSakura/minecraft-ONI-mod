@@ -61,13 +61,13 @@ loom {
 
         // Mixins are now defined in the `mods.toml`
 //        mixinConfigs = [
-//                "mconi.mixins.json"
+//                "conservecraft.mixins.json"
 //        ]
     }
     mixin {
         // Mixins are now defined in the `mods.toml`
 //        mixinConfigs = [
-//                "mconi.mixins.json"
+//                "conservecraft.mixins.json"
 //        ]
     }
 

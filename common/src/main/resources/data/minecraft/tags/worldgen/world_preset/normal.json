@@ -1,7 +1,7 @@
 {
     "replace": false,
     "values": [
-        "mconi:oni_2d",
-        "mconi:oni_3d"
+        "conservecraft:oni_2d",
+        "conservecraft:oni_3d"
     ]
 }

@@ -30,7 +30,7 @@
             "${group}.fabric.FabricModMenuIntegration"
         ],
         "jade": [
-            "mconi.common.compat.jade.OniJadePlugin"
+            "conservecraft.common.compat.jade.OniJadePlugin"
         ]
     },
     

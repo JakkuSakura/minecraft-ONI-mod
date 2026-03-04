@@ -1,0 +1,14 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "conservecraft.mixins",
+    "mixins": [],
+    "client": [
+        "forge.client.SplashManagerMixin",
+        "common.client.TitleScreenMixin"
+    ],
+    "server": [
+        "common.server.MinecraftServerSystemMixin"
+    ],
+    "plugin": "conservecraft.mixins.forge.ForgeMixinPlugin"
+}

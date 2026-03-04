@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_dirt": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:dirt"
+            ]
+          }
+        ]
+      }
+    },
+    "has_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "conservecraft:blueprint_book"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_dirt",
+      "has_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "conservecraft:blueprint_book"
+    ]
+  }
+}

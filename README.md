@@ -1,6 +1,6 @@
-# Oxygen Not Included (MCONI)
+# ConserveCraft (ConserveCraft)
 
-Bring ONI-style colony simulation into Minecraft. This repo focuses on a constrained ONI world, layered matter simulation, and gameplay systems that mirror Oxygen Not Included without abandoning Minecraft ergonomics.
+Bring ONI-style colony simulation into Minecraft. This repo focuses on a constrained ONI world, layered matter simulation, and gameplay systems that mirror ConserveCraft without abandoning Minecraft ergonomics.
 
 ## Highlights
 
@@ -31,9 +31,9 @@ Bring ONI-style colony simulation into Minecraft. This repo focuses on a constra
 
 ## Branding
 
-- Maven group: `mconi`
-- Mod ID: `mconi`
-- Mod name: `Oxygen Not Included`
+- Maven group: `conservecraft`
+- Mod ID: `conservecraft`
+- Mod name: `ConserveCraft`
 
 ## Status
 

@@ -1,0 +1,40 @@
+package conservecraft.common.item
+
+import conservecraft.common.sim.OniServices
+import conservecraft.common.sim.OniSystemInspector
+import conservecraft.common.sim.model.SystemLens
+import net.minecraft.core.BlockPos
+import net.minecraft.network.chat.Component
+import net.minecraft.world.InteractionHand
+import net.minecraft.world.InteractionResult
+import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.Item
+import net.minecraft.world.level.Level
+import net.minecraft.server.level.ServerLevel
+
+class SystemGlassesItem(
+    properties: Item.Properties,
+    private val systemLens: SystemLens,
+) : OniDescribedItem(properties) {
+    fun lens(): SystemLens = systemLens
+
+    override fun use(level: Level, player: Player, hand: InteractionHand): InteractionResult {
+        if (!level.isClientSide) {
+            val serverLevel = level as? ServerLevel ?: return InteractionResult.SUCCESS
+            val pos: BlockPos = player.blockPosition()
+            player.displayClientMessage(
+                Component.literal(
+                    "System glasses [${systemLens.name}] at (${pos.x},${pos.y},${pos.z}):"
+                ),
+                false
+            )
+            for (property in OniSystemInspector.inspect(OniServices.systemRuntime(), systemLens, serverLevel, pos, player)) {
+                player.displayClientMessage(
+                    Component.literal("[${property.layer()}] ${property.key()}=${property.value()}"),
+                    false
+                )
+            }
+        }
+        return InteractionResult.SUCCESS
+    }
+}

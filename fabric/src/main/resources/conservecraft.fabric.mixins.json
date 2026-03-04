@@ -1,0 +1,19 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "conservecraft.mixins",
+    "mixins": [],
+    "client": [
+        "fabric.client.SplashManagerMixin",
+        "fabric.client.PresetEditorAccessor",
+        "common.client.TitleScreenMixin",
+        "common.client.TitleScreenButtonMixin"
+    ],
+    "server": [
+        "common.server.MinecraftServerSystemMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    },
+    "plugin": "conservecraft.mixins.fabric.FabricMixinPlugin"
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "_comment": "Custom texture.",
+  "textures": {
+    "layer0": "conservecraft:item/bottled_steam"
+  }
+}

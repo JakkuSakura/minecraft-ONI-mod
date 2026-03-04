@@ -28,7 +28,7 @@ Player actions:
 Notes:
 
 - All blueprints are selectable for now (research may still pause completion).
-- Material requirements are based on Oxygen Not Included building materials.
+- Material requirements are based on ConserveCraft building materials.
 
 Current blueprint materials (ONI wiki reference values for the primary material, plus a secondary MC material to enforce multi-material recipes):
 

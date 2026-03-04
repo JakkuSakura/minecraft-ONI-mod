@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "mconi:item/heavi_watt_conductive_joint_plate"
-  }
-}

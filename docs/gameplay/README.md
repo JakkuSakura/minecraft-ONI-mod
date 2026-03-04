@@ -1,6 +1,6 @@
-# ONI Gameplay Design for Minecraft (`mconi`)
+# ONI Gameplay Design for Minecraft (`conservecraft`)
 
-This folder defines the first-pass gameplay design for bringing core *Oxygen Not Included* ideas into Minecraft.
+This folder defines the first-pass gameplay design for bringing core *ConserveCraft* ideas into Minecraft.
 
 ## Goals
 

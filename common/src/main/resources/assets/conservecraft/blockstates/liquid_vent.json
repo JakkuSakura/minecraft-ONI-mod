@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "conservecraft:block/liquid_vent" }
+  }
+}

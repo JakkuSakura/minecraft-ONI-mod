@@ -1,0 +1,39 @@
+package conservecraft.forge
+
+import conservecraft.common.AbstractModBootstrap
+import conservecraft.common.block.OniBlockFactory
+import net.minecraft.resources.Identifier
+import net.minecraft.world.item.BlockItem
+import net.minecraft.world.item.Item
+import net.minecraft.world.level.block.Block
+import net.minecraftforge.eventbus.api.bus.BusGroup
+import net.minecraftforge.registries.DeferredRegister
+import net.minecraftforge.registries.ForgeRegistries
+import net.minecraftforge.registries.RegistryObject
+
+object ForgeBlocks {
+    private val BLOCKS: DeferredRegister<Block> = DeferredRegister.create(ForgeRegistries.BLOCKS, AbstractModBootstrap.MOD_ID)
+    private val ITEMS: DeferredRegister<Item> = DeferredRegister.create(ForgeRegistries.ITEMS, AbstractModBootstrap.MOD_ID)
+    private val BLOCK_HOLDERS: MutableMap<String, RegistryObject<Block>> = HashMap()
+
+    init {
+        for (entry in OniBlockFactory.entries()) {
+            val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:${entry.id}")
+                ?: throw IllegalArgumentException("Invalid block id path: ${entry.id}")
+            val holder = BLOCKS.register(entry.id) { OniBlockFactory.createBlock(entry.id) }
+            BLOCK_HOLDERS[entry.id] = holder
+            if (entry.kind == OniBlockFactory.BlockKind.SOLID) {
+                ITEMS.register(entry.id) { BlockItem(holder.get(), Item.Properties()) }
+            }
+        }
+    }
+
+    fun register(busGroup: BusGroup) {
+        BLOCKS.register(busGroup)
+        ITEMS.register(busGroup)
+    }
+
+    fun blockHolder(id: String): RegistryObject<Block> {
+        return BLOCK_HOLDERS[id] ?: throw IllegalArgumentException("Unknown block id: $id")
+    }
+}

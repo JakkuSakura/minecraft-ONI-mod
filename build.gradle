@@ -332,11 +332,11 @@ subprojects { p ->
         configurations = [project.configurations.shadowMe]
         if (isMinecraftSubProject && p != project(":common")) {
             configurations.push(project.configurations.shadowCommon) // Shadow the common subproject
-            //FIXME relocate "mconi.common", "loaderCommon.${p.name}.mconi.common" // Move the loader files to a different location
+            //FIXME relocate "conservecraft.common", "loaderCommon.${p.name}.conservecraft.common" // Move the loader files to a different location
         
             if (findProject(":fabricLike") && p != project(":fabricLike")) {
                 configurations.push(project.configurations.shadowFabricLike) // Shadow the fabricLike subproject
-                //FIXME relocate "mconi.fabriclike", "loaderCommon.${p.name}.mconi.fabriclike" // Move the loader files to a different location
+                //FIXME relocate "conservecraft.fabriclike", "loaderCommon.${p.name}.conservecraft.fabriclike" // Move the loader files to a different location
             }
         }
         def librariesLocation = rootProject.mod_id + ".libraries"
@@ -443,8 +443,8 @@ subprojects { p ->
         // ==================== Delete un-needed files ====================
         exclude rootProject.mod_id + ".fabricLike.mixins.json" // This isnt required atm, but we will be using it later
 
-//        exclude "*.mconi.accesswidener"
-////        include "${accessWidenerVersion}.mconi.accesswidener"
+//        exclude "*.conservecraft.accesswidener"
+////        include "${accessWidenerVersion}.conservecraft.accesswidener"
 
         // Jank solution to remove all unused accesswideners
         // The line above would work..., except that (neo)forge (well, mainly architectury) requires the original accesswidener file, meaning we require this jank solution to keep it

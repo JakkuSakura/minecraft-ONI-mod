@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "_comment": "Refining machine texture.",
-  "textures": {
-    "all": "mconi:block/refining_machine"
-  }
-}

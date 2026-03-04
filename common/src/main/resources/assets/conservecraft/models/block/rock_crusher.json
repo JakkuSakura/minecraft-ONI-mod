@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "_comment": "Refining machine texture.",
+  "textures": {
+    "all": "conservecraft:block/refining_machine"
+  }
+}

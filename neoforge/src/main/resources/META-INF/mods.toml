@@ -26,7 +26,7 @@ issueTrackerURL = "${issues}"
 [[mixins]]
     config = "${mod_id}.neoforge.mixins.json"
 
-[[dependencies.mconi]]
+[[dependencies.conservecraft]]
     modId = "minecraft"
     mandatory = true  # Forge syntax
     type = "required" # Neoforge syntax
@@ -34,7 +34,7 @@ issueTrackerURL = "${issues}"
     ordering = "NONE"
     side = "BOTH"
 
-[[dependencies.mconi]]
+[[dependencies.conservecraft]]
     modId = "jade"
     mandatory = false
     type = "optional"

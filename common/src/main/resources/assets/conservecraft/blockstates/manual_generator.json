@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "conservecraft:block/manual_generator" }
+  }
+}

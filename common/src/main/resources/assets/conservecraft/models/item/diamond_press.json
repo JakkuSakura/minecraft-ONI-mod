@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "_comment": "Refining machine texture.",
+  "textures": {
+    "layer0": "conservecraft:block/refining_machine"
+  }
+}

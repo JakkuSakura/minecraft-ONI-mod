@@ -1,0 +1,15 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "conservecraft.mixins",
+    "mixins": [],
+    "client": [
+        "neoforge.client.SplashManagerMixin",
+        "common.client.TitleScreenMixin",
+        "common.client.TitleScreenButtonMixin"
+    ],
+    "server": [
+        "common.server.MinecraftServerSystemMixin"
+    ],
+    "plugin": "conservecraft.mixins.neoforge.NeoforgeMixinPlugin"
+}

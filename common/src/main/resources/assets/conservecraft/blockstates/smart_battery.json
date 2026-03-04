@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "conservecraft:block/smart_battery" }
+  }
+}

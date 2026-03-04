@@ -1,8 +1,0 @@
-{
-  "variants": {
-    "": {
-      "model": "mconi:block/construction_site",
-      "render_type": "translucent"
-    }
-  }
-}

@@ -57,20 +57,20 @@ def generatedResourcesDir = "${buildDir}/generated/resources"
 tasks.register("generateElementItemModels") {
     outputs.dir(generatedResourcesDir)
     doLast {
-        def modelDir = file("${generatedResourcesDir}/assets/mconi/models/item")
-        def itemDir = file("${generatedResourcesDir}/assets/mconi/items")
+        def modelDir = file("${generatedResourcesDir}/assets/conservecraft/models/item")
+        def itemDir = file("${generatedResourcesDir}/assets/conservecraft/items")
         modelDir.mkdirs()
         itemDir.mkdirs()
         def models = [
-            "element_regolith": "mconi:item/regolith",
-            "element_sedimentary_rock": "mconi:item/sedimentary_rock",
-            "element_igneous_rock": "mconi:item/igneous_rock",
-            "element_granite": "mconi:item/granite",
-            "element_abyssalite": "mconi:item/abyssalite",
-            "element_algae": "mconi:item/algae",
-            "element_polluted_dirt": "mconi:item/polluted_dirt",
-            "element_metal_ore": "mconi:item/metal_ore",
-            "element_refined_metal": "mconi:item/refined_metal"
+            "element_regolith": "conservecraft:item/regolith",
+            "element_sedimentary_rock": "conservecraft:item/sedimentary_rock",
+            "element_igneous_rock": "conservecraft:item/igneous_rock",
+            "element_granite": "conservecraft:item/granite",
+            "element_abyssalite": "conservecraft:item/abyssalite",
+            "element_algae": "conservecraft:item/algae",
+            "element_polluted_dirt": "conservecraft:item/polluted_dirt",
+            "element_metal_ore": "conservecraft:item/metal_ore",
+            "element_refined_metal": "conservecraft:item/refined_metal"
         ]
         def placeholderElements = [
             "element_dirt",
@@ -136,15 +136,15 @@ tasks.register("generateElementItemModels") {
             "element_kelp"
         ]
         placeholderElements.each { name ->
-            models[name] = "mconi:item/regolith"
+            models[name] = "conservecraft:item/regolith"
         }
         models.each { name, texture ->
             def file = new File(modelDir, "${name}.json")
-            def commentLine = texture == "mconi:item/regolith" ?
+            def commentLine = texture == "conservecraft:item/regolith" ?
                 "  \\\"_comment\\\": \\\"Placeholder texture reused from regolith.\\\",\\n" : ""
             file.text = """{\n  \"parent\": \"minecraft:item/generated\",\n${commentLine}  \"textures\": {\n    \"layer0\": \"${texture}\"\n  }\n}\n"""
             def itemFile = new File(itemDir, "${name}.json")
-            itemFile.text = """{\n  \"model\": {\n    \"type\": \"minecraft:model\",\n    \"model\": \"mconi:item/${name}\"\n  }\n}\n"""
+            itemFile.text = """{\n  \"model\": {\n    \"type\": \"minecraft:model\",\n    \"model\": \"conservecraft:item/${name}\"\n  }\n}\n"""
         }
     }
 }

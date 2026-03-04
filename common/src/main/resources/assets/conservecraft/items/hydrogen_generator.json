@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "conservecraft:item/hydrogen_generator"
+  }
+}
