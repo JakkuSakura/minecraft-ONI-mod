@@ -2,7 +2,10 @@ package conservecraft.neoforge
 
 import com.mojang.brigadier.CommandDispatcher
 import conservecraft.common.AbstractModBootstrap
+import conservecraft.common.world.OniElementAccess
 import conservecraft.common.world.OniSpawnHelper
+import conservecraft.common.world.OniVanillaDrops
+import conservecraft.common.world.OniVanillaElementBindings
 import conservecraft.common.world.OniWorldEnforcer
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
@@ -12,10 +15,13 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.storage.LevelData
 import net.minecraft.world.level.storage.WritableLevelData
 import net.minecraft.world.entity.Relative
+import net.minecraft.world.entity.item.ItemEntity
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.neoforge.common.NeoForge
 import net.neoforged.neoforge.event.RegisterCommandsEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent
+import net.neoforged.neoforge.event.level.BlockDropsEvent
+import net.neoforged.neoforge.event.level.BlockEvent
 import net.neoforged.neoforge.event.level.ChunkEvent
 import net.neoforged.neoforge.event.level.LevelEvent
 import org.apache.logging.log4j.Logger
@@ -57,6 +63,31 @@ class NeoforgeServerProxy(private val isDedicated: Boolean) : AbstractModBootstr
         val serverLevel = event.level as? ServerLevel ?: return
         val chunk = event.chunk as? net.minecraft.world.level.chunk.LevelChunk ?: return
         OniWorldEnforcer.enforceChunk(serverLevel, chunk)
+    }
+
+    @SubscribeEvent
+    fun onBlockPlaced(event: BlockEvent.EntityPlaceEvent) {
+        val level = event.level as? ServerLevel ?: return
+        val state = event.placedBlock
+        if (!OniVanillaElementBindings.isMapped(state.block)) {
+            return
+        }
+        OniElementAccess.ensureDefaults(level, event.pos)
+    }
+
+    @SubscribeEvent
+    fun onBlockDrops(event: BlockDropsEvent) {
+        val level = event.level
+        val state = event.state
+        if (!OniVanillaElementBindings.isMapped(state.block)) {
+            return
+        }
+        val drop = OniVanillaDrops.buildDrop(level, state, event.pos) ?: return
+        event.drops.clear()
+        val pos = event.pos
+        event.drops.add(ItemEntity(level, pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, drop))
+        event.setDroppedExperience(0)
+        OniElementAccess.remove(level, pos)
     }
 
     @SubscribeEvent

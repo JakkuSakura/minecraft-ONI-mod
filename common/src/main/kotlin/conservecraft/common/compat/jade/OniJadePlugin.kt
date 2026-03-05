@@ -1,7 +1,8 @@
 package conservecraft.common.compat.jade
 
 import conservecraft.common.AbstractModBootstrap
-import conservecraft.common.block.entity.OniElementBlockEntity
+import conservecraft.common.element.ElementContents
+import conservecraft.common.world.OniElementAccess
 import conservecraft.common.world.OniMatterAccess
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.RegistryFriendlyByteBuf
@@ -44,7 +45,7 @@ object OniJadeDataProvider : StreamServerDataProvider<BlockAccessor, String> {
         val lines = ArrayList<String>()
         val level = accessor.level as? ServerLevel ?: return null
         val pos = accessor.position
-        val elements = (level.getBlockEntity(pos) as? OniElementBlockEntity)?.elements().orEmpty()
+        val elements: List<ElementContents> = OniElementAccess.elements(level, pos)
         val totalMass = elements.sumOf { it.mass }
 
         lines.add("Elements:")
@@ -58,12 +59,14 @@ object OniJadeDataProvider : StreamServerDataProvider<BlockAccessor, String> {
 
         lines.add("Element mass: $totalMass")
 
-        val entity = OniMatterAccess.matterEntity(level, pos)
-        if (entity != null) {
-            val tempK = entity.temperatureK()
+        if (elements.isNotEmpty()) {
+            val tempK = OniElementAccess.averageTemperatureK(level, pos)
             val tempC = tempK - 273.15
             lines.add("Temperature: %.2f K (%.2f C)".format(tempK, tempC))
-            lines.add("Matter mass: %.3f".format(entity.mass()))
+            val entity = OniMatterAccess.matterEntity(level, pos)
+            if (entity != null) {
+                lines.add("Matter mass: %.3f".format(entity.mass()))
+            }
         } else {
             lines.add("Temperature: <unknown>")
         }

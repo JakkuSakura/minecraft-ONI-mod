@@ -811,8 +811,12 @@ object OniBlockFactory {
     }
 
     fun blockDigYield(level: net.minecraft.server.level.ServerLevel, pos: net.minecraft.core.BlockPos): Int {
-        val entity = level.getBlockEntity(pos) as? conservecraft.common.block.entity.OniElementBlockEntity ?: return 0
-        return blockDigYield(entity)
+        val entity = level.getBlockEntity(pos) as? conservecraft.common.block.entity.OniElementBlockEntity
+        if (entity != null) {
+            return blockDigYield(entity)
+        }
+        val total = conservecraft.common.world.OniElementAccess.totalMass(level, pos)
+        return total.coerceAtLeast(0.0).toInt()
     }
 
     fun createBlock(id: String): Block {

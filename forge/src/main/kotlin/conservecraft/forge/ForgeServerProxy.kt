@@ -2,7 +2,9 @@ package conservecraft.forge
 
 import com.mojang.brigadier.CommandDispatcher
 import conservecraft.common.AbstractModBootstrap
+import conservecraft.common.world.OniElementAccess
 import conservecraft.common.world.OniSpawnHelper
+import conservecraft.common.world.OniVanillaElementBindings
 import conservecraft.common.world.OniWorldEnforcer
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
@@ -15,6 +17,7 @@ import net.minecraft.world.entity.Relative
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.RegisterCommandsEvent
 import net.minecraftforge.event.entity.player.PlayerEvent
+import net.minecraftforge.event.level.BlockEvent
 import net.minecraftforge.event.level.ChunkEvent
 import net.minecraftforge.event.level.LevelEvent
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent
@@ -57,6 +60,16 @@ class ForgeServerProxy(private val isDedicated: Boolean) : AbstractModBootstrap.
         val serverLevel = event.level as? ServerLevel ?: return
         val chunk = event.chunk as? net.minecraft.world.level.chunk.LevelChunk ?: return
         OniWorldEnforcer.enforceChunk(serverLevel, chunk)
+    }
+
+    @SubscribeEvent
+    fun onBlockPlaced(event: BlockEvent.EntityPlaceEvent) {
+        val level = event.level as? ServerLevel ?: return
+        val state = event.placedBlock
+        if (!OniVanillaElementBindings.isMapped(state.block)) {
+            return
+        }
+        OniElementAccess.ensureDefaults(level, event.pos)
     }
 
     @SubscribeEvent
