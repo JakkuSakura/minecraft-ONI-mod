@@ -5,10 +5,7 @@ This system defines temperature, heat transfer, and thermal failure behavior.
 ## 1. Thermal State
 
 - Each simulation cell stores `temperature_k`.
-- Solids use thermal class with effective heat capacity:
-  - `low`
-  - `medium`
-  - `high`
+- Elements define specific heat capacity (kJ/kg/K); values come from ONI element data (DTU/g/°C, numerically equal to kJ/kg/K). Cell heat capacity is the sum of `mass * specific_heat_capacity`.
 - Machines define:
   - `heat_output_kw` (or equivalent internal unit)
   - `max_operating_temp_k`
@@ -27,7 +24,7 @@ All channels are rate-limited per tick for stability.
 
 Per cell update:
 
-- `delta_temp = (net_heat_in - net_heat_out) / effective_heat_capacity`
+- `delta_temp = (net_heat_in - net_heat_out) / heat_capacity`
 - clamp delta to configured max step for numerical stability.
 
 This is a deterministic approximation, not high-fidelity CFD.

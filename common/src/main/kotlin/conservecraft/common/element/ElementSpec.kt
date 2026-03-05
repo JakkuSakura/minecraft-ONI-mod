@@ -6,6 +6,7 @@ data class ElementSpec(
     val id: String,
     val itemId: Identifier,
     val phase: ElementPhase,
+    val specificHeatCapacity: Double,
     val thermalConductivityWmK: Double?,
     val massPerItem: Double?,
     val clotterThresholdItems: Int?,

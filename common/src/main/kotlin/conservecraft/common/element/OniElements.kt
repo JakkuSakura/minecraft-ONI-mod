@@ -32,6 +32,7 @@ object OniElements {
         val bottledItemId: String,
         val defaultMass: Double,
         val defaultTemperatureK: Double,
+        val specificHeatCapacity: Double,
         val thermalConductivityWmK: Double? = null,
         val massPerItem: Double? = null,
         val clotterThresholdItems: Int? = null,
@@ -71,12 +72,26 @@ object OniElements {
         val dlcId: String,
     )
 
+    private val gasSpecificHeatCapacityByOniId: Map<String, Double> = mapOf(
+        "Oxygen" to 1.005,
+        "CarbonDioxide" to 0.846,
+        "Hydrogen" to 2.4,
+        "Methane" to 2.191,
+        "Steam" to 4.179,
+        "ChlorineGas" to 0.48
+    )
+
+    private fun gasSpecificHeatCapacity(oniId: String): Double {
+        return gasSpecificHeatCapacityByOniId[oniId]
+            ?: error("Missing specific heat capacity for gas element id '$oniId'.")
+    }
+
     @JvmField
     val GAS_CARBON_DIOXIDE: GasSpec = GasSpec(
         id = "carbon_dioxide",
         elementId = "CarbonDioxide",
         symbol = "CO2",
-        specificHeatCapacity = 0.846,
+        specificHeatCapacity = gasSpecificHeatCapacity("CarbonDioxide"),
         thermalConductivity = 0.0146,
         solidSurfaceAreaMultiplier = 25.0,
         liquidSurfaceAreaMultiplier = 1.0,
@@ -104,7 +119,7 @@ object OniElements {
         id = "hydrogen",
         elementId = "Hydrogen",
         symbol = "H2",
-        specificHeatCapacity = 2.4,
+        specificHeatCapacity = gasSpecificHeatCapacity("Hydrogen"),
         thermalConductivity = 0.168,
         solidSurfaceAreaMultiplier = 25.0,
         liquidSurfaceAreaMultiplier = 1.0,
@@ -132,7 +147,7 @@ object OniElements {
         id = "oxygen",
         elementId = "Oxygen",
         symbol = "O2",
-        specificHeatCapacity = 1.005,
+        specificHeatCapacity = gasSpecificHeatCapacity("Oxygen"),
         thermalConductivity = 0.024,
         solidSurfaceAreaMultiplier = 25.0,
         liquidSurfaceAreaMultiplier = 1.0,
@@ -160,7 +175,7 @@ object OniElements {
         id = "methane",
         elementId = "Methane",
         symbol = "CH4",
-        specificHeatCapacity = 2.191,
+        specificHeatCapacity = gasSpecificHeatCapacity("Methane"),
         thermalConductivity = 0.035,
         solidSurfaceAreaMultiplier = 25.0,
         liquidSurfaceAreaMultiplier = 1.0,
@@ -188,7 +203,7 @@ object OniElements {
         id = "steam",
         elementId = "Steam",
         symbol = "H2O",
-        specificHeatCapacity = 4.179,
+        specificHeatCapacity = gasSpecificHeatCapacity("Steam"),
         thermalConductivity = 0.184,
         solidSurfaceAreaMultiplier = 25.0,
         liquidSurfaceAreaMultiplier = 1.0,
@@ -216,7 +231,7 @@ object OniElements {
         id = "chlorine",
         elementId = "ChlorineGas",
         symbol = "Cl2",
-        specificHeatCapacity = 0.48,
+        specificHeatCapacity = gasSpecificHeatCapacity("ChlorineGas"),
         thermalConductivity = 0.0081,
         solidSurfaceAreaMultiplier = 25.0,
         liquidSurfaceAreaMultiplier = 1.0,
@@ -256,6 +271,28 @@ object OniElements {
         REGISTRY.all().values.associateBy({ it.itemId.toString() }, { it.id })
     }
 
+    private val liquidSpecificHeatCapacityByOniId: Map<String, Double> = mapOf(
+        "Water" to 4.179,
+        "DirtyWater" to 4.179,
+        "CrudeOil" to 1.69,
+        "Magma" to 1.0,
+        "SaltWater" to 4.1,
+        "Brine" to 3.4,
+        "Ethanol" to 2.46,
+        "Petroleum" to 1.76,
+        "Milk" to 4.1,
+        "NaturalResin" to 1.11,
+        "PhytoOil" to 0.9,
+        "MoltenGlass" to 0.2,
+        "SuperCoolant" to 8.44,
+        "ViscoGel" to 1.55
+    )
+
+    private fun liquidSpecificHeatCapacity(oniId: String): Double {
+        return liquidSpecificHeatCapacityByOniId[oniId]
+            ?: error("Missing specific heat capacity for liquid element id '$oniId'.")
+    }
+
     @JvmField
     val LIQUID_SPECS: List<LiquidSpec> = listOf(
         LiquidSpec(
@@ -264,6 +301,7 @@ object OniElements {
             bottledItemId = OniItemFactory.BOTTLED_WATER,
             defaultMass = 1000.0,
             defaultTemperatureK = 300.0,
+            specificHeatCapacity = liquidSpecificHeatCapacity("Water"),
             thermalConductivityWmK = 0.609
         ),
         LiquidSpec(
@@ -272,6 +310,7 @@ object OniElements {
             bottledItemId = OniItemFactory.BOTTLED_POLLUTED_WATER,
             defaultMass = 1000.0,
             defaultTemperatureK = 300.0,
+            specificHeatCapacity = liquidSpecificHeatCapacity("DirtyWater"),
             thermalConductivityWmK = 0.58
         ),
         LiquidSpec(
@@ -280,6 +319,7 @@ object OniElements {
             bottledItemId = OniItemFactory.BOTTLED_CRUDE_OIL,
             defaultMass = 870.0,
             defaultTemperatureK = 350.0,
+            specificHeatCapacity = liquidSpecificHeatCapacity("CrudeOil"),
             thermalConductivityWmK = 2.0
         ),
         LiquidSpec(
@@ -288,6 +328,7 @@ object OniElements {
             bottledItemId = OniItemFactory.BOTTLED_LAVA,
             defaultMass = 1840.0,
             defaultTemperatureK = 2000.0,
+            specificHeatCapacity = liquidSpecificHeatCapacity("Magma"),
             thermalConductivityWmK = 1.0
         ),
         LiquidSpec(
@@ -296,6 +337,7 @@ object OniElements {
             bottledItemId = OniItemFactory.BOTTLED_SALT_WATER,
             defaultMass = 1100.0,
             defaultTemperatureK = 300.0,
+            specificHeatCapacity = liquidSpecificHeatCapacity("SaltWater"),
             thermalConductivityWmK = 0.609
         ),
         LiquidSpec(
@@ -304,6 +346,7 @@ object OniElements {
             bottledItemId = OniItemFactory.BOTTLED_BRINE,
             defaultMass = 1200.0,
             defaultTemperatureK = 282.15,
+            specificHeatCapacity = liquidSpecificHeatCapacity("Brine"),
             thermalConductivityWmK = 0.609
         ),
         LiquidSpec(
@@ -312,6 +355,7 @@ object OniElements {
             bottledItemId = OniItemFactory.BOTTLED_ETHANOL,
             defaultMass = 1000.0,
             defaultTemperatureK = 300.0,
+            specificHeatCapacity = liquidSpecificHeatCapacity("Ethanol"),
             thermalConductivityWmK = 0.171
         ),
         LiquidSpec(
@@ -320,6 +364,7 @@ object OniElements {
             bottledItemId = OniItemFactory.BOTTLED_PETROLEUM,
             defaultMass = 740.0,
             defaultTemperatureK = 300.0,
+            specificHeatCapacity = liquidSpecificHeatCapacity("Petroleum"),
             thermalConductivityWmK = 2.0
         ),
         LiquidSpec(
@@ -328,6 +373,7 @@ object OniElements {
             bottledItemId = OniItemFactory.BOTTLED_MILK,
             defaultMass = 1100.0,
             defaultTemperatureK = 310.0,
+            specificHeatCapacity = liquidSpecificHeatCapacity("Milk"),
             thermalConductivityWmK = 0.609
         ),
         LiquidSpec(
@@ -336,6 +382,7 @@ object OniElements {
             bottledItemId = OniItemFactory.BOTTLED_NATURAL_RESIN,
             defaultMass = 920.0,
             defaultTemperatureK = 300.0,
+            specificHeatCapacity = liquidSpecificHeatCapacity("NaturalResin"),
             thermalConductivityWmK = 0.15
         ),
         LiquidSpec(
@@ -344,6 +391,7 @@ object OniElements {
             bottledItemId = OniItemFactory.BOTTLED_PHYTO_OIL,
             defaultMass = 800.0,
             defaultTemperatureK = 293.0,
+            specificHeatCapacity = liquidSpecificHeatCapacity("PhytoOil"),
             thermalConductivityWmK = 2.0
         ),
         LiquidSpec(
@@ -352,6 +400,7 @@ object OniElements {
             bottledItemId = OniItemFactory.BOTTLED_MOLTEN_GLASS,
             defaultMass = 200.0,
             defaultTemperatureK = 2215.0,
+            specificHeatCapacity = liquidSpecificHeatCapacity("MoltenGlass"),
             thermalConductivityWmK = 1.0
         ),
         LiquidSpec(
@@ -360,6 +409,7 @@ object OniElements {
             bottledItemId = OniItemFactory.BOTTLED_SUPER_COOLANT,
             defaultMass = 800.0,
             defaultTemperatureK = 238.0,
+            specificHeatCapacity = liquidSpecificHeatCapacity("SuperCoolant"),
             thermalConductivityWmK = 9.46
         ),
         LiquidSpec(
@@ -368,6 +418,7 @@ object OniElements {
             bottledItemId = OniItemFactory.BOTTLED_VISCO_GEL,
             defaultMass = 100.0,
             defaultTemperatureK = 238.0,
+            specificHeatCapacity = liquidSpecificHeatCapacity("ViscoGel"),
             thermalConductivityWmK = 0.45
         )
     )
@@ -424,16 +475,115 @@ object OniElements {
         "katairite" to 1.0e-05
     )
 
+    // Specific heat capacity values sourced from ONI element data (kJ/kg/K).
+    private val solidSpecificHeatCapacityByOniId: Map<String, Double> = mapOf(
+        "Algae" to 0.2,
+        "Aluminum" to 0.91,
+        "AluminumOre" to 0.91,
+        "Amber" to 1.3,
+        "BleachStone" to 0.5,
+        "Carbon" to 0.71,
+        "Ceramic" to 0.84,
+        "Clay" to 0.92,
+        "Cobalt" to 0.42,
+        "Cobaltite" to 0.42,
+        "Copper" to 0.385,
+        "Cuprite" to 0.386,
+        "Diamond" to 0.516,
+        "Dirt" to 1.48,
+        "EnrichedUranium" to 1.0,
+        "FabricatedWood" to 2.3,
+        "Fertilizer" to 0.83,
+        "Fossil" to 0.91,
+        "Fullerene" to 0.95,
+        "Gold" to 0.129,
+        "GoldAmalgam" to 0.15,
+        "Granite" to 0.79,
+        "Graphite" to 0.71,
+        "HardPolypropylene" to 1.5,
+        "IgneousRock" to 1.0,
+        "Iron" to 0.449,
+        "IronOre" to 0.449,
+        "Isoresin" to 1.3,
+        "Katairite" to 4.0,
+        "Lime" to 0.834,
+        "MilkFat" to 1.92,
+        "Niobium" to 0.265,
+        "OxyRock" to 1.0,
+        "Peat" to 0.71,
+        "Phosphorite" to 0.15,
+        "Polypropylene" to 1.92,
+        "RefinedCarbon" to 1.74,
+        "Regolith" to 0.2,
+        "Salt" to 0.7,
+        "Sand" to 0.83,
+        "SedimentaryRock" to 0.2,
+        "SlimeMold" to 0.2,
+        "Steel" to 0.49,
+        "Sulfur" to 0.7,
+        "SuperInsulator" to 5.57,
+        "TempConductorSolid" to 0.622,
+        "ToxicSand" to 0.83,
+        "Tungsten" to 0.134,
+        "Wolframite" to 0.134,
+        "WoodLog" to 2.3
+    )
+
+    // Proxy mapping for placeholder or non-ONI ids to real ONI element ids.
+    private val solidSpecificHeatCapacityProxyById: Map<String, String> = mapOf(
+        "abyssalite" to "Katairite",
+        "bean_plant_seed" to "Dirt",
+        "building_wood" to "FabricatedWood",
+        "cold_wheat_seed" to "Dirt",
+        "crab_shell" to "Lime",
+        "crab_wood_shell" to "Lime",
+        "dew_drip" to "Dirt",
+        "egg_shell" to "Lime",
+        "fabricated_wood" to "FabricatedWood",
+        "garbage_electrobank" to "Iron",
+        "gold_belly_crown" to "Gold",
+        "ice_belly_poop" to "Dirt",
+        "kelp" to "Algae",
+        "metal_ore" to "IronOre",
+        "oxyrock" to "OxyRock",
+        "plant_fiber" to "FabricatedWood",
+        "polluted_dirt" to "Dirt",
+        "refined_lipid" to "MilkFat",
+        "refined_metal" to "Iron",
+        "self_charging_electrobank" to "Iron",
+        "spice_nut" to "Dirt",
+        "table_salt" to "Salt",
+        "tungsten_ore" to "Wolframite",
+        "copper_ore" to "Cuprite"
+    )
+
     @JvmField
     val LIQUIDS: List<String> = LIQUID_SPECS.map { it.id }
 
     private val liquidById: Map<String, LiquidSpec> = LIQUID_SPECS.associateBy { it.id }
+
+    private fun toOniSolidId(id: String): String {
+        val proxied = solidSpecificHeatCapacityProxyById[id]
+        if (proxied != null) {
+            return proxied
+        }
+        return id.split('_').joinToString(separator = "") { part ->
+            part.replaceFirstChar { it.uppercase() }
+        }
+    }
+
+    private fun solidSpecificHeatCapacity(id: String): Double {
+        val oniId = toOniSolidId(id)
+        return solidSpecificHeatCapacityByOniId[oniId]
+            ?: error("Missing specific heat capacity for solid element id '$id' (ONI id '$oniId').")
+    }
 
     private fun solidElement(id: String): ElementSpec {
         return ElementSpec(
             id = id,
             itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:element_$id"),
             phase = ElementPhase.SOLID,
+            specificHeatCapacity = solidSpecificHeatCapacity(id),
             thermalConductivityWmK = solidThermalConductivityById[id],
             massPerItem = null,
             clotterThresholdItems = null,
@@ -524,6 +674,7 @@ object OniElements {
                 id = spec.id,
                 itemId = Identifier.parse("${AbstractModBootstrap.MOD_ID}:${spec.bottledItemId}"),
                 phase = ElementPhase.LIQUID,
+                specificHeatCapacity = spec.specificHeatCapacity,
                 thermalConductivityWmK = spec.thermalConductivityWmK,
                 massPerItem = spec.itemMass(),
                 clotterThresholdItems = spec.clotterThresholdItems,
@@ -542,7 +693,13 @@ object OniElements {
         return LIQUIDS.contains(id)
     }
 
+    fun elementSpec(id: String): ElementSpec? = REGISTRY.byId(id)
+
     fun liquidSpec(id: String): LiquidSpec? = liquidById[id]
+
+    fun specificHeatCapacityForElementId(id: String): Double? {
+        return gasById[id]?.specificHeatCapacity ?: REGISTRY.byId(id)?.specificHeatCapacity
+    }
 
     fun parseLiquidId(input: String): String? {
         val normalized = input.trim().lowercase()
