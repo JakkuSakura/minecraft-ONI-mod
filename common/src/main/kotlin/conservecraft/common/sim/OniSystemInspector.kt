@@ -26,7 +26,7 @@ object OniSystemInspector {
             SystemLens.POWER -> powerLayers(runtime)
             SystemLens.STRESS -> stressLayers(runtime, player)
             SystemLens.RESEARCH -> researchLayers(runtime)
-            SystemLens.CONSTRUCTION -> constructionLayers(runtime)
+            SystemLens.CONSTRUCTION -> emptyList()
         }
     }
 
@@ -132,12 +132,6 @@ object OniSystemInspector {
         return listOf(
             LayerProperty("research", "unlocked_count", runtime.researchState().unlockedCount().toString()),
             LayerProperty("research", "nodes", runtime.researchState().unlockedNodes().toString()),
-        )
-    }
-
-    private fun constructionLayers(runtime: OniSystemRuntime): List<LayerProperty> {
-        return listOf(
-            LayerProperty("construction", "queue_size", runtime.constructionState().activeCount().toString()),
         )
     }
 

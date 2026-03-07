@@ -31,8 +31,6 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import conservecraft.common.block.OniBlockFactory
 import conservecraft.common.block.OniBlockLookup
 import conservecraft.common.element.OniElements
-import conservecraft.common.item.OniBlueprintRegistry
-import conservecraft.common.sim.OniConstructionState
 import conservecraft.common.sim.OniServices
 import conservecraft.common.sim.OniSystemInspector
 import conservecraft.common.sim.OniSystemSnapshot
@@ -161,8 +159,7 @@ abstract class AbstractModBootstrap {
                                     + " storedJ=${String.format("%.1f", snapshot.storedEnergyJ())}"
                                     + " powerTripped=${snapshot.powerTripped()}"
                                     + " stress=${String.format("%.2f", snapshot.colonyStress())}"
-                                    + " researchUnlocked=${snapshot.unlockedResearchCount()}"
-                                    + " buildQueue=${snapshot.activeConstructionCount()}",
+                                    + " researchUnlocked=${snapshot.unlockedResearchCount()}",
                                 true
                             )
                             1
@@ -382,84 +379,6 @@ abstract class AbstractModBootstrap {
                                     Utils.SendFeedback(context, "Unlocked research node: $node", true)
                                     1
                                 })))
-                    .then(literal("build")
-                        .then(literal("status")
-                            .executes { context ->
-                                Utils.SendFeedback(
-                                    context,
-                                    "Build queue size: ${OniServices.systemRuntime().constructionState().activeCount()}",
-                                    true
-                                )
-                                for (task in OniServices.systemRuntime().constructionState().tasks()) {
-                                    Utils.SendFeedback(
-                                        context,
-                                        "- ${task.blueprintId}"
-                                            + " progress=${String.format("%.2f", task.progressSeconds)}/${task.buildTimeSeconds}s"
-                                            + " materials=${task.depositedMaterials}/${task.requiredMaterialUnits}"
-                                            + " pausedReason=${task.pausedReason}",
-                                        true
-                                    )
-                                }
-                                1
-                            })
-                        .then(literal("blueprints")
-                            .executes { context ->
-                                Utils.SendFeedback(context, "Blueprints: ${OniBlueprintRegistry.allIds()}", true)
-                                1
-                            })
-                        .then(literal("queue_blueprint")
-                            .then(argument("blueprint", StringArgumentType.word())
-                                .executes { context ->
-                                    val blueprint = StringArgumentType.getString(context, "blueprint")
-                                    val task: OniConstructionState.BuildTask? =
-                                        OniServices.systemRuntime().constructionState().queueBlueprint(blueprint)
-                                    if (task == null) {
-                                        Utils.SendError(context, "Unknown blueprint: $blueprint", true)
-                                        return@executes 0
-                                    }
-                                    Utils.SendFeedback(context, "Queued build task for blueprint: $blueprint", true)
-                                    1
-                                }))
-                        .then(literal("queue")
-                            .then(argument("blueprint", StringArgumentType.word())
-                                .then(argument("required_research", StringArgumentType.word())
-                                    .then(argument("materials", IntegerArgumentType.integer(1, 100000))
-                                        .then(argument("build_seconds", IntegerArgumentType.integer(1, 100000))
-                                            .executes { context ->
-                                                val blueprint = StringArgumentType.getString(context, "blueprint")
-                                                val requiredResearch = StringArgumentType.getString(context, "required_research")
-                                                val materials = IntegerArgumentType.getInteger(context, "materials")
-                                                val buildSeconds = IntegerArgumentType.getInteger(context, "build_seconds")
-                                                OniServices.systemRuntime().constructionState().queueTask(
-                                                    OniConstructionState.BuildTask(
-                                                        blueprint,
-                                                        requiredResearch,
-                                                        materials,
-                                                        buildSeconds,
-                                                        0,
-                                                        0.0,
-                                                        "Missing materials"
-                                                    )
-                                                )
-                                                Utils.SendFeedback(context, "Queued build task for blueprint: $blueprint", true)
-                                                1
-                                            })))))
-                        .then(literal("deposit")
-                            .then(argument("index", IntegerArgumentType.integer(0, 10000))
-                                .then(argument("materials", IntegerArgumentType.integer(1, 100000))
-                                    .executes { context ->
-                                        val index = IntegerArgumentType.getInteger(context, "index")
-                                        val materials = IntegerArgumentType.getInteger(context, "materials")
-                                        val tasks = OniServices.systemRuntime().constructionState().tasks()
-                                        if (index >= tasks.size) {
-                                            Utils.SendError(context, "Invalid task index.", true)
-                                            return@executes 0
-                                        }
-                                        val task = tasks[index]
-                                        task.depositedMaterials += materials
-                                        Utils.SendFeedback(context, "Deposited $materials materials into task $index.", true)
-                                        1
-                                    }))))
                 .then(literal("world")
                     .then(literal("here")
                         .executes { context ->

@@ -1,7 +1,6 @@
 package conservecraft.neoforge
 
 import conservecraft.common.AbstractModBootstrap
-import conservecraft.common.block.entity.ConstructionSiteBlockEntity
 import conservecraft.common.block.OniBlockFactory
 import conservecraft.common.block.entity.OniBlockEntityTypes
 import conservecraft.common.block.entity.OniConduitBlockEntity
@@ -16,11 +15,7 @@ import java.util.function.Supplier
 object NeoforgeBlockEntities {
     private val BLOCK_ENTITIES: DeferredRegister<BlockEntityType<*>> =
         DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, AbstractModBootstrap.MOD_ID)
-
-    private val CONSTRUCTION_SITE = BLOCK_ENTITIES.register(OniBlockFactory.CONSTRUCTION_SITE, Supplier {
-        val block = NeoforgeBlocks.blockHolder(OniBlockFactory.CONSTRUCTION_SITE).get()
-        BlockEntityType(::ConstructionSiteBlockEntity, setOf(block))
-    })
+    // TODO: rename to elements
     private val MATTER = BLOCK_ENTITIES.register("matter", Supplier {
         val blocks = (OniBlockFactory.SOLID_IDS + OniBlockFactory.GAS_IDS + OniBlockFactory.LIQUID_IDS)
             .map { NeoforgeBlocks.blockHolder(it).get() }
@@ -45,8 +40,6 @@ object NeoforgeBlockEntities {
     }
 
     fun bindTypes() {
-        @Suppress("UNCHECKED_CAST")
-        OniBlockEntityTypes.CONSTRUCTION_SITE = CONSTRUCTION_SITE.get() as BlockEntityType<ConstructionSiteBlockEntity>
         @Suppress("UNCHECKED_CAST")
         OniBlockEntityTypes.MATTER = MATTER.get() as BlockEntityType<OniMatterBlockEntity>
         @Suppress("UNCHECKED_CAST")

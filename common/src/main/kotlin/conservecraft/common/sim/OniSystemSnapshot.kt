@@ -14,7 +14,6 @@ class OniSystemSnapshot(
     private val powerTripped: Boolean,
     private val colonyStress: Double,
     private val unlockedResearchCount: Int,
-    private val activeConstructionCount: Int,
 ) {
     fun running(): Boolean = running
     fun serverTicks(): Long = serverTicks
@@ -29,5 +28,4 @@ class OniSystemSnapshot(
     fun powerTripped(): Boolean = powerTripped
     fun colonyStress(): Double = colonyStress
     fun unlockedResearchCount(): Int = unlockedResearchCount
-    fun activeConstructionCount(): Int = activeConstructionCount
 }

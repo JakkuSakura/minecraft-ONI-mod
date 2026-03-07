@@ -1,9 +1,8 @@
 package conservecraft.fabric
 
 import conservecraft.common.AbstractModBootstrap
-import conservecraft.common.item.BlueprintBookItem
-import conservecraft.common.item.BlueprintItem
 import conservecraft.common.item.BottledMatterItem
+import conservecraft.common.item.PortableAdvancedCraftingTableItem
 import conservecraft.common.item.ElementItem
 import conservecraft.common.item.OniBottledItems
 import conservecraft.common.item.OniCreativeTabs
@@ -55,22 +54,6 @@ object FabricItems {
             )
             Registry.register(BuiltInRegistries.ITEM, id, item)
             OniItemFactory.registerItem(spec.id) { item }
-        }
-
-        run {
-            val id = id(OniItemFactory.BLUEPRINT_BOOK)
-            val key = ResourceKey.create(Registries.ITEM, id)
-            val item = BlueprintBookItem(Item.Properties().setId(key).stacksTo(1))
-            Registry.register(BuiltInRegistries.ITEM, id, item)
-            OniItemFactory.registerItem(OniItemFactory.BLUEPRINT_BOOK) { item }
-        }
-
-        run {
-            val id = id(OniItemFactory.BLUEPRINT)
-            val key = ResourceKey.create(Registries.ITEM, id)
-            val item = BlueprintItem(Item.Properties().setId(key))
-            Registry.register(BuiltInRegistries.ITEM, id, item)
-            OniItemFactory.registerItem(OniItemFactory.BLUEPRINT) { item }
         }
 
         for (elementId in OniItemFactory.ELEMENTS) {

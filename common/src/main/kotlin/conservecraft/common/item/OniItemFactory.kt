@@ -30,8 +30,7 @@ object OniItemFactory {
     const val BOTTLED_MOLTEN_GLASS = "bottled_molten_glass"
     const val BOTTLED_SUPER_COOLANT = "bottled_super_coolant"
     const val BOTTLED_VISCO_GEL = "bottled_visco_gel"
-    const val BLUEPRINT_BOOK = "blueprint_book"
-    const val BLUEPRINT = "blueprint"
+    const val PORTABLE_ADVANCED_CRAFTING_TABLE = "portable_advanced_crafting_table"
     const val ELEMENT_REGOLITH = "element_regolith"
     const val ELEMENT_SEDIMENTARY_ROCK = "element_sedimentary_rock"
     const val ELEMENT_IGNEOUS_ROCK = "element_igneous_rock"
@@ -200,8 +199,7 @@ object OniItemFactory {
         BOTTLED_MOLTEN_GLASS,
         BOTTLED_SUPER_COOLANT,
         BOTTLED_VISCO_GEL,
-        BLUEPRINT_BOOK,
-        BLUEPRINT,
+        PORTABLE_ADVANCED_CRAFTING_TABLE,
         ELEMENT_REGOLITH,
         ELEMENT_SEDIMENTARY_ROCK,
         ELEMENT_IGNEOUS_ROCK,
@@ -628,11 +626,8 @@ object OniItemFactory {
                     temperatureK(spec.bottledTemperatureK())
                 }
             }
-            item(BLUEPRINT_BOOK) {
-                registryId(modId(BLUEPRINT_BOOK))
-            }
-            item(BLUEPRINT) {
-                registryId(modId(BLUEPRINT))
+            item(PORTABLE_ADVANCED_CRAFTING_TABLE) {
+                registryId(modId(PORTABLE_ADVANCED_CRAFTING_TABLE))
             }
             item(ELEMENT_REGOLITH) {
                 registryId(modId(ELEMENT_REGOLITH))

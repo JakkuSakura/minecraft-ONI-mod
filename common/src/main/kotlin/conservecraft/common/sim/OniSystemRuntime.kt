@@ -6,7 +6,6 @@ import conservecraft.common.sim.subsystem.OniSystem
 import conservecraft.common.sim.subsystem.PlumbingSystem
 import conservecraft.common.sim.subsystem.PowerSystem
 import conservecraft.common.sim.subsystem.RefiningSystem
-import conservecraft.common.sim.subsystem.ResearchConstructionSystem
 import conservecraft.common.sim.subsystem.StressSystem
 import conservecraft.common.sim.subsystem.SystemContext
 import conservecraft.common.sim.subsystem.ThermalSystem
@@ -23,7 +22,6 @@ class OniSystemRuntime {
     private val powerState = OniPowerState()
     private val stressState = OniStressState()
     private val researchState = OniResearchState()
-    private val constructionState = OniConstructionState()
     private val serverTicks = AtomicLong(0L)
     private val systemTicks = AtomicLong(0L)
     private val lastSystemTick = AtomicLong(-1L)
@@ -43,14 +41,12 @@ class OniSystemRuntime {
         systems.add(PowerSystem())
         systems.add(RefiningSystem())
         systems.add(StressSystem())
-        systems.add(ResearchConstructionSystem())
     }
 
     fun config(): OniSystemConfig = config
     fun powerState(): OniPowerState = powerState
     fun stressState(): OniStressState = stressState
     fun researchState(): OniResearchState = researchState
-    fun constructionState(): OniConstructionState = constructionState
 
     fun onServerStarted() {
         serverTicks.set(0L)
@@ -73,7 +69,6 @@ class OniSystemRuntime {
         powerState.setNetworks(emptyList())
         stressState.setScore(0.0)
         researchState.clear()
-        constructionState.clear()
     }
 
     fun onServerTick(server: net.minecraft.server.MinecraftServer) {
@@ -136,7 +131,6 @@ class OniSystemRuntime {
             powerState.tripped(),
             stressState.score(),
             researchState.unlockedCount(),
-            constructionState.activeCount(),
         )
     }
 }

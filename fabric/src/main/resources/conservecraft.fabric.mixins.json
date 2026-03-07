@@ -2,7 +2,9 @@
     "required": true,
     "minVersion": "0.8",
     "package": "conservecraft.mixins",
-    "mixins": [],
+    "mixins": [
+        "common.CraftingResultTemperatureMixin"
+    ],
     "client": [
         "fabric.client.SplashManagerMixin",
         "fabric.client.PresetEditorAccessor",

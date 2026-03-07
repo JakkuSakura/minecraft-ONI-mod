@@ -12,7 +12,6 @@ OK common/src/main/resources/assets/conservecraft/textures/block/algae.png <= co
 MISS common/src/main/resources/assets/conservecraft/textures/block/research_desk.png
 MISS common/src/main/resources/assets/conservecraft/textures/block/heavi_watt_conductive_joint_plate.png
 MISS common/src/main/resources/assets/conservecraft/textures/block/liquid_pump.png
-MISS common/src/main/resources/assets/conservecraft/textures/block/construction_site.png
 MISS common/src/main/resources/assets/conservecraft/textures/block/natural_gas_generator.png
 OK common/src/main/resources/assets/conservecraft/textures/block/regolith.png <= common/src/main/resources/assets/conservecraft/textures/oni/sharedassets0/regolith.png
 MISS common/src/main/resources/assets/conservecraft/textures/block/jumbo_battery.png
@@ -59,7 +58,6 @@ MISS common/src/main/resources/assets/conservecraft/textures/item/research_desk.
 MISS common/src/main/resources/assets/conservecraft/textures/item/thermal_glasses.png
 MISS common/src/main/resources/assets/conservecraft/textures/item/heavi_watt_conductive_joint_plate.png
 MISS common/src/main/resources/assets/conservecraft/textures/item/liquid_pump.png
-MISS common/src/main/resources/assets/conservecraft/textures/item/construction_site.png
 MISS common/src/main/resources/assets/conservecraft/textures/item/natural_gas_generator.png
 MISS common/src/main/resources/assets/conservecraft/textures/item/power_station_tools.png
 OK common/src/main/resources/assets/conservecraft/textures/item/regolith.png <= common/src/main/resources/assets/conservecraft/textures/oni/sharedassets0/regolith.png
@@ -75,7 +73,7 @@ MISS common/src/main/resources/assets/conservecraft/textures/item/power_transfor
 MISS common/src/main/resources/assets/conservecraft/textures/item/power_wire.png
 MISS common/src/main/resources/assets/conservecraft/textures/item/hydrogen_generator.png
 OK common/src/main/resources/assets/conservecraft/textures/item/igneous_rock.png <= common/src/main/resources/assets/conservecraft/textures/oni/sharedassets0/igneous_rock.png
-MISS common/src/main/resources/assets/conservecraft/textures/item/blueprint_book.png
+MISS common/src/main/resources/assets/conservecraft/textures/item/portable_advanced_crafting_table.png
 MISS common/src/main/resources/assets/conservecraft/textures/item/bottled_oxygen.png
 MISS common/src/main/resources/assets/conservecraft/textures/item/bottled_polluted_water.png
 MISS common/src/main/resources/assets/conservecraft/textures/item/bottled_lava.png

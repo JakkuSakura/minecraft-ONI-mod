@@ -5,15 +5,12 @@ import conservecraft.common.AbstractModBootstrap
 import conservecraft.common.client.OniClientScreens
 import conservecraft.common.client.overlay.OniLensOverlayRenderer
 import conservecraft.common.client.worldgen.OniWorldgenPresetEditors
-import conservecraft.common.client.screen.BlueprintBookScreen
-import conservecraft.common.menu.OniMenuTypes
 import conservecraft.mixins.fabric.client.PresetEditorAccessor
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.screens.MenuScreens
 import net.minecraft.commands.CommandSourceStack
 import org.apache.logging.log4j.Logger
 
@@ -30,10 +27,6 @@ class FabricClientProxy : AbstractModBootstrap.IEventProxy {
             AbstractModBootstrap.registerClientCommands(
                 dispatcher as CommandDispatcher<CommandSourceStack>
             )
-        }
-
-        MenuScreens.register(OniMenuTypes.BLUEPRINT_BOOK) { menu, inventory, title ->
-            BlueprintBookScreen(menu, inventory, title)
         }
 
         OniClientScreens.registerWorldgenConfigScreen { parent ->

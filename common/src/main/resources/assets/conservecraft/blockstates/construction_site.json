@@ -1,8 +1,0 @@
-{
-  "variants": {
-    "": {
-      "model": "conservecraft:block/construction_site",
-      "render_type": "translucent"
-    }
-  }
-}

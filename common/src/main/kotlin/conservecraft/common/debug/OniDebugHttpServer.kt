@@ -4,7 +4,6 @@ import com.sun.net.httpserver.HttpExchange
 import com.sun.net.httpserver.HttpHandler
 import com.sun.net.httpserver.HttpServer
 import conservecraft.common.AbstractModBootstrap
-import conservecraft.common.item.OniBlueprintRegistry
 import conservecraft.common.sim.OniServices
 import conservecraft.common.world.OniMatterAccess
 import net.minecraft.server.MinecraftServer
@@ -47,7 +46,6 @@ object OniDebugHttpServer {
             httpServer.createContext("/health", HealthHandler())
             httpServer.createContext("/snapshot", SnapshotHandler())
             httpServer.createContext("/power", PowerHandler())
-            httpServer.createContext("/blueprints", BlueprintHandler())
             httpServer.createContext("/cell", CellHandler())
             httpServer.createContext("/world/sample", WorldSampleHandler())
             httpServer.start()
@@ -135,7 +133,6 @@ object OniDebugHttpServer {
                 append(",\"powerTripped\":").append(snapshot.powerTripped())
                 append(",\"colonyStress\":").append(snapshot.colonyStress())
                 append(",\"unlockedResearchCount\":").append(snapshot.unlockedResearchCount())
-                append(",\"activeConstructionCount\":").append(snapshot.activeConstructionCount())
                 append("}")
             }
             writeJson(exchange, 200, body)
@@ -157,17 +154,6 @@ object OniDebugHttpServer {
                 append(",\"tripped\":").append(power.tripped())
                 append("}")
             }
-            writeJson(exchange, 200, body)
-        }
-    }
-
-    private class BlueprintHandler : HttpHandler {
-        override fun handle(exchange: HttpExchange) {
-            if (!exchange.requestMethod.equals("GET", ignoreCase = true)) {
-                writeJson(exchange, 405, "{\"error\":\"method_not_allowed\"}")
-                return
-            }
-            val body = "{\"blueprints\":\"${OniBlueprintRegistry.allIds()}\"}"
             writeJson(exchange, 200, body)
         }
     }

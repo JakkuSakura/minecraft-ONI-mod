@@ -3,7 +3,6 @@ package conservecraft.fabric
 import conservecraft.common.AbstractModBootstrap
 import conservecraft.common.block.OniBlockLookup
 import conservecraft.common.block.OniBlockFactory
-import conservecraft.common.block.entity.ConstructionSiteBlockEntity
 import conservecraft.common.block.entity.OniBlockEntityTypes
 import conservecraft.common.block.entity.OniConduitBlockEntity
 import conservecraft.common.block.entity.OniMatterBlockEntity
@@ -21,13 +20,6 @@ object FabricBlockEntities {
             return
         }
         registered = true
-
-        val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:${OniBlockFactory.CONSTRUCTION_SITE}")
-            ?: throw IllegalArgumentException("Invalid block entity id")
-        val block = OniBlockLookup.block(OniBlockFactory.CONSTRUCTION_SITE)
-        val type = FabricBlockEntityTypeBuilder.create(::ConstructionSiteBlockEntity, block).build()
-        Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id, type)
-        OniBlockEntityTypes.CONSTRUCTION_SITE = type
 
         val matterId = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:matter")
             ?: throw IllegalArgumentException("Invalid block entity id")

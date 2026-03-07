@@ -3,7 +3,6 @@ package conservecraft.common.block
 import conservecraft.common.AbstractModBootstrap
 import conservecraft.common.element.ElementContents
 import conservecraft.common.element.OniElements
-import conservecraft.common.item.OniBlueprintRegistry
 import conservecraft.common.refining.RefiningMachineBlock
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
@@ -52,7 +51,8 @@ object OniBlockFactory {
     const val POWER_CONTROL_STATION = "power_control_station"
     const val POWER_GENERATOR = "power_generator"
     const val RESEARCH_DESK = "research_desk"
-    const val CONSTRUCTION_SITE = "construction_site"
+    const val ADVANCED_CRAFTING_TABLE = "advanced_crafting_table"
+    const val RECYCLING_TABLE = "recycling_table"
     const val OXYGEN_GAS = "oxygen_gas"
     const val CARBON_DIOXIDE_GAS = "carbon_dioxide_gas"
     const val HYDROGEN_GAS = "hydrogen_gas"
@@ -191,23 +191,7 @@ object OniBlockFactory {
         return listOf(ElementContents(elementId, mass, DEFAULT_SOLID_TEMP_K))
     }
 
-    private fun defaultElementsFromBlueprint(blueprintId: String): List<ElementContents> {
-        val blueprint = OniBlueprintRegistry.get(blueprintId) ?: return emptyList()
-        return blueprint.materialSlots.mapNotNull { slot ->
-            if (slot.amount <= 0) {
-                return@mapNotNull null
-            }
-            val itemId = slot.allowedItems.firstOrNull() ?: return@mapNotNull null
-            val elementId = OniElements.elementIdForItemId(itemId) ?: return@mapNotNull null
-            ElementContents(elementId, slot.amount.toDouble(), DEFAULT_SOLID_TEMP_K)
-        }
-    }
-
     private fun defaultElementsForBuilding(id: String): List<ElementContents> {
-        val fromBlueprint = defaultElementsFromBlueprint(id)
-        if (fromBlueprint.isNotEmpty()) {
-            return fromBlueprint
-        }
         return solidElements("refined_metal", 100.0)
     }
 
@@ -480,10 +464,14 @@ object OniBlockFactory {
                 properties = propsFor(RESEARCH_DESK).mapColor(MapColor.COLOR_LIGHT_GRAY).strength(2.0f, 5.0f).sound(SoundType.METAL)
             )
         }),
-        solidEntry(CONSTRUCTION_SITE, SolidBlockSpec(), defaultElementsForBuilding(CONSTRUCTION_SITE), { _, _ ->
-            ConstructionSiteBlock(
-                propsFor(CONSTRUCTION_SITE).mapColor(MapColor.COLOR_LIGHT_GRAY).noOcclusion().strength(1.0f, 2.0f)
-                    .sound(SoundType.METAL)
+        solidEntry(ADVANCED_CRAFTING_TABLE, SolidBlockSpec(), solidElements("building_wood", 200.0), { _, _ ->
+            AdvancedCraftingTableBlock(
+                propsFor(ADVANCED_CRAFTING_TABLE).mapColor(MapColor.WOOD).strength(2.5f).sound(SoundType.WOOD)
+            )
+        }),
+        solidEntry(RECYCLING_TABLE, SolidBlockSpec(), solidElements("refined_metal", 100.0), { _, _ ->
+            RecyclingTableBlock(
+                propsFor(RECYCLING_TABLE).mapColor(MapColor.METAL).strength(2.5f, 6.0f).sound(SoundType.METAL)
             )
         }),
         solidEntry(LIQUID_CONDUIT, SolidBlockSpec(), defaultElementsForBuilding(LIQUID_CONDUIT), { _, _ ->

@@ -4,10 +4,7 @@ import com.mojang.brigadier.CommandDispatcher
 import conservecraft.common.AbstractModBootstrap
 import conservecraft.common.client.OniClientScreens
 import conservecraft.common.client.overlay.OniLensOverlayRenderer
-import conservecraft.common.client.screen.BlueprintBookScreen
-import conservecraft.common.menu.OniMenuTypes
 import net.minecraft.commands.CommandSourceStack
-import net.minecraft.client.gui.screens.MenuScreens
 import net.minecraft.client.Minecraft
 import net.minecraft.resources.Identifier
 import net.minecraftforge.client.FramePassManager
@@ -43,9 +40,6 @@ class ForgeClientProxy : AbstractModBootstrap.IEventProxy {
                     )
                 }
             })
-        }
-        MenuScreens.register(OniMenuTypes.BLUEPRINT_BOOK) { menu, inventory, title ->
-            BlueprintBookScreen(menu, inventory, title)
         }
         OniClientScreens.registerWorldgenConfigScreen { parent ->
             ForgeWorldgenConfigScreen.create(parent)

@@ -2,9 +2,8 @@ package conservecraft.neoforge
 
 import conservecraft.common.AbstractModBootstrap
 import conservecraft.common.item.OniItemFactory
-import conservecraft.common.item.BlueprintBookItem
-import conservecraft.common.item.BlueprintItem
 import conservecraft.common.item.BottledMatterItem
+import conservecraft.common.item.PortableAdvancedCraftingTableItem
 import conservecraft.common.item.ElementItem
 import conservecraft.common.item.OniBottledItems
 import conservecraft.common.item.OniCreativeTabs
@@ -53,26 +52,6 @@ object NeoforgeItems {
                 )
             })
             OniItemFactory.registerItem(spec.id) { holder.get() }
-        }
-
-        run {
-            val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:${OniItemFactory.BLUEPRINT_BOOK}")
-                ?: throw IllegalArgumentException("Invalid item id path: ${OniItemFactory.BLUEPRINT_BOOK}")
-            val key = ResourceKey.create(Registries.ITEM, id)
-            val holder = ITEMS.register(OniItemFactory.BLUEPRINT_BOOK, Supplier {
-                BlueprintBookItem(Item.Properties().setId(key).stacksTo(1))
-            })
-            OniItemFactory.registerItem(OniItemFactory.BLUEPRINT_BOOK) { holder.get() }
-        }
-
-        run {
-            val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:${OniItemFactory.BLUEPRINT}")
-                ?: throw IllegalArgumentException("Invalid item id path: ${OniItemFactory.BLUEPRINT}")
-            val key = ResourceKey.create(Registries.ITEM, id)
-            val holder = ITEMS.register(OniItemFactory.BLUEPRINT, Supplier {
-                BlueprintItem(Item.Properties().setId(key))
-            })
-            OniItemFactory.registerItem(OniItemFactory.BLUEPRINT) { holder.get() }
         }
 
         for (elementId in OniItemFactory.ELEMENTS) {

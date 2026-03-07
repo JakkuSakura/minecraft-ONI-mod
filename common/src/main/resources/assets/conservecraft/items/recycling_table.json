@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "conservecraft:item/construction_site"
+    "model": "conservecraft:item/recycling_table"
   }
 }

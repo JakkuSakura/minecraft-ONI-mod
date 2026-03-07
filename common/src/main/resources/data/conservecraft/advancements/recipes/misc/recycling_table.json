@@ -1,0 +1,27 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_crafting_table": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "items": ["minecraft:crafting_table"] }]
+      }
+    },
+    "has_redstone": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "items": ["minecraft:redstone"] }]
+      }
+    },
+    "has_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "conservecraft:recycling_table"
+      }
+    }
+  },
+  "requirements": [["has_crafting_table", "has_redstone", "has_recipe"]],
+  "rewards": {
+    "recipes": ["conservecraft:recycling_table"]
+  }
+}

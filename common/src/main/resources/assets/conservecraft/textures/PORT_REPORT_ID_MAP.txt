@@ -35,7 +35,6 @@ MISS block petroleum_generator
 MISS block power_control_station
 MISS block power_generator
 MISS block research_desk
-MISS block construction_site
 MISS block oxygen_gas
 MISS block carbon_dioxide_gas
 MISS block hydrogen_gas
@@ -50,8 +49,6 @@ MISS item bottled_water
 MISS item bottled_polluted_water
 MISS item bottled_crude_oil
 MISS item bottled_lava
-MISS item blueprint_book
-MISS item blueprint
 MISS item element_regolith
 MISS item element_sedimentary_rock
 MISS item element_igneous_rock

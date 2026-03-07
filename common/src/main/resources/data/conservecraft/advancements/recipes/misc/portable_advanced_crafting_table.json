@@ -16,7 +16,7 @@
     "has_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "conservecraft:blueprint_book"
+        "recipe": "conservecraft:portable_advanced_crafting_table"
       }
     }
   },
@@ -28,7 +28,7 @@
   ],
   "rewards": {
     "recipes": [
-      "conservecraft:blueprint_book"
+      "conservecraft:portable_advanced_crafting_table"
     ]
   }
 }

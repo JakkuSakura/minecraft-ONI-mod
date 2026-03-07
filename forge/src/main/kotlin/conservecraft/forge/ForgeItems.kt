@@ -2,9 +2,8 @@ package conservecraft.forge
 
 import conservecraft.common.AbstractModBootstrap
 import conservecraft.common.item.OniItemFactory
-import conservecraft.common.item.BlueprintBookItem
-import conservecraft.common.item.BlueprintItem
 import conservecraft.common.item.BottledMatterItem
+import conservecraft.common.item.PortableAdvancedCraftingTableItem
 import conservecraft.common.item.ElementItem
 import conservecraft.common.item.OniBottledItems
 import conservecraft.common.sim.model.SystemLens
@@ -34,15 +33,6 @@ object ForgeItems {
                 )
             }
             OniItemFactory.registerItem(spec.id) { holder.get() }
-        }
-
-        run {
-            val holder = ITEMS.register(OniItemFactory.BLUEPRINT_BOOK) { BlueprintBookItem(Item.Properties().stacksTo(1)) }
-            OniItemFactory.registerItem(OniItemFactory.BLUEPRINT_BOOK) { holder.get() }
-        }
-        run {
-            val holder = ITEMS.register(OniItemFactory.BLUEPRINT) { BlueprintItem(Item.Properties()) }
-            OniItemFactory.registerItem(OniItemFactory.BLUEPRINT) { holder.get() }
         }
         for (elementId in OniItemFactory.ELEMENTS) {
             val holder = ITEMS.register(elementId) { ElementItem(Item.Properties()) }
