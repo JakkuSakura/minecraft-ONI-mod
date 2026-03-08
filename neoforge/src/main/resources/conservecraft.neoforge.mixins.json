@@ -7,7 +7,8 @@
         "common.BucketItemMixin",
         "common.AbstractCauldronBlockMixin",
         "common.CauldronBlockMixin",
-        "common.LayeredCauldronBlockMixin"
+        "common.LayeredCauldronBlockMixin",
+        "common.EntityFluidStateMixin"
     ],
     "client": [
         "neoforge.client.SplashManagerMixin",
