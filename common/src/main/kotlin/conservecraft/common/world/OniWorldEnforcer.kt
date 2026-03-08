@@ -22,7 +22,7 @@ object OniWorldEnforcer {
     private val LOGGER: Logger = AbstractModBootstrap.LOGGER
 
     fun applyWorldBorder(level: ServerLevel) {
-        if (level.dimension() != Level.OVERWORLD) {
+        if (level.dimension() != Level.OVERWORLD || !OniWorldType.isConserveCraftWorld(level)) {
             return
         }
         syncWorldgenBounds(level)
@@ -44,7 +44,7 @@ object OniWorldEnforcer {
     }
 
     fun enforceChunk(level: ServerLevel, chunk: LevelChunk) {
-        if (level.dimension() != Level.OVERWORLD) {
+        if (level.dimension() != Level.OVERWORLD || !OniWorldType.isConserveCraftWorld(level)) {
             return
         }
         syncWorldgenBounds(level)
@@ -167,7 +167,7 @@ object OniWorldEnforcer {
     }
 
     fun syncWorldgenBounds(level: ServerLevel) {
-        if (level.dimension() != Level.OVERWORLD) {
+        if (level.dimension() != Level.OVERWORLD || !OniWorldType.isConserveCraftWorld(level)) {
             return
         }
         val generator = level.chunkSource.generator

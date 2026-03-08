@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher
 import conservecraft.common.AbstractModBootstrap
 import conservecraft.common.world.OniWorldEnforcer
 import conservecraft.common.world.OniSpawnHelper
+import conservecraft.common.world.OniWorldType
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
@@ -36,10 +37,12 @@ class FabricServerProxy(private val isDedicated: Boolean) : AbstractModBootstrap
         ServerLifecycleEvents.SERVER_STARTED.register { server ->
             val level: ServerLevel = server.overworld()
             OniWorldEnforcer.applyWorldBorder(level)
-            val respawn = LevelData.RespawnData.of(Level.OVERWORLD, OniSpawnHelper.spawnPos(), 0.0f, 0.0f)
-            level.setRespawnData(respawn)
-            val data = level.getLevelData() as? WritableLevelData
-            data?.setSpawn(respawn)
+            if (OniWorldType.isConserveCraftWorld(level)) {
+                val respawn = LevelData.RespawnData.of(Level.OVERWORLD, OniSpawnHelper.spawnPos(), 0.0f, 0.0f)
+                level.setRespawnData(respawn)
+                val data = level.getLevelData() as? WritableLevelData
+                data?.setSpawn(respawn)
+            }
         }
 
         ServerChunkEvents.CHUNK_LOAD.register(ServerChunkEvents.Load { level, chunk ->
@@ -48,7 +51,8 @@ class FabricServerProxy(private val isDedicated: Boolean) : AbstractModBootstrap
 
         ServerPlayConnectionEvents.JOIN.register { handler, _, _ ->
             val player: ServerPlayer = handler.player
-            if (player.level().dimension() == Level.OVERWORLD) {
+            val level = player.level() as? ServerLevel
+            if (player.level().dimension() == Level.OVERWORLD && level != null && OniWorldType.isConserveCraftWorld(level)) {
                 val config = ServerPlayer.RespawnConfig(
                     LevelData.RespawnData.of(Level.OVERWORLD, OniSpawnHelper.spawnPos(), 0.0f, 0.0f),
                     true

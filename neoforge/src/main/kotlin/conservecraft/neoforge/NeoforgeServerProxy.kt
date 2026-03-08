@@ -5,6 +5,7 @@ import conservecraft.common.AbstractModBootstrap
 import conservecraft.common.world.OniElementAccess
 import conservecraft.common.world.OniSpawnHelper
 import conservecraft.common.world.OniVanillaDrops
+import conservecraft.common.world.OniWorldType
 import conservecraft.common.world.OniVanillaElementBindings
 import conservecraft.common.world.OniWorldEnforcer
 import net.minecraft.commands.CommandSourceStack
@@ -50,7 +51,7 @@ class NeoforgeServerProxy(private val isDedicated: Boolean) : AbstractModBootstr
     fun onLevelLoad(event: LevelEvent.Load) {
         val serverLevel = event.level as? ServerLevel ?: return
         OniWorldEnforcer.applyWorldBorder(serverLevel)
-        if (serverLevel.dimension() == Level.OVERWORLD) {
+        if (serverLevel.dimension() == Level.OVERWORLD && OniWorldType.isConserveCraftWorld(serverLevel)) {
             val respawn = LevelData.RespawnData.of(Level.OVERWORLD, OniSpawnHelper.spawnPos(), 0.0f, 0.0f)
             serverLevel.setRespawnData(respawn)
             val data = serverLevel.getLevelData() as? WritableLevelData
@@ -96,12 +97,15 @@ class NeoforgeServerProxy(private val isDedicated: Boolean) : AbstractModBootstr
         if (player.level().dimension() != Level.OVERWORLD) {
             return
         }
+        val serverLevel = player.level() as? ServerLevel ?: return
+        if (!OniWorldType.isConserveCraftWorld(serverLevel)) {
+            return
+        }
         val config = ServerPlayer.RespawnConfig(
             LevelData.RespawnData.of(Level.OVERWORLD, OniSpawnHelper.spawnPos(), 0.0f, 0.0f),
             true
         )
         player.setRespawnPosition(config, true)
-        val serverLevel = player.level() as? ServerLevel ?: return
         val spawn = OniSpawnHelper.spawnPos()
         player.teleportTo(
             serverLevel,
@@ -114,6 +118,7 @@ class NeoforgeServerProxy(private val isDedicated: Boolean) : AbstractModBootstr
             true
         )
     }
+
 
     companion object {
         private val LOGGER: Logger = AbstractModBootstrap.LOGGER

@@ -2,8 +2,8 @@ package conservecraft.common.item
 
 import conservecraft.common.AbstractModBootstrap
 import conservecraft.common.block.OniBlockFactory
-import conservecraft.common.item.OniItemFactory
 import conservecraft.common.sim.model.SystemLens
+import net.minecraft.core.HolderGetter
 import net.minecraft.core.registries.Registries
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
@@ -14,9 +14,6 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.ItemLike
 import java.util.function.Supplier
 
-/**
- * Shared creative tab definition for ONI items.
- */
 object OniCreativeTabs {
     const val TAB_PATH: String = "oni"
 
@@ -42,23 +39,29 @@ object OniCreativeTabs {
             .title(Component.translatable("itemGroup.${AbstractModBootstrap.MOD_ID}.$TAB_PATH"))
             .icon(iconSupplier)
             .displayItems { params, output ->
+                val itemLookup = params.holders().lookupOrThrow(Registries.ITEM)
                 for (lens in SystemLens.values()) {
                     val path = OniItemFactory.pathForLens(lens) ?: continue
-                    val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:$path") ?: continue
-                    val itemKey = ResourceKey.create(Registries.ITEM, id)
-                    output.accept(ItemStack(params.holders().lookupOrThrow(Registries.ITEM).getOrThrow(itemKey)))
+                    acceptIfPresent(output, itemLookup, path)
                 }
                 for (path in OniItemFactory.ALL) {
-                    val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:$path") ?: continue
-                    val itemKey = ResourceKey.create(Registries.ITEM, id)
-                    output.accept(ItemStack(params.holders().lookupOrThrow(Registries.ITEM).getOrThrow(itemKey)))
+                    acceptIfPresent(output, itemLookup, path)
                 }
                 for (path in OniBlockFactory.SOLID_IDS) {
-                    val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:$path") ?: continue
-                    val itemKey = ResourceKey.create(Registries.ITEM, id)
-                    output.accept(ItemStack(params.holders().lookupOrThrow(Registries.ITEM).getOrThrow(itemKey)))
+                    acceptIfPresent(output, itemLookup, path)
                 }
             }
             .build()
+    }
+
+    private fun acceptIfPresent(
+        output: CreativeModeTab.Output,
+        itemLookup: HolderGetter<Item>,
+        path: String,
+    ) {
+        val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:$path") ?: return
+        val itemKey = ResourceKey.create(Registries.ITEM, id)
+        val itemHolder = itemLookup.get(itemKey).orElse(null) ?: return
+        output.accept(ItemStack(itemHolder))
     }
 }
