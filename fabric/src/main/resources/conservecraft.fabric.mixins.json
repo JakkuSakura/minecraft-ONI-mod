@@ -12,7 +12,8 @@
         "common.client.TitleScreenButtonMixin"
     ],
     "server": [
-        "common.server.MinecraftServerSystemMixin"
+        "common.server.MinecraftServerSystemMixin",
+        "common.server.FlowingFluidMixin"
     ],
     "injectors": {
         "defaultRequire": 1

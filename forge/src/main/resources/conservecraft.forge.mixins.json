@@ -10,7 +10,8 @@
         "common.client.TitleScreenMixin"
     ],
     "server": [
-        "common.server.MinecraftServerSystemMixin"
+        "common.server.MinecraftServerSystemMixin",
+        "common.server.FlowingFluidMixin"
     ],
     "plugin": "conservecraft.mixins.forge.ForgeMixinPlugin"
 }

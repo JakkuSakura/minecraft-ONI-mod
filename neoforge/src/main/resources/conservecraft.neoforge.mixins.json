@@ -11,7 +11,8 @@
         "common.client.TitleScreenButtonMixin"
     ],
     "server": [
-        "common.server.MinecraftServerSystemMixin"
+        "common.server.MinecraftServerSystemMixin",
+        "common.server.FlowingFluidMixin"
     ],
     "plugin": "conservecraft.mixins.neoforge.NeoforgeMixinPlugin"
 }

@@ -2,6 +2,7 @@ package conservecraft.common.sim.subsystem
 
 import conservecraft.common.element.OniElements
 import conservecraft.common.world.OniMatterAccess
+import conservecraft.common.world.OniVanillaFluidInterop
 import conservecraft.common.world.OniWorldScan
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.block.Blocks
@@ -33,6 +34,16 @@ class LiquidSystem : OniSystem {
                     elementId = liquidId,
                     mass = mass,
                     temperatureK = temp
+                )
+                continue
+            }
+            if (OniVanillaFluidInterop.isVanillaManagedFluid(state.fluidState)) {
+                val vanillaLiquidId = OniVanillaFluidInterop.oniLiquidId(state.fluidState) ?: continue
+                cells[pos] = FluidFlowKernel.CellState(
+                    phase = FluidFlowKernel.Phase.LIQUID,
+                    elementId = vanillaLiquidId,
+                    mass = OniVanillaFluidInterop.massFor(state.fluidState),
+                    temperatureK = OniVanillaFluidInterop.defaultTemperatureK(state.fluidState)
                 )
                 continue
             }
