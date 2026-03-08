@@ -222,6 +222,8 @@ class RefiningSystem : OniSystem {
     private fun availableFromContainers(level: ServerLevel, pos: BlockPos, elementId: String): Double {
         var total = 0.0
         for (container in adjacentContainers(level, pos)) {
+            conservecraft.common.item.OniItemThermal.equalizeContainerTemperature(container)
+            val containerTemp = conservecraft.common.thermal.OniThermalMath.stateOfContainer(container).temperatureK(293.15)
             for (i in 0 until container.containerSize) {
                 val stack = container.getItem(i)
                 if (stack.isEmpty || OniSolidItems.elementIdOf(stack.item) != elementId) {
@@ -308,12 +310,13 @@ class RefiningSystem : OniSystem {
         var totalHeatCapacity = 0.0
         var totalEnergy = 0.0
         for (container in adjacentContainers(level, pos)) {
+            val containerTemp = conservecraft.common.thermal.OniThermalMath.stateOfContainer(container).temperatureK(293.15)
             for (i in 0 until container.containerSize) {
                 val stack = container.getItem(i)
                 if (stack.isEmpty || OniSolidItems.elementIdOf(stack.item) != elementId) {
                     continue
                 }
-                val temp = stackTemperature(stack)
+                val temp = containerTemp
                 val taken = OniItemMass.takeMass(stack, remaining)
                 if (taken > 0.0) {
                     totalMass += taken

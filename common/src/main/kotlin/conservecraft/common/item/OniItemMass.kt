@@ -139,6 +139,7 @@ object OniItemMass {
         if (mass <= 0.0) {
             return false
         }
+        val extraSample = OniThermalMath.sampleOf(stack) ?: return false
         val size = container.containerSize
         for (i in 0 until size) {
             val current = container.getItem(i)
@@ -146,10 +147,8 @@ object OniItemMass {
                 continue
             }
             val next = stackMass(current) + mass
-            val averageTemperature = OniThermalMath.averageItemTemperatureK(listOf(current, stack))
             setStackMass(current, next)
-            OniItemThermal.setTemperatureK(current, averageTemperature)
-            container.setChanged()
+            OniItemThermal.equalizeContainerTemperature(container, listOf(extraSample))
             return true
         }
         for (i in 0 until size) {
@@ -157,7 +156,7 @@ object OniItemMass {
                 continue
             }
             container.setItem(i, stack)
-            container.setChanged()
+            OniItemThermal.equalizeContainerTemperature(container)
             return true
         }
         return false
@@ -177,6 +176,9 @@ object OniItemMass {
         if (remainingUnits <= 0) {
             return stack
         }
+        val movedPreview = ItemStack(stack.item, remainingUnits)
+        OniItemThermal.setTemperatureK(movedPreview, OniItemThermal.temperatureK(stack))
+        val extraSample = OniThermalMath.sampleOf(movedPreview) ?: return stack
         for (index in 0 until container.containerSize) {
             val current = container.getItem(index)
             if (current.isEmpty || current.item != stack.item) {
@@ -190,15 +192,11 @@ object OniItemMass {
             if (moved <= 0) {
                 continue
             }
-            val addStack = ItemStack(stack.item, moved)
-            OniItemThermal.setTemperatureK(addStack, OniItemThermal.temperatureK(stack))
-            val averageTemperature = OniThermalMath.averageItemTemperatureK(listOf(current, addStack))
             current.grow(moved)
-            OniItemThermal.setTemperatureK(current, averageTemperature)
             stack.shrink(moved)
             remainingUnits -= moved
-            container.setChanged()
             if (remainingUnits <= 0 || stack.isEmpty) {
+                OniItemThermal.equalizeContainerTemperature(container, listOf(extraSample))
                 return stack
             }
         }
@@ -211,7 +209,7 @@ object OniItemMass {
             OniItemThermal.setTemperatureK(inserted, OniItemThermal.temperatureK(stack))
             container.setItem(index, inserted)
             stack.shrink(moved)
-            container.setChanged()
+            OniItemThermal.equalizeContainerTemperature(container)
             return stack
         }
         return stack
