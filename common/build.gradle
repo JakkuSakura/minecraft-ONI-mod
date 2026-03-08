@@ -138,7 +138,22 @@ tasks.register("generateElementItemModels") {
         placeholderElements.each { name ->
             models[name] = "conservecraft:item/regolith"
         }
+        def langFile = file("src/main/resources/assets/conservecraft/lang/en_us.json")
+        if (langFile.exists()) {
+            def matcher = (langFile.text =~ /"item\.conservecraft\.(element_[a-z0-9_]+)"/)
+            matcher.each { match ->
+                def name = match[1]
+                models.putIfAbsent(name, "conservecraft:item/regolith")
+            }
+        }
+        def derivedModels = new LinkedHashMap(models)
         models.each { name, texture ->
+            if (name.startsWith("element_")) {
+                derivedModels["${name}_kg"] = texture
+                derivedModels["${name}_g"] = texture
+            }
+        }
+        derivedModels.each { name, texture ->
             def file = new File(modelDir, "${name}.json")
             def commentLine = texture == "conservecraft:item/regolith" ?
                 "  \\\"_comment\\\": \\\"Placeholder texture reused from regolith.\\\",\\n" : ""

@@ -8,6 +8,7 @@ import conservecraft.common.item.BottledMatterItem
 import conservecraft.common.item.OniInventoryMass
 import conservecraft.common.item.OniItemFactory
 import conservecraft.common.item.OniItemMass
+import conservecraft.common.item.OniSolidItems
 import conservecraft.common.refining.*
 import conservecraft.common.world.OniMatterAccess
 import conservecraft.common.world.OniWorldScan
@@ -219,13 +220,11 @@ class RefiningSystem : OniSystem {
     }
 
     private fun availableFromContainers(level: ServerLevel, pos: BlockPos, elementId: String): Double {
-        val itemId = OniElements.REGISTRY.byId(elementId)?.itemId ?: return 0.0
-        val item = OniItemFactory.itemById(itemId.toString()) ?: return 0.0
         var total = 0.0
         for (container in adjacentContainers(level, pos)) {
             for (i in 0 until container.containerSize) {
                 val stack = container.getItem(i)
-                if (stack.isEmpty || stack.item != item) {
+                if (stack.isEmpty || OniSolidItems.elementIdOf(stack.item) != elementId) {
                     continue
                 }
                 total += OniItemMass.stackMass(stack)
@@ -259,6 +258,7 @@ class RefiningSystem : OniSystem {
         inputs: List<Pair<RefiningIngredient, Double>>
     ): InputTemperature {
         var totalMass = 0.0
+        var totalHeatCapacity = 0.0
         var totalEnergy = 0.0
         for ((ingredient, required) in inputs) {
             if (required <= 0.0) {
@@ -268,52 +268,57 @@ class RefiningSystem : OniSystem {
             val taken = takeFromStorage(entity, elementId, required)
             if (taken.mass > 0.0) {
                 totalMass += taken.mass
-                totalEnergy += taken.mass * taken.temperatureK
+                totalHeatCapacity += taken.mass * taken.specificHeatCapacity
+                totalEnergy += taken.mass * taken.specificHeatCapacity * taken.temperatureK
             }
             if (taken.mass + 1e-9 < required) {
                 val remaining = required - taken.mass
                 val fromContainers = takeFromContainers(level, pos, elementId, remaining)
                 totalMass += fromContainers.mass
-                totalEnergy += fromContainers.mass * fromContainers.temperatureK
+                totalHeatCapacity += fromContainers.mass * fromContainers.specificHeatCapacity
+                totalEnergy += fromContainers.mass * fromContainers.specificHeatCapacity * fromContainers.temperatureK
                 val remaining2 = remaining - fromContainers.mass
                 if (remaining2 > 1e-9) {
                     val fromConduit = takeFromConduits(level, pos, ingredient.phase, elementId, remaining2)
                     totalMass += fromConduit.mass
-                    totalEnergy += fromConduit.mass * fromConduit.temperatureK
+                    totalHeatCapacity += fromConduit.mass * fromConduit.specificHeatCapacity
+                    totalEnergy += fromConduit.mass * fromConduit.specificHeatCapacity * fromConduit.temperatureK
                 }
             }
         }
-        val avgTemp = if (totalMass > 0.0) totalEnergy / totalMass else 293.15
+        val avgTemp = if (totalHeatCapacity > 0.0) totalEnergy / totalHeatCapacity else 293.15
         return InputTemperature(totalMass, avgTemp)
     }
 
-    private data class TakenMass(val mass: Double, val temperatureK: Double)
+    private data class TakenMass(val mass: Double, val temperatureK: Double, val specificHeatCapacity: Double = 1.0)
 
     private fun takeFromStorage(entity: RefiningMachineBlockEntity, elementId: String, amount: Double): TakenMass {
         val stored = entity.takeStored(elementId, amount) ?: return TakenMass(0.0, 293.15)
-        return TakenMass(stored.mass, stored.temperatureK)
+        val specificHeatCapacity = conservecraft.common.element.OniElements.specificHeatCapacityForElementId(elementId) ?: 1.0
+        return TakenMass(stored.mass, stored.temperatureK, specificHeatCapacity)
     }
 
     private fun takeFromContainers(level: ServerLevel, pos: BlockPos, elementId: String, amount: Double): TakenMass {
         if (amount <= 0.0) {
             return TakenMass(0.0, 293.15)
         }
-        val itemId = OniElements.REGISTRY.byId(elementId)?.itemId ?: return TakenMass(0.0, 293.15)
-        val item = OniItemFactory.itemById(itemId.toString()) ?: return TakenMass(0.0, 293.15)
+        val specificHeatCapacity = conservecraft.common.element.OniElements.specificHeatCapacityForElementId(elementId) ?: 1.0
         var remaining = amount
         var totalMass = 0.0
+        var totalHeatCapacity = 0.0
         var totalEnergy = 0.0
         for (container in adjacentContainers(level, pos)) {
             for (i in 0 until container.containerSize) {
                 val stack = container.getItem(i)
-                if (stack.isEmpty || stack.item != item) {
+                if (stack.isEmpty || OniSolidItems.elementIdOf(stack.item) != elementId) {
                     continue
                 }
                 val temp = stackTemperature(stack)
                 val taken = OniItemMass.takeMass(stack, remaining)
                 if (taken > 0.0) {
                     totalMass += taken
-                    totalEnergy += taken * temp
+                    totalHeatCapacity += taken * specificHeatCapacity
+                    totalEnergy += taken * specificHeatCapacity * temp
                     remaining -= taken
                 }
                 if (remaining <= 1e-9) {
@@ -324,8 +329,8 @@ class RefiningSystem : OniSystem {
                 break
             }
         }
-        val avgTemp = if (totalMass > 0.0) totalEnergy / totalMass else 293.15
-        return TakenMass(totalMass, avgTemp)
+        val avgTemp = if (totalHeatCapacity > 0.0) totalEnergy / totalHeatCapacity else 293.15
+        return TakenMass(totalMass, avgTemp, specificHeatCapacity)
     }
 
     private fun takeFromConduits(
@@ -338,8 +343,10 @@ class RefiningSystem : OniSystem {
         if (phase == RefiningPhase.SOLID || amount <= 0.0) {
             return TakenMass(0.0, 293.15)
         }
+        val specificHeatCapacity = conservecraft.common.element.OniElements.specificHeatCapacityForElementId(elementId) ?: 1.0
         var remaining = amount
         var totalMass = 0.0
+        var totalHeatCapacity = 0.0
         var totalEnergy = 0.0
         for (conduit in adjacentConduits(level, pos, phase)) {
             if (conduit.elementId() != elementId || conduit.mass() <= 0.0) {
@@ -351,15 +358,16 @@ class RefiningSystem : OniSystem {
                 continue
             }
             totalMass += taken
-            totalEnergy += taken * conduit.temperatureK()
+            totalHeatCapacity += taken * specificHeatCapacity
+            totalEnergy += taken * specificHeatCapacity * conduit.temperatureK()
             remaining -= taken
             conduit.setMass(available - taken)
             if (remaining <= 1e-9) {
                 break
             }
         }
-        val avgTemp = if (totalMass > 0.0) totalEnergy / totalMass else 293.15
-        return TakenMass(totalMass, avgTemp)
+        val avgTemp = if (totalHeatCapacity > 0.0) totalEnergy / totalHeatCapacity else 293.15
+        return TakenMass(totalMass, avgTemp, specificHeatCapacity)
     }
 
     private fun selectElementForIngredient(
@@ -592,30 +600,26 @@ class RefiningSystem : OniSystem {
             if (entry.phase != RefiningPhase.SOLID || entry.mass <= 0.0) {
                 continue
             }
-            val itemId = OniElements.REGISTRY.byId(entry.elementId)?.itemId ?: continue
-            val item = OniItemFactory.itemById(itemId.toString()) ?: continue
-            val stack = ItemStack(item, 1)
-            OniItemMass.setStackMass(stack, entry.mass)
-            setStackTemperature(stack, entry.temperatureK)
-            val remaining = mergeIntoAdjacentContainers(level, pos, stack)
-            val remainingMass = OniItemMass.stackMass(remaining)
+            val stacks = OniSolidItems.encode(entry.elementId, entry.mass, entry.temperatureK)
             entity.takeStored(entry.elementId, entry.mass)
-            if (remainingMass > 0.0) {
-                entity.addStored(entry.elementId, remainingMass, entry.temperatureK, RefiningPhase.SOLID)
+            var leftoverMass = 0.0
+            for (stack in stacks) {
+                val remaining = mergeIntoAdjacentContainers(level, pos, stack)
+                leftoverMass += OniItemMass.stackMass(remaining)
+            }
+            if (leftoverMass > 0.0) {
+                entity.addStored(entry.elementId, leftoverMass, entry.temperatureK, RefiningPhase.SOLID)
             }
         }
     }
 
     private fun spawnItem(level: ServerLevel, pos: BlockPos, elementId: String, amount: Double, temperatureK: Double) {
-        val itemId = OniElements.REGISTRY.byId(elementId)?.itemId ?: return
-        val item = OniItemFactory.itemById(itemId.toString()) ?: return
-        val stack = ItemStack(item, 1)
-        OniItemMass.setStackMass(stack, amount)
-        setStackTemperature(stack, temperatureK)
-        val remainder = mergeIntoAdjacentContainers(level, pos, stack)
-        if (!remainder.isEmpty) {
-            net.minecraft.world.entity.item.ItemEntity(level, pos.x + 0.5, pos.y + 1.0, pos.z + 0.5, remainder).let {
-                level.addFreshEntity(it)
+        for (stack in OniSolidItems.encode(elementId, amount, temperatureK)) {
+            val remainder = mergeIntoAdjacentContainers(level, pos, stack)
+            if (!remainder.isEmpty) {
+                net.minecraft.world.entity.item.ItemEntity(level, pos.x + 0.5, pos.y + 1.0, pos.z + 0.5, remainder).let {
+                    level.addFreshEntity(it)
+                }
             }
         }
     }

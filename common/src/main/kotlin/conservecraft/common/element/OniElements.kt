@@ -2,6 +2,7 @@ package conservecraft.common.element
 
 import conservecraft.common.AbstractModBootstrap
 import conservecraft.common.item.OniItemFactory
+import conservecraft.common.block.OniBlockFactory
 import net.minecraft.resources.Identifier
 import net.minecraft.world.item.Item
 import java.util.Collections
@@ -585,7 +586,7 @@ object OniElements {
             phase = ElementPhase.SOLID,
             specificHeatCapacity = solidSpecificHeatCapacity(id),
             thermalConductivityWmK = solidThermalConductivityById[id],
-            massPerItem = null,
+            massPerItem = OniBlockFactory.defaultElements(id).firstOrNull { it.elementId == id }?.mass,
             clotterThresholdItems = null,
             transforms = emptyList()
         )

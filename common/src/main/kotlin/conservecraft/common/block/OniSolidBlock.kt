@@ -4,8 +4,7 @@ import conservecraft.common.block.entity.OniElementBlockEntity
 import conservecraft.common.block.entity.OniMatterBlockEntity
 import conservecraft.common.element.ElementContents
 import conservecraft.common.element.OniElements
-import conservecraft.common.item.OniItemFactory
-import conservecraft.common.item.OniItemMass
+import conservecraft.common.item.OniSolidItems
 import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.item.ItemStack
@@ -70,11 +69,7 @@ open class OniSolidBlock(
             if (element.mass <= 0.0) {
                 continue
             }
-            val spec = OniElements.REGISTRY.byId(element.elementId) ?: continue
-            val item = OniItemFactory.itemById(spec.itemId.toString()) ?: continue
-            val stack = ItemStack(item, 1)
-            OniItemMass.setStackMass(stack, element.mass)
-            drops.add(stack)
+            drops.addAll(OniSolidItems.encode(element.elementId, element.mass, element.temperatureK))
         }
         return drops
     }

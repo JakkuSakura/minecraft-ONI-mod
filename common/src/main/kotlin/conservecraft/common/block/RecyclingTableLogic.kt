@@ -5,6 +5,7 @@ import conservecraft.common.element.OniElements
 import conservecraft.common.item.OniItemFactory
 import conservecraft.common.item.OniItemThermal
 import conservecraft.common.item.OniItemMass
+import conservecraft.common.item.OniSolidItems
 import conservecraft.common.world.OniVanillaElementBindings
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.server.level.ServerLevel
@@ -55,7 +56,7 @@ object RecyclingTableLogic {
         }
 
         consumeSingleInput(stack)
-        val resultStacks = outputs.mapNotNull(::toItemStack)
+        val resultStacks = outputs.flatMap(::toItemStacks)
         for (result in resultStacks) {
             var remaining = OniItemMass.mergeIntoContainer(player.inventory, result)
             if (!remaining.isEmpty) {
@@ -86,6 +87,10 @@ object RecyclingTableLogic {
         stack.shrink(1)
     }
 
+    fun outputStacksFor(stack: ItemStack): List<ItemStack> {
+        return outputsFor(stack).flatMap(::toItemStacks)
+    }
+
     fun outputsFor(stack: ItemStack): List<RecycledElement> {
         if (stack.isEmpty) {
             return emptyList()
@@ -97,7 +102,7 @@ object RecyclingTableLogic {
         }
 
         val itemId = BuiltInRegistries.ITEM.getKey(stack.item)?.toString() ?: return emptyList()
-        val directElementId = OniElements.elementIdForItemId(itemId)
+        val directElementId = OniSolidItems.elementIdOf(stack.item) ?: OniElements.elementIdForItemId(itemId)
         if (directElementId != null) {
             return listOf(recycledElement(directElementId, stack))
         }
@@ -115,7 +120,7 @@ object RecyclingTableLogic {
     }
 
     private fun itemMass(stack: ItemStack): Double {
-        return if (hasMassTag(stack)) OniItemMass.stackMass(stack) else stack.count.toDouble()
+        return OniItemMass.stackMass(stack)
     }
 
     private fun hasMassTag(stack: ItemStack): Boolean {
@@ -221,13 +226,8 @@ object RecyclingTableLogic {
         }
     }
 
-    private fun toItemStack(recycled: RecycledElement): ItemStack? {
-        val itemId = OniElements.REGISTRY.byId(recycled.elementId)?.itemId ?: return null
-        val item = OniItemFactory.itemById(itemId.toString()) ?: return null
-        val stack = ItemStack(item, 1)
-        OniItemMass.setStackMass(stack, recycled.mass)
-        OniItemThermal.setTemperatureK(stack, recycled.temperatureK)
-        return stack
+    private fun toItemStacks(recycled: RecycledElement): List<ItemStack> {
+        return OniSolidItems.encode(recycled.elementId, recycled.mass, recycled.temperatureK)
     }
 
     private fun mergeIntoAdjacentContainers(level: ServerLevel, pos: net.minecraft.core.BlockPos, stack: ItemStack): ItemStack {

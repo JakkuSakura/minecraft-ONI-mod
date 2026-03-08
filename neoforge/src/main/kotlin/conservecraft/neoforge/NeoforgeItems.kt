@@ -1,12 +1,12 @@
 package conservecraft.neoforge
 
 import conservecraft.common.AbstractModBootstrap
-import conservecraft.common.item.OniItemFactory
 import conservecraft.common.item.BottledMatterItem
-import conservecraft.common.item.PortableAdvancedCraftingTableItem
-import conservecraft.common.item.ElementItem
 import conservecraft.common.item.OniBottledItems
 import conservecraft.common.item.OniCreativeTabs
+import conservecraft.common.item.OniItemFactory
+import conservecraft.common.item.OniSolidItems
+import conservecraft.common.item.PortableAdvancedCraftingTableItem
 import conservecraft.common.sim.model.SystemLens
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.Identifier
@@ -44,24 +44,28 @@ object NeoforgeItems {
                 ?: throw IllegalArgumentException("Invalid item id path: ${spec.id}")
             val key = ResourceKey.create(Registries.ITEM, id)
             val holder = ITEMS.register(spec.id, Supplier {
-                BottledMatterItem(
-                    Item.Properties().setId(key),
-                    spec.phase,
-                    spec.mass,
-                    spec.temperatureK
-                )
+                BottledMatterItem(Item.Properties().setId(key), spec.phase, spec.mass, spec.temperatureK)
             })
             OniItemFactory.registerItem(spec.id) { holder.get() }
         }
 
-        for (elementId in OniItemFactory.ELEMENTS) {
-            val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:$elementId")
-                ?: throw IllegalArgumentException("Invalid item id path: $elementId")
+        for (path in OniSolidItems.allRegistryPaths()) {
+            val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:$path")
+                ?: throw IllegalArgumentException("Invalid item id path: $path")
             val key = ResourceKey.create(Registries.ITEM, id)
-            val holder = ITEMS.register(elementId, Supplier {
-                ElementItem(Item.Properties().setId(key))
+            val holder = ITEMS.register(path, Supplier { OniSolidItems.createItem(path, Item.Properties().setId(key)) })
+            OniItemFactory.registerItem(path) { holder.get() }
+        }
+
+        run {
+            val path = OniItemFactory.PORTABLE_ADVANCED_CRAFTING_TABLE
+            val id = Identifier.tryParse("${AbstractModBootstrap.MOD_ID}:$path")
+                ?: throw IllegalArgumentException("Invalid item id path: $path")
+            val key = ResourceKey.create(Registries.ITEM, id)
+            val holder = ITEMS.register(path, Supplier {
+                PortableAdvancedCraftingTableItem(Item.Properties().setId(key).stacksTo(1))
             })
-            OniItemFactory.registerItem(elementId) { holder.get() }
+            OniItemFactory.registerItem(path) { holder.get() }
         }
 
         run {
@@ -79,7 +83,6 @@ object NeoforgeItems {
                 oxygenLensSupplier?.get()?.let { ItemStack(it) } ?: ItemStack.EMPTY
             })
         })
-
     }
 
     fun register(eventBus: IEventBus) {

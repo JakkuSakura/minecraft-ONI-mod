@@ -1,13 +1,13 @@
 package conservecraft.fabric
 
 import conservecraft.common.AbstractModBootstrap
+import conservecraft.common.element.OniElements
 import conservecraft.common.item.BottledMatterItem
-import conservecraft.common.item.PortableAdvancedCraftingTableItem
-import conservecraft.common.item.ElementItem
 import conservecraft.common.item.OniBottledItems
 import conservecraft.common.item.OniCreativeTabs
 import conservecraft.common.item.OniItemFactory
-import conservecraft.common.element.OniElements
+import conservecraft.common.item.OniSolidItems
+import conservecraft.common.item.PortableAdvancedCraftingTableItem
 import conservecraft.common.sim.model.SystemLens
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
@@ -46,22 +46,26 @@ object FabricItems {
         for (spec in OniBottledItems.SPECS) {
             val id = id(spec.id)
             val key = ResourceKey.create(Registries.ITEM, id)
-            val item = BottledMatterItem(
-                Item.Properties().setId(key),
-                spec.phase,
-                spec.mass,
-                spec.temperatureK
-            )
+            val item = BottledMatterItem(Item.Properties().setId(key), spec.phase, spec.mass, spec.temperatureK)
             Registry.register(BuiltInRegistries.ITEM, id, item)
             OniItemFactory.registerItem(spec.id) { item }
         }
 
-        for (elementId in OniItemFactory.ELEMENTS) {
-            val id = id(elementId)
+        for (path in OniSolidItems.allRegistryPaths()) {
+            val id = id(path)
             val key = ResourceKey.create(Registries.ITEM, id)
-            val item = ElementItem(Item.Properties().setId(key))
+            val item = OniSolidItems.createItem(path, Item.Properties().setId(key))
             Registry.register(BuiltInRegistries.ITEM, id, item)
-            OniItemFactory.registerItem(elementId) { item }
+            OniItemFactory.registerItem(path) { item }
+        }
+
+        run {
+            val path = OniItemFactory.PORTABLE_ADVANCED_CRAFTING_TABLE
+            val id = id(path)
+            val key = ResourceKey.create(Registries.ITEM, id)
+            val item = PortableAdvancedCraftingTableItem(Item.Properties().setId(key).stacksTo(1))
+            Registry.register(BuiltInRegistries.ITEM, id, item)
+            OniItemFactory.registerItem(path) { item }
         }
 
         run {

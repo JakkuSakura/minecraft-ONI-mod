@@ -1,5 +1,6 @@
 package conservecraft.common.item
 
+import conservecraft.common.thermal.OniThermalMath
 import net.minecraft.core.component.DataComponents
 import net.minecraft.world.Container
 import net.minecraft.world.item.ItemStack
@@ -24,25 +25,14 @@ object OniItemThermal {
     }
 
     fun conservedCraftingTemperatureK(container: Container): Double {
-        var totalMass = 0.0
-        var totalEnergy = 0.0
+        val stacks = ArrayList<ItemStack>(container.containerSize)
         for (index in 0 until container.containerSize) {
             val stack = container.getItem(index)
-            if (stack.isEmpty) {
-                continue
+            if (!stack.isEmpty) {
+                stacks.add(stack)
             }
-            val mass = if (hasMassTag(stack)) OniItemMass.stackMass(stack) else stack.count.toDouble()
-            if (mass <= 0.0) {
-                continue
-            }
-            val temperatureK = temperatureK(stack)
-            totalMass += mass
-            totalEnergy += mass * temperatureK
         }
-        if (totalMass <= 0.0) {
-            return DEFAULT_TEMP_K
-        }
-        return totalEnergy / totalMass
+        return OniThermalMath.averageItemTemperatureK(stacks, DEFAULT_TEMP_K)
     }
 
     fun hasMassTag(stack: ItemStack): Boolean {

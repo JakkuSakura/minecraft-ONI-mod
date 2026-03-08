@@ -1,16 +1,20 @@
 package conservecraft.common.block
 
+import conservecraft.common.menu.RecyclingTableMenu
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
+import net.minecraft.world.SimpleMenuProvider
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
+import net.minecraft.world.inventory.ContainerLevelAccess
 
-class RecyclingTableBlock(properties: BlockBehaviour.Properties) : net.minecraft.world.level.block.Block(properties) {
+class RecyclingTableBlock(properties: BlockBehaviour.Properties) : Block(properties) {
     override fun useWithoutItem(
         state: BlockState,
         level: Level,
@@ -18,11 +22,7 @@ class RecyclingTableBlock(properties: BlockBehaviour.Properties) : net.minecraft
         player: Player,
         hit: BlockHitResult,
     ): InteractionResult {
-        if (level.isClientSide) {
-            return InteractionResult.SUCCESS
-        }
-        player.displayClientMessage(Component.literal("Use an item on the Recycling Table to recover its elements."), true)
-        return InteractionResult.CONSUME
+        return openMenu(level, pos, player)
     }
 
     override fun useItemOn(
@@ -34,16 +34,19 @@ class RecyclingTableBlock(properties: BlockBehaviour.Properties) : net.minecraft
         hand: InteractionHand,
         hit: BlockHitResult,
     ): InteractionResult {
+        return openMenu(level, pos, player)
+    }
+
+    private fun openMenu(level: Level, pos: net.minecraft.core.BlockPos, player: Player): InteractionResult {
         if (level.isClientSide) {
             return InteractionResult.SUCCESS
         }
-        val serverLevel = level as? net.minecraft.server.level.ServerLevel ?: return InteractionResult.CONSUME
-        val recycled = RecyclingTableLogic.recycleHeldItem(serverLevel, player, pos, stack)
-        if (!recycled) {
-            player.displayClientMessage(Component.literal("That item cannot be recycled into known elements."), true)
-            return InteractionResult.PASS
-        }
-        player.displayClientMessage(Component.literal("Recovered elemental materials."), true)
+        player.openMenu(
+            SimpleMenuProvider(
+                { id, inventory, _ -> RecyclingTableMenu(id, inventory, ContainerLevelAccess.create(level, pos)) },
+                Component.translatable("block.conservecraft.recycling_table")
+            )
+        )
         return InteractionResult.CONSUME
     }
 }

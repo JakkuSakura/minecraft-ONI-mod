@@ -4,14 +4,20 @@ import com.mojang.brigadier.CommandDispatcher
 import conservecraft.common.AbstractModBootstrap
 import conservecraft.common.client.OniClientScreens
 import conservecraft.common.client.overlay.OniLensOverlayRenderer
+import conservecraft.common.client.screen.AdvancedCraftingTableScreen
+import conservecraft.common.client.screen.RecyclingTableScreen
 import conservecraft.common.client.worldgen.OniWorldgenPresetEditors
+import conservecraft.common.menu.OniMenuTypes
 import conservecraft.mixins.fabric.client.PresetEditorAccessor
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents
 import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.screens.MenuScreens
 import net.minecraft.commands.CommandSourceStack
+import net.minecraft.network.chat.Component
+import net.minecraft.world.entity.player.Inventory
 import org.apache.logging.log4j.Logger
 
 /**
@@ -29,6 +35,16 @@ class FabricClientProxy : AbstractModBootstrap.IEventProxy {
             )
         }
 
+        MenuScreens.register(OniMenuTypes.advancedCraftingTable(), object : MenuScreens.ScreenConstructor<conservecraft.common.menu.AdvancedCraftingTableMenu, AdvancedCraftingTableScreen> {
+            override fun create(menu: conservecraft.common.menu.AdvancedCraftingTableMenu, inventory: Inventory, title: Component): AdvancedCraftingTableScreen {
+                return AdvancedCraftingTableScreen(menu, inventory, title)
+            }
+        })
+        MenuScreens.register(OniMenuTypes.recyclingTable(), object : MenuScreens.ScreenConstructor<conservecraft.common.menu.RecyclingTableMenu, RecyclingTableScreen> {
+            override fun create(menu: conservecraft.common.menu.RecyclingTableMenu, inventory: Inventory, title: Component): RecyclingTableScreen {
+                return RecyclingTableScreen(menu, inventory, title)
+            }
+        })
         OniClientScreens.registerWorldgenConfigScreen { parent ->
             FabricWorldgenConfigScreen.create(parent)
         }
@@ -51,7 +67,6 @@ class FabricClientProxy : AbstractModBootstrap.IEventProxy {
             )
         }
     }
-
     companion object {
         private val LOGGER: Logger = AbstractModBootstrap.LOGGER
     }

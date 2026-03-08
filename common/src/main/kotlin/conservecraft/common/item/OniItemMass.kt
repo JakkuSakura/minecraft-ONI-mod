@@ -1,8 +1,9 @@
 package conservecraft.common.item
 
+import conservecraft.common.thermal.OniThermalMath
 import net.minecraft.core.component.DataComponents
-import net.minecraft.world.item.ItemStack
 import net.minecraft.world.Container
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.CustomData
 import kotlin.math.floor
 
@@ -13,10 +14,20 @@ object OniItemMass {
         if (stack.isEmpty) {
             return 0.0
         }
-        val data = stack.get(DataComponents.CUSTOM_DATA) ?: return stack.count.toDouble()
-        val tag = data.copyTag()
-        if (tag.contains(TAG_MASS)) {
-            return tag.getDouble(TAG_MASS).orElse(0.0)
+        val data = stack.get(DataComponents.CUSTOM_DATA)
+        if (data != null) {
+            val tag = data.copyTag()
+            if (tag.contains(TAG_MASS)) {
+                return tag.getDouble(TAG_MASS).orElse(0.0)
+            }
+        }
+        val solidUnitMass = OniSolidItems.unitMassKgOf(stack.item)
+        if (solidUnitMass != null) {
+            return solidUnitMass * stack.count.toDouble()
+        }
+        val specMass = OniItemFactory.specByItem(stack.item)?.properties?.mass
+        if (specMass != null) {
+            return specMass * stack.count.toDouble()
         }
         return stack.count.toDouble()
     }
@@ -36,8 +47,7 @@ object OniItemMass {
         if (stack.isEmpty || mass <= 0.0) {
             return 0.0
         }
-        val data = stack.get(DataComponents.CUSTOM_DATA)
-        if (data != null && hasMassTag(stack)) {
+        if (hasMassTag(stack)) {
             val current = stackMass(stack)
             val take = minOf(current, mass)
             val remaining = current - take
@@ -49,18 +59,29 @@ object OniItemMass {
             return take
         }
 
-        val available = stack.count.toDouble()
-        val take = minOf(available, floor(mass + 1e-9))
-        if (take <= 0.0) {
+        if (OniSolidItems.unitMassKgOf(stack.item) != null) {
+            return OniSolidItems.takeMass(stack, mass)
+        }
+
+        val unitMass = OniItemFactory.specByItem(stack.item)?.properties?.mass ?: 1.0
+        val units = floor((mass + 1e-9) / unitMass).toInt().coerceAtLeast(0)
+        if (units <= 0) {
             return 0.0
         }
-        stack.count = (stack.count - take.toInt()).coerceAtLeast(0)
-        return take
+        val takenUnits = minOf(stack.count, units)
+        if (takenUnits <= 0) {
+            return 0.0
+        }
+        stack.count = (stack.count - takenUnits).coerceAtLeast(0)
+        return takenUnits.toDouble() * unitMass
     }
 
     fun mergeIntoContainer(container: Container, stack: ItemStack): ItemStack {
         if (stack.isEmpty) {
             return stack
+        }
+        if (!hasMassTag(stack) && OniSolidItems.unitMassKgOf(stack.item) != null) {
+            return mergeCountStack(container, stack)
         }
         val capacity = OniInventoryMass.remainingCapacity(container)
         if (capacity <= 0.0) {
@@ -73,6 +94,7 @@ object OniItemMass {
         }
         val addStack = ItemStack(stack.item, 1)
         setStackMass(addStack, toAdd)
+        OniItemThermal.setTemperatureK(addStack, OniItemThermal.temperatureK(stack))
         if (!mergeMassStack(container, addStack)) {
             return stack
         }
@@ -97,6 +119,14 @@ object OniItemMass {
         }
         val merged: MutableList<ItemStack> = ArrayList(grouped.size)
         for ((item, mass) in grouped) {
+            val solidUnitMass = OniSolidItems.unitMassKgOf(item)
+            if (solidUnitMass != null) {
+                val units = floor((mass + 1e-9) / solidUnitMass).toInt()
+                if (units > 0) {
+                    merged.add(ItemStack(item, units))
+                }
+                continue
+            }
             val mergedStack = ItemStack(item, 1)
             setStackMass(mergedStack, mass)
             merged.add(mergedStack)
@@ -112,23 +142,18 @@ object OniItemMass {
         val size = container.containerSize
         for (i in 0 until size) {
             val current = container.getItem(i)
-            if (current.isEmpty) {
-                continue
-            }
-            if (current.item != stack.item) {
-                continue
-            }
-            if (!hasMassTag(current)) {
+            if (current.isEmpty || current.item != stack.item || !hasMassTag(current)) {
                 continue
             }
             val next = stackMass(current) + mass
+            val averageTemperature = OniThermalMath.averageItemTemperatureK(listOf(current, stack))
             setStackMass(current, next)
+            OniItemThermal.setTemperatureK(current, averageTemperature)
             container.setChanged()
             return true
         }
         for (i in 0 until size) {
-            val current = container.getItem(i)
-            if (!current.isEmpty) {
+            if (!container.getItem(i).isEmpty) {
                 continue
             }
             container.setItem(i, stack)
@@ -136,6 +161,60 @@ object OniItemMass {
             return true
         }
         return false
+    }
+
+    private fun mergeCountStack(container: Container, stack: ItemStack): ItemStack {
+        val unitMass = OniSolidItems.unitMassKgOf(stack.item) ?: return stack
+        if (unitMass <= 0.0) {
+            return stack
+        }
+        val capacityMass = OniInventoryMass.remainingCapacity(container)
+        val maxByCapacity = floor((capacityMass + 1e-9) / unitMass).toInt().coerceAtLeast(0)
+        if (maxByCapacity <= 0) {
+            return stack
+        }
+        var remainingUnits = minOf(stack.count, maxByCapacity)
+        if (remainingUnits <= 0) {
+            return stack
+        }
+        for (index in 0 until container.containerSize) {
+            val current = container.getItem(index)
+            if (current.isEmpty || current.item != stack.item) {
+                continue
+            }
+            val free = current.maxStackSize - current.count
+            if (free <= 0) {
+                continue
+            }
+            val moved = minOf(free, remainingUnits)
+            if (moved <= 0) {
+                continue
+            }
+            val addStack = ItemStack(stack.item, moved)
+            OniItemThermal.setTemperatureK(addStack, OniItemThermal.temperatureK(stack))
+            val averageTemperature = OniThermalMath.averageItemTemperatureK(listOf(current, addStack))
+            current.grow(moved)
+            OniItemThermal.setTemperatureK(current, averageTemperature)
+            stack.shrink(moved)
+            remainingUnits -= moved
+            container.setChanged()
+            if (remainingUnits <= 0 || stack.isEmpty) {
+                return stack
+            }
+        }
+        for (index in 0 until container.containerSize) {
+            if (!container.getItem(index).isEmpty) {
+                continue
+            }
+            val moved = remainingUnits
+            val inserted = ItemStack(stack.item, moved)
+            OniItemThermal.setTemperatureK(inserted, OniItemThermal.temperatureK(stack))
+            container.setItem(index, inserted)
+            stack.shrink(moved)
+            container.setChanged()
+            return stack
+        }
+        return stack
     }
 
     private fun hasMassTag(stack: ItemStack): Boolean {

@@ -26,12 +26,7 @@ open class OniElementBlockEntity(
     fun totalMass(): Double = elements.sumOf { it.mass }
 
     fun averageTemperatureK(): Double {
-        val total = totalMass()
-        if (total <= 0.0) {
-            return 293.15
-        }
-        val weighted = elements.sumOf { it.mass * it.temperatureK }
-        return weighted / total
+        return conservecraft.common.thermal.OniThermalMath.averageElementTemperatureK(elements, 293.15)
     }
 
     fun setTemperatureK(value: Double) {
