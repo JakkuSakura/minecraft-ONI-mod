@@ -1,8 +1,8 @@
 package conservecraft.mixins.common
 
 import conservecraft.common.item.OniItemThermal
-import net.minecraft.world.Container
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.inventory.CraftingContainer
 import net.minecraft.world.inventory.ResultSlot
 import net.minecraft.world.item.ItemStack
 import org.spongepowered.asm.mixin.Final
@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 class CraftingResultTemperatureMixin {
     @Shadow
     @Final
-    private lateinit var craftSlots: Container
+    private lateinit var craftSlots: CraftingContainer
 
     @Inject(method = ["onTake"], at = [At("HEAD")])
     @Suppress("UNUSED_PARAMETER")
