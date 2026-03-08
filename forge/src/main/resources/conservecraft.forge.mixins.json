@@ -3,7 +3,11 @@
     "minVersion": "0.8",
     "package": "conservecraft.mixins",
     "mixins": [
-        "common.CraftingResultTemperatureMixin"
+        "common.CraftingResultTemperatureMixin",
+        "common.BucketItemMixin",
+        "common.AbstractCauldronBlockMixin",
+        "common.CauldronBlockMixin",
+        "common.LayeredCauldronBlockMixin"
     ],
     "client": [
         "forge.client.SplashManagerMixin",
